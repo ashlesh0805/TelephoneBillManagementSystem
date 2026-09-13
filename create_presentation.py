@@ -78,7 +78,7 @@ def create_deck():
         tf.word_wrap = True
         tf.margin_left = tf.margin_top = tf.margin_right = tf.margin_bottom = 0
         p = tf.paragraphs[0]
-        p.text = f"APEX TELECOM — Major Project Presentation  |  Team 07  |  Slide {slide_num} of 14"
+        p.text = f"APEX TELECOM — Major Project Presentation  |  Team 07  |  Slide {slide_num} of 13"
         p.font.name = "Segoe UI"
         p.font.size = Pt(9.5)
         p.font.color.rgb = C_SLATE_500
@@ -647,79 +647,14 @@ def create_deck():
     add_footer(s12, 12)
 
     # ==========================================
-    # SLIDE 13: TEAM 07 MEMBERS (NO ROLES / TASKS)
+    # SLIDE 13: CONCLUSION & FUTURE SCOPE
     # ==========================================
     s13 = prs.slides.add_slide(blank_layout)
     add_bg(s13)
-    add_header(s13, "Project Members", "Team 07", "Department of Computer Science & Engineering — Academic Major Project 2026")
+    add_header(s13, "Conclusion & Roadmap", "Project Outcomes & Future Scope", "Reflections on project milestones and future directions for telecommunication infrastructure")
 
-    # Display 5 balanced, clean profile cards (NO roles, NO task descriptions)
-    card_w = Inches(11.7)
-    card_h = Inches(0.85)
-    gap_y = Inches(0.12)
-    start_y = Inches(1.8)
-
-    for i, (m_name, m_roll) in enumerate(members):
-        cy = start_y + i * (card_h + gap_y)
-        create_card(s13, Inches(0.8), cy, card_w, card_h, C_CARD, C_CARD_BORDER)
-
-        # Avatar circle icon placeholder
-        icon_shape = s13.shapes.add_shape(MSO_SHAPE.OVAL, Inches(1.1), cy + Inches(0.15), Inches(0.55), Inches(0.55))
-        icon_shape.fill.solid()
-        icon_shape.fill.fore_color.rgb = RGBColor(30, 41, 59)
-        icon_shape.line.color.rgb = C_CYAN
-        tf_ic = icon_shape.text_frame
-        p_ic = tf_ic.paragraphs[0]
-        p_ic.text = str(i + 1)
-        p_ic.font.name = "Segoe UI"
-        p_ic.font.size = Pt(13)
-        p_ic.font.bold = True
-        p_ic.font.color.rgb = C_CYAN
-        p_ic.alignment = PP_ALIGN.CENTER
-
-        # Member Name
-        tb_name = s13.shapes.add_textbox(Inches(1.85), cy + Inches(0.12), Inches(4.5), Inches(0.6))
-        tf_name = tb_name.text_frame
-        tf_name.word_wrap = True
-        p_name = tf_name.paragraphs[0]
-        p_name.text = m_name
-        p_name.font.name = "Segoe UI"
-        p_name.font.size = Pt(16)
-        p_name.font.bold = True
-        p_name.font.color.rgb = C_WHITE
-
-        p_dept = tf_name.add_paragraph()
-        p_dept.text = "Computer Science & Engineering"
-        p_dept.font.name = "Segoe UI"
-        p_dept.font.size = Pt(9.5)
-        p_dept.font.color.rgb = C_SLATE_400
-
-        # Roll Number Badge on Right
-        roll_badge = s13.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(9.8), cy + Inches(0.2), Inches(2.4), Inches(0.45))
-        roll_badge.fill.solid()
-        roll_badge.fill.fore_color.rgb = RGBColor(15, 23, 42)
-        roll_badge.line.color.rgb = C_CYAN
-        roll_badge.line.width = Pt(1)
-        tf_rb = roll_badge.text_frame
-        p_rb = tf_rb.paragraphs[0]
-        p_rb.text = f"Roll: {m_roll}"
-        p_rb.font.name = "Consolas"
-        p_rb.font.size = Pt(11)
-        p_rb.font.bold = True
-        p_rb.font.color.rgb = C_CYAN
-        p_rb.alignment = PP_ALIGN.CENTER
-
-    add_footer(s13, 13)
-
-    # ==========================================
-    # SLIDE 14: CONCLUSION & FUTURE SCOPE
-    # ==========================================
-    s14 = prs.slides.add_slide(blank_layout)
-    add_bg(s14)
-    add_header(s14, "Conclusion & Roadmap", "Project Outcomes & Future Scope", "Reflections on project milestones and future directions for telecommunication infrastructure")
-
-    create_card(s14, Inches(0.8), Inches(1.8), Inches(5.6), Inches(4.8), C_CARD, C_EMERALD)
-    tb = s14.shapes.add_textbox(Inches(1.1), Inches(2.0), Inches(5.0), Inches(4.4))
+    create_card(s13, Inches(0.8), Inches(1.8), Inches(5.6), Inches(4.8), C_CARD, C_EMERALD)
+    tb = s13.shapes.add_textbox(Inches(1.1), Inches(2.0), Inches(5.0), Inches(4.4))
     tf = tb.text_frame
     tf.word_wrap = True
 
@@ -752,8 +687,8 @@ def create_deck():
         p2.font.color.rgb = C_SLATE_400
         p2.space_after = Pt(8)
 
-    create_card(s14, Inches(6.9), Inches(1.8), Inches(5.6), Inches(4.8), C_CARD, C_CYAN)
-    tb2 = s14.shapes.add_textbox(Inches(7.2), Inches(2.0), Inches(5.0), Inches(4.4))
+    create_card(s13, Inches(6.9), Inches(1.8), Inches(5.6), Inches(4.8), C_CARD, C_CYAN)
+    tb2 = s13.shapes.add_textbox(Inches(7.2), Inches(2.0), Inches(5.0), Inches(4.4))
     tf2 = tb2.text_frame
     tf2.word_wrap = True
 
@@ -794,7 +729,7 @@ def create_deck():
     p.font.color.rgb = C_AMBER
     p.alignment = PP_ALIGN.CENTER
 
-    add_footer(s14, 14)
+    add_footer(s13, 13)
 
     out_file = "Telephone_Bill_Management_System_Team07.pptx"
     prs.save(out_file)
