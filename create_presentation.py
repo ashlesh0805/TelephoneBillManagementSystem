@@ -27,6 +27,15 @@ def create_deck():
 
     assets_dir = 'presentation_assets'
 
+    # Team Members (Strictly Name & Roll Number only)
+    members = [
+        ("M. Akshitha", "24241-CS-033"),
+        ("G. Ashlesh", "24241-CS-034"),
+        ("G. Bhargavi", "24241-CS-035"),
+        ("E. Sakshi", "24241-CS-036"),
+        ("A. Varun", "24241-CS-037")
+    ]
+
     def add_bg(slide):
         bg = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, prs.slide_width, prs.slide_height)
         bg.fill.solid()
@@ -35,7 +44,6 @@ def create_deck():
         return bg
 
     def add_header(slide, category, title, subtitle):
-        # Header box
         tb = slide.shapes.add_textbox(Inches(0.8), Inches(0.5), Inches(11.7), Inches(1.1))
         tf = tb.text_frame
         tf.word_wrap = True
@@ -65,7 +73,6 @@ def create_deck():
             p2.font.color.rgb = C_SLATE_400
 
     def add_footer(slide, slide_num):
-        # Footer text
         tb = slide.shapes.add_textbox(Inches(0.8), Inches(6.9), Inches(11.7), Inches(0.4))
         tf = tb.text_frame
         tf.word_wrap = True
@@ -90,7 +97,6 @@ def create_deck():
     s1 = prs.slides.add_slide(blank_layout)
     add_bg(s1)
 
-    # Decorative top bar
     bar = s1.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, prs.slide_width, Inches(0.1))
     bar.fill.solid()
     bar.fill.fore_color.rgb = C_BLUE
@@ -141,7 +147,7 @@ def create_deck():
     tf_lb.paragraphs[0].font.color.rgb = RGBColor(167, 243, 208)
     tf_lb.paragraphs[0].alignment = PP_ALIGN.CENTER
 
-    # Right Card: Presented by Team 07
+    # Right Card: Presented by Team 07 (Names and Roll Numbers ONLY)
     create_card(s1, Inches(8.5), Inches(0.8), Inches(4.0), Inches(5.8), C_CARD, C_BLUE)
     tb_team = s1.shapes.add_textbox(Inches(8.8), Inches(1.1), Inches(3.4), Inches(5.2))
     tf_team = tb_team.text_frame
@@ -150,7 +156,7 @@ def create_deck():
     p = tf_team.paragraphs[0]
     p.text = "TEAM 07"
     p.font.name = "Segoe UI"
-    p.font.size = Pt(14)
+    p.font.size = Pt(15)
     p.font.bold = True
     p.font.color.rgb = C_CYAN
     p.space_after = Pt(2)
@@ -160,38 +166,24 @@ def create_deck():
     p.font.name = "Segoe UI"
     p.font.size = Pt(10)
     p.font.color.rgb = C_SLATE_400
-    p.space_after = Pt(14)
+    p.space_after = Pt(16)
 
     p = tf_team.add_paragraph()
-    p.text = "PRESENTED BY:"
+    p.text = "Presented by:"
     p.font.name = "Segoe UI"
-    p.font.size = Pt(11)
+    p.font.size = Pt(13)
     p.font.bold = True
     p.font.color.rgb = C_WHITE
-    p.space_after = Pt(10)
-
-    members = [
-        ("M. Akshitha", "24241-CS-033"),
-        ("G. Ashlesh", "24241-CS-034"),
-        ("G. Bhargavi", "24241-CS-035"),
-        ("E. Sakshi", "24241-CS-036"),
-        ("A. Varun", "24241-CS-037")
-    ]
+    p.space_after = Pt(12)
 
     for name, roll in members:
         p = tf_team.add_paragraph()
-        p.text = f"•  {name}"
+        p.text = f"•  {name} ({roll})"
         p.font.name = "Segoe UI"
         p.font.size = Pt(12)
         p.font.bold = True
         p.font.color.rgb = C_SLATE_200
-        
-        p_sub = tf_team.add_paragraph()
-        p_sub.text = f"    Roll No: {roll}"
-        p_sub.font.name = "Consolas"
-        p_sub.font.size = Pt(10.5)
-        p_sub.font.color.rgb = C_CYAN
-        p_sub.space_after = Pt(8)
+        p.space_after = Pt(10)
 
     add_footer(s1, 1)
 
@@ -202,7 +194,6 @@ def create_deck():
     add_bg(s2)
     add_header(s2, "Introduction", "Problem Statement & Project Objectives", "Overcoming legacy telecom billing bottlenecks through modern automated software architecture")
 
-    # Left Column: The Problem (Red accented card)
     create_card(s2, Inches(0.8), Inches(1.8), Inches(5.6), Inches(4.8))
     tb = s2.shapes.add_textbox(Inches(1.1), Inches(2.0), Inches(5.0), Inches(4.4))
     tf = tb.text_frame
@@ -237,7 +228,6 @@ def create_deck():
         p_desc.font.color.rgb = C_SLATE_400
         p_desc.space_after = Pt(8)
 
-    # Right Column: The Solution & Objectives (Green accented card)
     create_card(s2, Inches(6.9), Inches(1.8), Inches(5.6), Inches(4.8))
     tb2 = s2.shapes.add_textbox(Inches(7.2), Inches(2.0), Inches(5.0), Inches(4.4))
     tf2 = tb2.text_frame
@@ -281,7 +271,6 @@ def create_deck():
     add_bg(s3)
     add_header(s3, "Engineering Design", "System Architecture & MVC Pattern", "Clean separation of presentation, business rules, and persistence layers for maximum maintainability")
 
-    # 4 Architecture Columns (Model, View, Controller/Service, Persistence)
     cols = [
         ("VIEW LAYER", C_CYAN, [
             ("JavaFX 21 (FXML)", "Declarative XML UI views with CSS styling and dark/light themes."),
@@ -404,7 +393,6 @@ def create_deck():
         add_bg(s)
         add_header(s, tag, title, subtitle)
 
-        # Left Column: Detailed bullet points (width 5.5 inches)
         create_card(s, Inches(0.8), Inches(1.8), Inches(5.5), Inches(4.8))
         tb = s.shapes.add_textbox(Inches(1.1), Inches(2.0), Inches(4.9), Inches(4.4))
         tf = tb.text_frame
@@ -425,15 +413,11 @@ def create_deck():
             p_desc.font.color.rgb = C_SLATE_400
             p_desc.space_after = Pt(10)
 
-        # Right Column: Screenshot Card (width 6.0 inches)
         img_path = os.path.join(assets_dir, img_name)
         create_card(s, Inches(6.6), Inches(1.8), Inches(5.9), Inches(4.8), C_CARD, C_BLUE)
 
         if os.path.exists(img_path):
-            # Add image inside card
             s.shapes.add_picture(img_path, Inches(6.75), Inches(1.95), Inches(5.6), Inches(4.2))
-            
-            # Caption badge
             cap = s.shapes.add_textbox(Inches(6.75), Inches(6.2), Inches(5.6), Inches(0.3))
             tf_c = cap.text_frame
             p_c = tf_c.paragraphs[0]
@@ -447,7 +431,7 @@ def create_deck():
         return s
 
     # ==========================================
-    # SLIDE 5: DASHBOARD
+    # SLIDES 5 TO 10: APP MODULES
     # ==========================================
     add_feature_slide(
         5,
@@ -464,9 +448,6 @@ def create_deck():
         "Apex Telecom Operational Dashboard with Live Charts"
     )
 
-    # ==========================================
-    # SLIDE 6: CDR & PREFIX AUTO-DETECTION
-    # ==========================================
     add_feature_slide(
         6,
         "System Showcase — Module 2",
@@ -482,9 +463,6 @@ def create_deck():
         "CDR Call Logger with Real-Time Classification Pills"
     )
 
-    # ==========================================
-    # SLIDE 7: BILLING CALCULATION ENGINE
-    # ==========================================
     add_feature_slide(
         7,
         "Core Business Logic — Module 3",
@@ -500,9 +478,6 @@ def create_deck():
         "Financial Analytics & Top Calling Subscribers"
     )
 
-    # ==========================================
-    # SLIDE 8: AIRTEL/JIO STYLED TAX INVOICE (CENTERPIECE)
-    # ==========================================
     add_feature_slide(
         8,
         "System Centerpiece — Module 4",
@@ -518,9 +493,6 @@ def create_deck():
         "Authentic Airtel/Jio Styled Tax Invoice Modal"
     )
 
-    # ==========================================
-    # SLIDE 9: SUBSCRIBERS & TARIFF PLANS
-    # ==========================================
     add_feature_slide(
         9,
         "System Showcase — Module 5",
@@ -536,9 +508,6 @@ def create_deck():
         "Tariff Plans & Calling Package Tier Cards"
     )
 
-    # ==========================================
-    # SLIDE 10: ANALYTICS & LEADERBOARD
-    # ==========================================
     add_feature_slide(
         10,
         "System Showcase — Module 6",
@@ -632,7 +601,7 @@ def create_deck():
         ]),
         ("Public GitHub Repository", C_CYAN, [
             ("Repository Link", "https://github.com/ashlesh0805/TelephoneBillManagementSystem"),
-            ("Clean Commit History", "Version-controlled with sanitized credentials and complete automated build scripts."),
+            ("Clean Commit History", "Version-controlled with sanitized configuration and complete automated build scripts."),
             ("Documentation & Badges", "Comprehensive README with architecture diagrams, setup instructions, and college viva Q&A."),
             ("Open Source Standards", "Structured Maven pom.xml with clear directory segregation for models, DAOs, controllers, and services.")
         ]),
@@ -678,92 +647,67 @@ def create_deck():
     add_footer(s12, 12)
 
     # ==========================================
-    # SLIDE 13: TEAM RESPONSIBILITIES
+    # SLIDE 13: TEAM 07 MEMBERS (NO ROLES / TASKS)
     # ==========================================
     s13 = prs.slides.add_slide(blank_layout)
     add_bg(s13)
-    add_header(s13, "Team Collaboration", "Team 07 Individual Contributions", "Equal distribution of responsibilities across architecture, development, database, QA, and cloud hosting")
+    add_header(s13, "Project Members", "Team 07", "Department of Computer Science & Engineering — Academic Major Project 2026")
 
-    team_roles = [
-        ("M. Akshitha", "24241-CS-033", "UI/UX & JavaFX Controller Design", [
-            "Designed declarative FXML screens for Dashboard, Subscribers, and Invoices.",
-            "Implemented dark/light CSS skinning, transitions, and responsive controls.",
-            "Coordinated with testing team to ensure responsive table views and form validations."
-        ]),
-        ("G. Ashlesh", "24241-CS-034", "System Architecture & Cloud Deployment", [
-            "Architected overall MVC design pattern and module separation.",
-            "Ported system to Vercel cloud web application with client-side data store.",
-            "Managed GitHub repository sync, BrowserOS neo testing, and project documentation."
-        ]),
-        ("G. Bhargavi", "24241-CS-035", "Core Billing Engine & Rating Algorithms", [
-            "Implemented BillingEngine calculation rules and 60-second pulse ceiling logic.",
-            "Programmed free-minutes deduction priorities and statutory 18% GST computations.",
-            "Formulated late payment surcharge policies and promotional credit deductions."
-        ]),
-        ("E. Sakshi", "24241-CS-036", "Database Design & Data Access (DAO)", [
-            "Engineered SQLite relational schema (schema.sql) with foreign keys and indexes.",
-            "Implemented DatabaseManager and CRUD DAO classes for customers, bills, and calls.",
-            "Prepared sample seed datasets representing realistic multi-circle telecom usage."
-        ]),
-        ("A. Varun", "24241-CS-037", "CDR Prefix Engine & Quality Assurance", [
-            "Developed CallService prefix auto-detection algorithms (ISD, STD, Local).",
-            "Authored JUnit 5 automated unit test suite (10/10 passing test cases).",
-            "Engineered OpenPDF vector invoice generation and CSV bulk import utilities."
-        ])
-    ]
+    # Display 5 balanced, clean profile cards (NO roles, NO task descriptions)
+    card_w = Inches(11.7)
+    card_h = Inches(0.85)
+    gap_y = Inches(0.12)
+    start_y = Inches(1.8)
 
-    for i, (name, roll, role, tasks) in enumerate(team_roles):
-        y = Inches(1.8) + i * Inches(0.96)
-        create_card(s13, Inches(0.8), y, Inches(11.7), Inches(0.88), C_CARD, C_CARD_BORDER)
+    for i, (m_name, m_roll) in enumerate(members):
+        cy = start_y + i * (card_h + gap_y)
+        create_card(s13, Inches(0.8), cy, card_w, card_h, C_CARD, C_CARD_BORDER)
 
-        # Name and Roll
-        tb = s13.shapes.add_textbox(Inches(1.0), y + Inches(0.12), Inches(3.2), Inches(0.65))
-        tf = tb.text_frame
-        tf.word_wrap = True
-        p = tf.paragraphs[0]
-        p.text = name
-        p.font.name = "Segoe UI"
-        p.font.size = Pt(12.5)
-        p.font.bold = True
-        p.font.color.rgb = C_WHITE
-        p2 = tf.add_paragraph()
-        p2.text = f"Roll: {roll}"
-        p2.font.name = "Consolas"
-        p2.font.size = Pt(9.5)
-        p2.font.color.rgb = C_CYAN
+        # Avatar circle icon placeholder
+        icon_shape = s13.shapes.add_shape(MSO_SHAPE.OVAL, Inches(1.1), cy + Inches(0.15), Inches(0.55), Inches(0.55))
+        icon_shape.fill.solid()
+        icon_shape.fill.fore_color.rgb = RGBColor(30, 41, 59)
+        icon_shape.line.color.rgb = C_CYAN
+        tf_ic = icon_shape.text_frame
+        p_ic = tf_ic.paragraphs[0]
+        p_ic.text = str(i + 1)
+        p_ic.font.name = "Segoe UI"
+        p_ic.font.size = Pt(13)
+        p_ic.font.bold = True
+        p_ic.font.color.rgb = C_CYAN
+        p_ic.alignment = PP_ALIGN.CENTER
 
-        # Role
-        tb_role = s13.shapes.add_textbox(Inches(4.2), y + Inches(0.12), Inches(2.6), Inches(0.65))
-        tf_role = tb_role.text_frame
-        tf_role.word_wrap = True
-        p = tf_role.paragraphs[0]
-        p.text = "ASSIGNED ROLE:"
-        p.font.name = "Segoe UI"
-        p.font.size = Pt(8.5)
-        p.font.bold = True
-        p.font.color.rgb = C_SLATE_500
-        p2 = tf_role.add_paragraph()
-        p2.text = role
-        p2.font.name = "Segoe UI"
-        p2.font.size = Pt(10.5)
-        p2.font.bold = True
-        p2.font.color.rgb = C_AMBER
+        # Member Name
+        tb_name = s13.shapes.add_textbox(Inches(1.85), cy + Inches(0.12), Inches(4.5), Inches(0.6))
+        tf_name = tb_name.text_frame
+        tf_name.word_wrap = True
+        p_name = tf_name.paragraphs[0]
+        p_name.text = m_name
+        p_name.font.name = "Segoe UI"
+        p_name.font.size = Pt(16)
+        p_name.font.bold = True
+        p_name.font.color.rgb = C_WHITE
 
-        # Key Contributions
-        tb_task = s13.shapes.add_textbox(Inches(7.0), y + Inches(0.12), Inches(5.3), Inches(0.65))
-        tf_task = tb_task.text_frame
-        tf_task.word_wrap = True
-        p = tf_task.paragraphs[0]
-        p.text = "KEY CONTRIBUTIONS:"
-        p.font.name = "Segoe UI"
-        p.font.size = Pt(8.5)
-        p.font.bold = True
-        p.font.color.rgb = C_SLATE_500
-        p2 = tf_task.add_paragraph()
-        p2.text = " • " + "  • ".join(tasks[:2])
-        p2.font.name = "Segoe UI"
-        p2.font.size = Pt(9.5)
-        p2.font.color.rgb = C_SLATE_200
+        p_dept = tf_name.add_paragraph()
+        p_dept.text = "Computer Science & Engineering"
+        p_dept.font.name = "Segoe UI"
+        p_dept.font.size = Pt(9.5)
+        p_dept.font.color.rgb = C_SLATE_400
+
+        # Roll Number Badge on Right
+        roll_badge = s13.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(9.8), cy + Inches(0.2), Inches(2.4), Inches(0.45))
+        roll_badge.fill.solid()
+        roll_badge.fill.fore_color.rgb = RGBColor(15, 23, 42)
+        roll_badge.line.color.rgb = C_CYAN
+        roll_badge.line.width = Pt(1)
+        tf_rb = roll_badge.text_frame
+        p_rb = tf_rb.paragraphs[0]
+        p_rb.text = f"Roll: {m_roll}"
+        p_rb.font.name = "Consolas"
+        p_rb.font.size = Pt(11)
+        p_rb.font.bold = True
+        p_rb.font.color.rgb = C_CYAN
+        p_rb.alignment = PP_ALIGN.CENTER
 
     add_footer(s13, 13)
 
@@ -774,7 +718,6 @@ def create_deck():
     add_bg(s14)
     add_header(s14, "Conclusion & Roadmap", "Project Outcomes & Future Scope", "Reflections on project milestones and future directions for telecommunication infrastructure")
 
-    # Left: Project Achievements (Emerald border)
     create_card(s14, Inches(0.8), Inches(1.8), Inches(5.6), Inches(4.8), C_CARD, C_EMERALD)
     tb = s14.shapes.add_textbox(Inches(1.1), Inches(2.0), Inches(5.0), Inches(4.4))
     tf = tb.text_frame
@@ -809,7 +752,6 @@ def create_deck():
         p2.font.color.rgb = C_SLATE_400
         p2.space_after = Pt(8)
 
-    # Right: Future Enhancements (Cyan border)
     create_card(s14, Inches(6.9), Inches(1.8), Inches(5.6), Inches(4.8), C_CARD, C_CYAN)
     tb2 = s14.shapes.add_textbox(Inches(7.2), Inches(2.0), Inches(5.0), Inches(4.4))
     tf2 = tb2.text_frame
@@ -844,7 +786,6 @@ def create_deck():
         p2.font.color.rgb = C_SLATE_400
         p2.space_after = Pt(8)
 
-    # Thank you box at bottom right
     p = tf2.add_paragraph()
     p.text = "Thank You! Questions & Discussion Welcome."
     p.font.name = "Segoe UI"
