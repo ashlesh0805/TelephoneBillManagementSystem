@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<ScrollPane fitToWidth="true" styleClass="scroll-pane" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.telecom.controller.DashboardController">
+   <content>
+      <VBox spacing="24.0" styleClass="content-area">
+         <children>
+            <!-- KPI Cards Row -->
+            <HBox spacing="18.0">
+               <children>
+                  <!-- Card 1: Revenue -->
+                  <VBox HBox.hgrow="ALWAYS" styleClass="stat-card" style="-fx-border-left-color: #2563eb; -fx-border-left-width: 4px;">
+                     <children>
+                        <HBox alignment="CENTER_LEFT">
+                           <children>
+                              <Label styleClass="stat-title" text="MONTHLY REVENUE" />
+                           </children>
+                        </HBox>
+                        <Label fx:id="revenueValueLabel" styleClass="stat-value" text="₹0.00" />
+                        <Label styleClass="stat-subtitle" text="Current billing cycle collections" />
+                     </children>
+                  </VBox>
+
+                  <!-- Card 2: Active Subscribers -->
+                  <VBox HBox.hgrow="ALWAYS" styleClass="stat-card" style="-fx-border-left-color: #10b981; -fx-border-left-width: 4px;">
+                     <children>
+                        <HBox alignment="CENTER_LEFT">
+                           <children>
+                              <Label styleClass="stat-title" text="ACTIVE SUBSCRIBERS" />
+                           </children>
+                        </HBox>
+                        <Label fx:id="customersValueLabel" styleClass="stat-value" text="0 Active" />
+                        <Label styleClass="stat-subtitle" text="Provisioned &amp; operational lines" />
+                     </children>
+                  </VBox>
+
+                  <!-- Card 3: Overdue Bills -->
+                  <VBox HBox.hgrow="ALWAYS" styleClass="stat-card" style="-fx-border-left-color: #ef4444; -fx-border-left-width: 4px;">
+                     <children>
+                        <HBox alignment="CENTER_LEFT">
+                           <children>
+                              <Label styleClass="stat-title" text="OVERDUE BILLS" />
+                           </children>
+                        </HBox>
+                        <Label fx:id="overdueValueLabel" styleClass="stat-value" style="-fx-text-fill: #ef4444;" text="0 Invoices" />
+                        <Label styleClass="stat-subtitle" text="Pending payment past grace date" />
+                     </children>
+                  </VBox>
+
+                  <!-- Card 4: Total Calls Logged -->
+                  <VBox HBox.hgrow="ALWAYS" styleClass="stat-card" style="-fx-border-left-color: #8b5cf6; -fx-border-left-width: 4px;">
+                     <children>
+                        <HBox alignment="CENTER_LEFT">
+                           <children>
+                              <Label styleClass="stat-title" text="TELECOM USAGE" />
+                           </children>
+                        </HBox>
+                        <Label fx:id="callsValueLabel" styleClass="stat-value" text="0 calls" />
+                        <Label styleClass="stat-subtitle" text="Recorded in Call Detail Register" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+
+            <!-- Charts Row -->
+            <HBox spacing="20.0" prefHeight="420.0">
+               <children>
+                  <!-- Revenue Bar Chart Card -->
+                  <VBox HBox.hgrow="ALWAYS" prefWidth="550.0" styleClass="card-panel">
+                     <children>
+                        <VBox spacing="4.0">
+                           <children>
+                              <Label styleClass="panel-title" text="Monthly Billing Trends" />
+                              <Label styleClass="panel-subtitle" text="Volume of invoices generated across recent billing periods" />
+                           </children>
+                        </VBox>
+                        <BarChart fx:id="revenueBarChart" VBox.vgrow="ALWAYS" animated="false">
+                           <xAxis>
+                              <CategoryAxis fx:id="chartXAxis" label="Billing Cycle" />
+                           </xAxis>
+                           <yAxis>
+                              <NumberAxis fx:id="chartYAxis" label="Amount (₹)" />
+                           </yAxis>
+                        </BarChart>
+                     </children>
+                  </VBox>
+
+                  <!-- Plan Distribution Pie Chart Card -->
+                  <VBox HBox.hgrow="ALWAYS" prefWidth="450.0" styleClass="card-panel">
+                     <children>
+                        <VBox spacing="4.0">
+                           <children>
+                              <Label styleClass="panel-title" text="Subscriber Plan Distribution" />
+                              <Label styleClass="panel-subtitle" text="Breakdown of customer subscriptions by tariff tier" />
+                           </children>
+                        </VBox>
+                        <PieChart fx:id="planPieChart" VBox.vgrow="ALWAYS" animated="false" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </content>
+</ScrollPane>

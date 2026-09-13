@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apex Telecom — Telephone Billing & Subscriber Management</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        },
+                        darkBg: '#0b0f19',
+                        darkCard: '#111827',
+                        darkBorder: '#1f2937'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- jsPDF & html2pdf -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.3); border-radius: 4px; }
+        .tab-btn.active {
+            background-color: #2563eb;
+            color: #ffffff;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-darkBg text-slate-800 dark:text-slate-100 min-h-screen flex flex-col md:flex-row antialiased transition-colors duration-200">
+
+    <!-- Mobile Header -->
+    <div class="md:hidden flex items-center justify-between p-4 bg-white dark:bg-darkCard border-b border-slate-200 dark:border-darkBorder">
+        <div class="flex items-center space-x-2">
+            <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold">⚡</div>
+            <span class="font-extrabold text-lg tracking-wide">APEX TELCO</span>
+        </div>
+        <button id="mobileMenuBtn" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800">
+            <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+    </div>
+
+    <!-- Sidebar Navigation -->
+    <aside id="sidebar" class="hidden md:flex flex-col w-64 bg-slate-900 text-slate-300 p-5 space-y-6 shrink-0 min-h-screen border-r border-slate-800">
+        <!-- Brand Header -->
+        <div class="flex items-center space-x-3 px-2 py-1">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-400 flex items-center justify-center text-white font-black text-xl shadow-lg shadow-blue-500/30">
+                ⚡
+            </div>
+            <div>
+                <h1 class="font-black text-lg tracking-wider text-white">APEX TELCO</h1>
+                <p class="text-[11px] font-medium text-slate-400">Billing & Subscriber Suite</p>
+            </div>
+        </div>
+
+        <!-- Navigation Links -->
+        <nav class="flex-1 space-y-1.5">
+            <button onclick="switchTab('dashboard')" class="tab-btn w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm transition-all duration-150 active" data-tab="dashboard">
+                <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                <span>Dashboard</span>
+            </button>
+            <button onclick="switchTab('customers')" class="tab-btn w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm transition-all duration-150 hover:bg-slate-800 text-slate-300" data-tab="customers">
+                <i data-lucide="users" class="w-4 h-4"></i>
+                <span>Subscribers</span>
+            </button>
+            <button onclick="switchTab('calls')" class="tab-btn w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm transition-all duration-150 hover:bg-slate-800 text-slate-300" data-tab="calls">
+                <i data-lucide="phone-call" class="w-4 h-4"></i>
+                <span>Call Records (CDR)</span>
+            </button>
+            <button onclick="switchTab('bills')" class="tab-btn w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm transition-all duration-150 hover:bg-slate-800 text-slate-300" data-tab="bills">
+                <i data-lucide="receipt" class="w-4 h-4"></i>
+                <span>Bills & Invoices</span>
+            </button>
+            <button onclick="switchTab('plans')" class="tab-btn w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm transition-all duration-150 hover:bg-slate-800 text-slate-300" data-tab="plans">
+                <i data-lucide="tags" class="w-4 h-4"></i>
+                <span>Tariff Plans</span>
+            </button>
+            <button onclick="switchTab('reports')" class="tab-btn w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm transition-all duration-150 hover:bg-slate-800 text-slate-300" data-tab="reports">
+                <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+                <span>Analytics & Reports</span>
+            </button>
+        </nav>
+
+        <!-- User Profile & Settings Box -->
+        <div class="pt-4 border-t border-slate-800 space-y-3">
+            <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-800/60 border border-slate-700/50">
+                <div class="flex items-center space-x-2.5">
+                    <div class="w-8 h-8 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold text-xs">
+                        AD
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-white" id="currentUserName">Administrator</p>
+                        <p class="text-[10px] text-emerald-400 font-semibold uppercase tracking-wider">System Active</p>
+                    </div>
+                </div>
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30">ADMIN</span>
+            </div>
+
+            <div class="flex items-center space-x-2">
+                <button onclick="toggleTheme()" class="flex-1 flex items-center justify-center space-x-2 py-2 px-3 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+                    <i data-lucide="sun-moon" class="w-3.5 h-3.5"></i>
+                    <span id="themeBtnText">Light Mode</span>
+                </button>
+                <button onclick="resetDemoData()" title="Reset to initial seed data" class="py-2 px-2.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-amber-400 border border-slate-700 transition">
+                    <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+        <!-- Top Bar Header -->
+        <header class="hidden md:flex items-center justify-between px-8 py-4 bg-white dark:bg-darkCard border-b border-slate-200 dark:border-darkBorder shrink-0">
+            <div>
+                <h2 id="pageTitle" class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Operational Dashboard</h2>
+                <p id="pageSubtitle" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Real-time metrics, revenue performance, and key telecom indicators</p>
+            </div>
+            <div class="flex items-center space-x-4">
+                <span id="liveDate" class="text-xs font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800/80 px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-700"></span>
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    Telecom Engine v1.0
+                </span>
+            </div>
+        </header>
+
+        <!-- View Container -->
+        <div class="p-6 md:p-8 space-y-6 flex-1">
+
+            <!-- 1. DASHBOARD TAB -->
+            <section id="tab-dashboard" class="space-y-6">
+                <!-- 4 KPI Summary Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                    <!-- Monthly Revenue -->
+                    <div class="p-5 rounded-2xl bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder shadow-sm relative overflow-hidden">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Monthly Revenue</span>
+                            <div class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+                                <i data-lucide="indian-rupee" class="w-4 h-4"></i>
+                            </div>
+                        </div>
+                        <h3 id="statRevenue" class="text-2xl font-black text-slate-900 dark:text-white mt-3">₹0.00</h3>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Current billing period collections</p>
+                        <div class="absolute bottom-0 left-0 right-0 h-1 bg-blue-500"></div>
+                    </div>
+
+                    <!-- Active Subscribers -->
+                    <div class="p-5 rounded-2xl bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder shadow-sm relative overflow-hidden">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Active Subscribers</span>
+                            <div class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                                <i data-lucide="users" class="w-4 h-4"></i>
+                            </div>
+                        </div>
+                        <h3 id="statSubscribers" class="text-2xl font-black text-slate-900 dark:text-white mt-3">0 Active</h3>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Provisioned & billable lines</p>
+                        <div class="absolute bottom-0 left-0 right-0 h-1 bg-emerald-500"></div>
+                    </div>
+
+                    <!-- Overdue Bills -->
+                    <div class="p-5 rounded-2xl bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder shadow-sm relative overflow-hidden">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Overdue Invoices</span>
+                            <div class="w-8 h-8 rounded-lg bg-rose-50 dark:bg-rose-950 text-rose-600 dark:text-rose-400 flex items-center justify-center">
+                                <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+                            </div>
+                        </div>
+                        <h3 id="statOverdue" class="text-2xl font-black text-rose-600 dark:text-rose-400 mt-3">0 Invoices</h3>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Pending payment past due date</p>
+                        <div class="absolute bottom-0 left-0 right-0 h-1 bg-rose-500"></div>
+                    </div>
+
+                    <!-- Telecom Minutes -->
+                    <div class="p-5 rounded-2xl bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder shadow-sm relative overflow-hidden">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Total Telecom Usage</span>
+                            <div class="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+                                <i data-lucide="phone-forwarded" class="w-4 h-4"></i>
+                            </div>
+                        </div>
+                        <h3 id="statMinutes" class="text-2xl font-black text-slate-900 dark:text-white mt-3">0 mins</h3>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Logged across CDR database</p>
+                        <div class="absolute bottom-0 left-0 right-0 h-1 bg-indigo-500"></div>
+                    </div>
+                </div>
+
+                <!-- Charts Row -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Revenue Trends Bar Chart -->
+                    <div class="lg:col-span-2 p-6 rounded-2xl bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder shadow-sm space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h4 class="font-bold text-base text-slate-900 dark:text-white">Monthly Billing Trend</h4>
+                                <p class="text-xs text-slate-500">Invoiced volume across recent billing periods (₹)</p>
+                            </div>
+                            <span class="text-xs font-semibold px-2.5 py-1 rounded bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-400">6 Months</span>
+                        </div>
+                        <div class="h-64">
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Plan Distribution Doughnut -->
+                    <div class="p-6 rounded-2xl bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder shadow-sm space-y-4">
+                        <div>
+                            <h4 class="font-bold text-base text-slate-900 dark:text-white">Plan Distribution</h4>
+                            <p class="text-xs text-slate-500">Subscriber count by tariff package</p>
+                        </div>
+                        <div class="h-64 flex items-center justify-center">
+                            <canvas id="planChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions Panel -->
+                <div class="p-6 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-700 text-white shadow-lg shadow-blue-500/20 flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div class="space-y-1 text-center md:text-left">
+                        <h4 class="font-black text-lg">College Viva & Demo Controls</h4>
+                        <p class="text-xs text-blue-100 max-w-xl">Generate a monthly bill, log calls with prefix detection, or inspect the Airtel/Jio styled PDF invoice with a single click.</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2.5">
+                        <button onclick="openGenerateBillModal()" class="px-4 py-2 rounded-xl text-xs font-bold bg-white text-blue-700 hover:bg-blue-50 transition shadow-sm">
+                            + Generate Monthly Bill
+                        </button>
+                        <button onclick="openLogCallModal()" class="px-4 py-2 rounded-xl text-xs font-bold bg-blue-800/70 hover:bg-blue-800 text-white border border-blue-400/30 transition">
+                            + Log Call (CDR)
+                        </button>
+                        <button onclick="openAddCustomerModal()" class="px-4 py-2 rounded-xl text-xs font-bold bg-blue-800/70 hover:bg-blue-800 text-white border border-blue-400/30 transition">
+                            + Add Subscriber
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. SUBSCRIBERS TAB -->
+            <section id="tab-customers" class="hidden space-y-6">
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div class="flex items-center space-x-3 w-full sm:w-auto">
+                        <div class="relative w-full sm:w-72">
+                            <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                            <input type="text" id="customerSearch" oninput="filterCustomers()" placeholder="Search by name, phone, email..." class="w-full pl-9 pr-4 py-2 text-xs rounded-xl bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <select id="customerStatusFilter" onchange="filterCustomers()" class="py-2 px-3 text-xs rounded-xl bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder focus:outline-none">
+                            <option value="ALL">All Statuses</option>
+                            <option value="ACTIVE">Active</option>
+                            <option value="SUSPENDED">Suspended</option>
+                            <option value="INACTIVE">Inactive</option>
+                        </select>
+                    </div>
+                    <button onclick="openAddCustomerModal()" class="w-full sm:w-auto px-4 py-2 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center space-x-2 transition shadow-sm">
+                        <i data-lucide="user-plus" class="w-4 h-4"></i>
+                        <span>Register New Subscriber</span>
+                    </button>
+                </div>
+
+                <!-- Table Card -->
+                <div class="rounded-2xl bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-50 dark:bg-slate-800/50 text-slate-500 uppercase font-bold text-[10px] tracking-wider border-b border-slate-200 dark:border-darkBorder">
+                                <tr>
+                                    <th class="p-4">ID</th>
+                                    <th class="p-4">Subscriber</th>
+                                    <th class="p-4">Phone</th>
+                                    <th class="p-4">Email</th>
+                                    <th class="p-4">Address</th>
+                                    <th class="p-4">Plan</th>
+                                    <th class="p-4">Status</th>
+                                    <th class="p-4 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="customersTableBody" class="divide-y divide-slate-100 dark:divide-darkBorder">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. CALL RECORDS TAB -->
+            <section id="tab-calls" class="hidden space-y-6">
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div class="flex items-center space-x-3 w-full sm:w-auto">
+                        <select id="callCustomerFilter" onchange="filterCalls()" class="py-2 px-3 text-xs rounded-xl bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder focus:outline-none">
+                            <option value="ALL">All Subscribers</option>
+                        </select>
+                        <select id="callTypeFilter" onchange="filterCalls()" class="py-2 px-3 text-xs rounded-xl bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder focus:outline-none">
+                            <option value="ALL">All Call Types</option>
+                            <option value="LOCAL">Local Call</option>
+                            <option value="STD">National STD</option>
+                            <option value="ISD">International ISD</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center space-x-2 w-full sm:w-auto">
+                        <label class="cursor-pointer px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 flex items-center justify-center space-x-2 transition border border-slate-300 dark:border-slate-700">
+                            <i data-lucide="upload" class="w-4 h-4"></i>
+                            <span>Bulk CSV Import</span>
+                            <input type="file" id="csvFileInput" accept=".csv" class="hidden" onchange="handleCsvImport(event)">
+                        </label>
+                        <button onclick="openLogCallModal()" class="px-4 py-2 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center space-x-2 transition shadow-sm">
+                            <i data-lucide="phone-outgoing" class="w-4 h-4"></i>
+                            <span>+ Log Single Call</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Calls Table -->
+                <div class="rounded-2xl bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-50 dark:bg-slate-800/50 text-slate-500 uppercase font-bold text-[10px] tracking-wider border-b border-slate-200 dark:border-darkBorder">
+                                <tr>
+                                    <th class="p-4">CDR ID</th>
+                                    <th class="p-4">Timestamp</th>
+                                    <th class="p-4">Calling Subscriber</th>
+                                    <th class="p-4">Dialed Number</th>
+                                    <th class="p-4">Classification</th>
+                                    <th class="p-4">Duration</th>
+                                    <th class="p-4">Tariff Cost</th>
+                                    <th class="p-4 text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="callsTableBody" class="divide-y divide-slate-100 dark:divide-darkBorder">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. BILLS & INVOICES TAB -->
+            <section id="tab-bills" class="hidden space-y-6">
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div class="flex items-center space-x-3 w-full sm:w-auto">
+                        <div class="relative w-full sm:w-64">
+                            <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                            <input type="text" id="billSearch" oninput="filterBills()" placeholder="Search invoice # or subscriber..." class="w-full pl-9 pr-4 py-2 text-xs rounded-xl bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder focus:outline-none">
+                        </div>
+                        <select id="billStatusFilter" onchange="filterBills()" class="py-2 px-3 text-xs rounded-xl bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder focus:outline-none">
+                            <option value="ALL">All Invoices</option>
+                            <option value="PAID">Paid</option>
+                            <option value="UNPAID">Unpaid</option>
+                            <option value="OVERDUE">Overdue</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center space-x-2 w-full sm:w-auto">
+                        <button onclick="exportBillsCsv()" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 flex items-center justify-center space-x-2 transition border border-slate-300 dark:border-slate-700">
+                            <i data-lucide="download" class="w-4 h-4"></i>
+                            <span>Export CSV</span>
+                        </button>
+                        <button onclick="openGenerateBillModal()" class="px-4 py-2 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center space-x-2 transition shadow-sm">
+                            <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                            <span>+ Generate Monthly Bill</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Bills Table -->
+                <div class="rounded-2xl bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-50 dark:bg-slate-800/50 text-slate-500 uppercase font-bold text-[10px] tracking-wider border-b border-slate-200 dark:border-darkBorder">
+                                <tr>
+                                    <th class="p-4">Invoice #</th>
+                                    <th class="p-4">Subscriber</th>
+                                    <th class="p-4">Cycle</th>
+                                    <th class="p-4">Rental (₹)</th>
+                                    <th class="p-4">Calls (₹)</th>
+                                    <th class="p-4">GST 18% (₹)</th>
+                                    <th class="p-4 font-bold text-slate-900 dark:text-white">Payable (₹)</th>
+                                    <th class="p-4">Due Date</th>
+                                    <th class="p-4">Status</th>
+                                    <th class="p-4 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="billsTableBody" class="divide-y divide-slate-100 dark:divide-darkBorder">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. TARIFF PLANS TAB -->
+            <section id="tab-plans" class="hidden space-y-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h4 class="font-bold text-base text-slate-900 dark:text-white">Calling Packages & Tariff Tiers</h4>
+                        <p class="text-xs text-slate-500">Configure monthly rentals, free minutes, and per-minute pulse rates</p>
+                    </div>
+                    <button onclick="openAddPlanModal()" class="px-4 py-2 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white flex items-center space-x-2 transition shadow-sm">
+                        <i data-lucide="plus" class="w-4 h-4"></i>
+                        <span>+ Create Tariff Plan</span>
+                    </button>
+                </div>
+
+                <!-- Plans Cards Grid -->
+                <div id="plansContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Populated dynamically -->
+                </div>
+            </section>
+
+            <!-- 6. ANALYTICS & REPORTS TAB -->
+            <section id="tab-reports" class="hidden space-y-6">
+                <!-- Financial Stats -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                    <div class="p-5 rounded-2xl bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder shadow-sm">
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Cumulative Invoiced</span>
+                        <h3 id="reportTotalBilled" class="text-2xl font-black text-slate-900 dark:text-white mt-2">₹0.00</h3>
+                        <p class="text-[11px] text-slate-400 mt-1">Gross billing volume across all cycles</p>
+                    </div>
+                    <div class="p-5 rounded-2xl bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder shadow-sm">
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Total Settled & Collected</span>
+                        <h3 id="reportTotalCollected" class="text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-2">₹0.00</h3>
+                        <p class="text-[11px] text-slate-400 mt-1">Payments collected via UPI / Cards / Cash</p>
+                    </div>
+                    <div class="p-5 rounded-2xl bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder shadow-sm">
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Outstanding Receivables</span>
+                        <h3 id="reportOutstanding" class="text-2xl font-black text-amber-500 mt-2">₹0.00</h3>
+                        <p class="text-[11px] text-slate-400 mt-1">Pending unpaid balances</p>
+                    </div>
+                </div>
+
+                <!-- Top Callers Leaderboard Table -->
+                <div class="rounded-2xl bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder shadow-sm overflow-hidden p-6 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h4 class="font-bold text-base text-slate-900 dark:text-white">Top Calling Subscribers Leaderboard</h4>
+                            <p class="text-xs text-slate-500">Ranked by total CDR telephone traffic and billable minutes</p>
+                        </div>
+                        <button onclick="exportTopCallersCsv()" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800 hover:bg-blue-100 transition">
+                            📊 Export Top Callers CSV
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-50 dark:bg-slate-800/50 text-slate-500 uppercase font-bold text-[10px] tracking-wider border-b border-slate-200 dark:border-darkBorder">
+                                <tr>
+                                    <th class="p-3">Rank</th>
+                                    <th class="p-3">Subscriber Name</th>
+                                    <th class="p-3">Phone Number</th>
+                                    <th class="p-3">Plan</th>
+                                    <th class="p-3">Calls Count</th>
+                                    <th class="p-3">Total Duration</th>
+                                    <th class="p-3 text-right">Total Spend (₹)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="topCallersTableBody" class="divide-y divide-slate-100 dark:divide-darkBorder">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- ==================== MODALS ==================== -->
+
+    <!-- Modal 1: Authentic Telecom Invoice Preview (Centerpiece) -->
+    <div id="invoiceModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-slate-100 dark:bg-slate-900 w-full max-w-4xl rounded-2xl shadow-2xl border border-slate-300 dark:border-slate-800 overflow-hidden my-8">
+            <!-- Modal Top Bar -->
+            <div class="px-6 py-4 bg-white dark:bg-darkCard border-b border-slate-200 dark:border-darkBorder flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <i data-lucide="file-text" class="w-5 h-5 text-blue-600"></i>
+                    <h3 class="font-bold text-base text-slate-900 dark:text-white" id="invModalTitle">Invoice Preview</h3>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button onclick="downloadInvoicePdf()" class="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-blue-600 text-white hover:bg-blue-700 flex items-center space-x-1.5 transition">
+                        <i data-lucide="download" class="w-4 h-4"></i>
+                        <span>Download PDF</span>
+                    </button>
+                    <button onclick="printInvoice()" class="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-300 flex items-center space-x-1.5 transition">
+                        <i data-lucide="printer" class="w-4 h-4"></i>
+                        <span>Print</span>
+                    </button>
+                    <button onclick="closeModal('invoiceModal')" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-white">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Printable Sheet Area (Airtel / Jio Style) -->
+            <div class="p-6 md:p-8 flex justify-center">
+                <div id="invoicePaperSheet" class="w-full bg-white text-slate-800 p-8 rounded-xl shadow-md border border-slate-200 space-y-6 text-xs">
+                    <!-- Brand & Invoice Header -->
+                    <div class="flex justify-between items-start border-b border-slate-200 pb-5">
+                        <div class="space-y-1">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-blue-600 font-black text-2xl">⚡</span>
+                                <span class="text-xl font-black tracking-wider text-slate-900">APEX TELECOM</span>
+                            </div>
+                            <p class="text-[10px] text-slate-500 font-medium">Next-Gen Global Telecommunications & Broadband</p>
+                            <p class="text-[9px] text-slate-400">GSTIN: 27AAACA1234F1Z5 | Lic: IND-98234-DOT</p>
+                            <p class="text-[9px] text-slate-400">Toll-Free Support: 1800-11-2233 | care@apextelecom.com</p>
+                        </div>
+                        <div class="text-right space-y-1">
+                            <span class="inline-block px-3 py-1 font-black text-sm tracking-wider uppercase text-blue-600 bg-blue-50 border border-blue-200 rounded">TAX INVOICE</span>
+                            <p class="font-bold text-slate-900 text-sm mt-1" id="invPaperNum">INV-202608-001</p>
+                            <p class="text-[10px] text-slate-600" id="invPaperDate">Bill Date: 01 Sep 2026</p>
+                            <p class="text-[10px] font-bold text-rose-600" id="invPaperDueDate">Due Date: 15 Sep 2026</p>
+                            <span id="invPaperStatusStamp" class="inline-block mt-2 px-3 py-0.5 text-xs font-black uppercase border-2 rounded">PAID</span>
+                        </div>
+                    </div>
+
+                    <!-- Billed To & Subscription Cards -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200 space-y-1">
+                            <p class="text-[10px] font-bold uppercase tracking-wider text-blue-600">BILLED TO</p>
+                            <p class="font-bold text-slate-900 text-sm" id="invPaperCustomer">Rajesh Sharma</p>
+                            <p class="text-slate-600" id="invPaperPhone">Phone: +91 98200 11223</p>
+                            <p class="text-slate-500 text-[11px]" id="invPaperAddress">Flat 402, Sea View Apartments, Bandra West, Mumbai</p>
+                            <p class="text-slate-400 text-[10px]" id="invPaperCustId">Account ID: TELCO-00001</p>
+                        </div>
+                        <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200 space-y-1">
+                            <p class="text-[10px] font-bold uppercase tracking-wider text-blue-600">PLAN & BILLING CYCLE</p>
+                            <p class="font-bold text-slate-900 text-sm" id="invPaperPlan">Postpaid Silver</p>
+                            <p class="text-slate-600" id="invPaperCycle">Billing Cycle: 08/2026</p>
+                            <p class="text-slate-500 text-[11px]">Payment Terms: Net 15 Days</p>
+                            <p class="text-slate-400 text-[10px]">Currency: Indian Rupee (INR ₹)</p>
+                        </div>
+                    </div>
+
+                    <!-- Summary of Charges Breakdown -->
+                    <div class="space-y-2">
+                        <p class="font-bold text-slate-900 uppercase text-[11px]">SUMMARY OF CHARGES</p>
+                        <table class="w-full border border-slate-200 rounded">
+                            <thead class="bg-slate-100 text-slate-600 uppercase text-[9.5px]">
+                                <tr>
+                                    <th class="p-2.5 text-left">Description</th>
+                                    <th class="p-2.5 text-center">Type / Rate</th>
+                                    <th class="p-2.5 text-right">Amount (INR)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-200 text-[11px]">
+                                <tr>
+                                    <td class="p-2.5">Monthly Tariff Plan Rental</td>
+                                    <td class="p-2.5 text-center text-slate-500">Fixed Package</td>
+                                    <td class="p-2.5 text-right font-semibold" id="invPaperRental">₹249.00</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2.5">Itemized Telephone Usage & Pulse Charges</td>
+                                    <td class="p-2.5 text-center text-slate-500">CDR Itemized</td>
+                                    <td class="p-2.5 text-right font-semibold" id="invPaperCalls">₹61.70</td>
+                                </tr>
+                                <tr class="bg-slate-50/70 font-semibold">
+                                    <td class="p-2.5">Subtotal (Taxable Value)</td>
+                                    <td class="p-2.5 text-center"></td>
+                                    <td class="p-2.5 text-right" id="invPaperSubtotal">₹310.70</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2.5 text-slate-600">Central GST (CGST @ 9%)</td>
+                                    <td class="p-2.5 text-center text-slate-400">9.0%</td>
+                                    <td class="p-2.5 text-right" id="invPaperCgst">₹27.96</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2.5 text-slate-600">State GST (SGST @ 9%)</td>
+                                    <td class="p-2.5 text-center text-slate-400">9.0%</td>
+                                    <td class="p-2.5 text-right" id="invPaperSgst">₹27.96</td>
+                                </tr>
+                                <tr id="invPaperLateFeeRow">
+                                    <td class="p-2.5 text-rose-600">Late Payment Surcharge / Fine</td>
+                                    <td class="p-2.5 text-center text-rose-400">Late Fee</td>
+                                    <td class="p-2.5 text-right text-rose-600" id="invPaperLateFee">₹0.00</td>
+                                </tr>
+                                <tr class="bg-blue-50/80 font-black text-slate-900 text-xs">
+                                    <td class="p-3" colspan="2">TOTAL AMOUNT DUE & PAYABLE</td>
+                                    <td class="p-3 text-right text-blue-700 text-sm" id="invPaperTotal">₹366.63</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Itemized CDR List -->
+                    <div class="space-y-2">
+                        <p class="font-bold text-slate-900 uppercase text-[11px]">ITEMIZED CALL DETAIL RECORDS (CDR)</p>
+                        <table class="w-full border border-slate-200 text-[10.5px]">
+                            <thead class="bg-slate-100 text-slate-600 uppercase text-[9px]">
+                                <tr>
+                                    <th class="p-2 text-left">Date & Time</th>
+                                    <th class="p-2 text-left">Dialed Destination</th>
+                                    <th class="p-2 text-left">Classification</th>
+                                    <th class="p-2 text-center">Duration</th>
+                                    <th class="p-2 text-right">Cost (₹)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="invPaperCdrBody" class="divide-y divide-slate-100">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Remittance Footer -->
+                    <div class="p-3 rounded bg-slate-50 border border-slate-200 text-[9.5px] text-slate-500 space-y-1">
+                        <p class="font-bold text-slate-700">PAYMENT & REMITTANCE INSTRUCTIONS:</p>
+                        <p>• Scan & Pay via UPI: <strong class="text-slate-800">apextelecom@upi</strong> | Net Banking / NEFT: A/C 982001928374, IFSC: APEX000123</p>
+                        <p>• Pay before the due date to avoid service suspension and standard late penalty fees of ₹50.00.</p>
+                        <p>• This is an electronically generated tax invoice and does not require an ink signature.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 2: Generate Monthly Bill -->
+    <div id="genBillModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-darkCard w-full max-w-lg rounded-2xl shadow-2xl border border-slate-200 dark:border-darkBorder p-6 space-y-5">
+            <div class="flex items-center justify-between border-b border-slate-100 dark:border-darkBorder pb-4">
+                <h3 class="font-bold text-base text-slate-900 dark:text-white">Generate Monthly Telephone Bill</h3>
+                <button onclick="closeModal('genBillModal')" class="p-1 text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <form onsubmit="handleGenerateBillSubmit(event)" class="space-y-4 text-xs">
+                <div>
+                    <label class="block font-semibold mb-1">Select Subscriber *</label>
+                    <select id="genBillCustomer" onchange="updateLiveBillCalculation()" required class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder focus:outline-none"></select>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block font-semibold mb-1">Billing Month *</label>
+                        <select id="genBillMonth" onchange="updateLiveBillCalculation()" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder focus:outline-none">
+                            <option value="1">01 - January</option>
+                            <option value="2">02 - February</option>
+                            <option value="3">03 - March</option>
+                            <option value="4">04 - April</option>
+                            <option value="5">05 - May</option>
+                            <option value="6">06 - June</option>
+                            <option value="7">07 - July</option>
+                            <option value="8" selected>08 - August</option>
+                            <option value="9">09 - September</option>
+                            <option value="10">10 - October</option>
+                            <option value="11">11 - November</option>
+                            <option value="12">12 - December</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1">Billing Year *</label>
+                        <select id="genBillYear" onchange="updateLiveBillCalculation()" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder focus:outline-none">
+                            <option value="2025">2025</option>
+                            <option value="2026" selected>2026</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block font-semibold mb-1">Promotional Discount (₹)</label>
+                        <input type="number" step="0.01" id="genBillDiscount" value="0.00" oninput="updateLiveBillCalculation()" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder">
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1">Late Surcharge (₹)</label>
+                        <input type="number" step="0.01" id="genBillLateFee" value="0.00" oninput="updateLiveBillCalculation()" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder">
+                    </div>
+                </div>
+
+                <!-- Live Calculation Preview -->
+                <div class="p-3 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/50 space-y-1">
+                    <span class="text-[10px] font-bold text-blue-600 uppercase tracking-wider">Live Calculation Breakdown</span>
+                    <p id="genBillPreviewSummary" class="text-xs font-semibold text-blue-900 dark:text-blue-300">Select subscriber and cycle</p>
+                </div>
+
+                <div class="flex justify-end space-x-2 pt-2">
+                    <button type="button" onclick="closeModal('genBillModal')" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-semibold">Cancel</button>
+                    <button type="submit" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold">Generate Bill</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 3: Log Call with Real-time Prefix Detection -->
+    <div id="logCallModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-darkCard w-full max-w-md rounded-2xl shadow-2xl border border-slate-200 dark:border-darkBorder p-6 space-y-5">
+            <div class="flex items-center justify-between border-b border-slate-100 dark:border-darkBorder pb-4">
+                <h3 class="font-bold text-base text-slate-900 dark:text-white">Log Telephone Call (CDR)</h3>
+                <button onclick="closeModal('logCallModal')" class="p-1 text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <form onsubmit="handleLogCallSubmit(event)" class="space-y-4 text-xs">
+                <div>
+                    <label class="block font-semibold mb-1">Subscriber *</label>
+                    <select id="logCallCustomer" onchange="updateLiveCallCost()" required class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder"></select>
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">Destination Number *</label>
+                    <input type="text" id="logCallDest" oninput="handleDestNumberChange()" required placeholder="e.g. +14155552671, 02224567890, +919820011223" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder">
+                </div>
+                <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder">
+                    <span class="text-[11px] font-medium text-slate-500">Prefix Classification:</span>
+                    <span id="logCallTypeBadge" class="px-2.5 py-0.5 rounded text-[11px] font-bold bg-blue-100 text-blue-700">LOCAL</span>
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">Call Duration (seconds) *</label>
+                    <input type="number" id="logCallDuration" value="180" oninput="updateLiveCallCost()" min="1" required class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder">
+                </div>
+                <div class="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 font-bold flex justify-between items-center">
+                    <span>Estimated Tariff Cost:</span>
+                    <span id="logCallCostPreview" class="text-sm">₹0.00</span>
+                </div>
+                <div class="flex justify-end space-x-2 pt-2">
+                    <button type="button" onclick="closeModal('logCallModal')" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 font-semibold">Cancel</button>
+                    <button type="submit" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold">Record Call</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 4: Add / Edit Subscriber -->
+    <div id="customerModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-darkCard w-full max-w-md rounded-2xl shadow-2xl border border-slate-200 dark:border-darkBorder p-6 space-y-5">
+            <div class="flex items-center justify-between border-b border-slate-100 dark:border-darkBorder pb-4">
+                <h3 id="custModalTitle" class="font-bold text-base text-slate-900 dark:text-white">Register Subscriber</h3>
+                <button onclick="closeModal('customerModal')" class="p-1 text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <form onsubmit="handleCustomerSubmit(event)" class="space-y-3.5 text-xs">
+                <input type="hidden" id="custEditId">
+                <div>
+                    <label class="block font-semibold mb-1">Full Name *</label>
+                    <input type="text" id="custName" required placeholder="e.g. Rahul Sharma" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder">
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">Phone Number *</label>
+                    <input type="text" id="custPhone" required placeholder="e.g. +919820011223" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder">
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">Email Address</label>
+                    <input type="email" id="custEmail" placeholder="e.g. rahul@example.com" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder">
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">Billing Address</label>
+                    <input type="text" id="custAddress" placeholder="Flat / Street, City, Pincode" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold mb-1">Tariff Plan *</label>
+                        <select id="custPlan" required class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder"></select>
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1">Status *</label>
+                        <select id="custStatus" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder">
+                            <option value="ACTIVE">ACTIVE</option>
+                            <option value="SUSPENDED">SUSPENDED</option>
+                            <option value="INACTIVE">INACTIVE</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-2 pt-3">
+                    <button type="button" onclick="closeModal('customerModal')" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 font-semibold">Cancel</button>
+                    <button type="submit" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold">Save Subscriber</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 5: Record Payment -->
+    <div id="paymentModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-darkCard w-full max-w-md rounded-2xl shadow-2xl border border-slate-200 dark:border-darkBorder p-6 space-y-5">
+            <div class="flex items-center justify-between border-b border-slate-100 dark:border-darkBorder pb-4">
+                <h3 class="font-bold text-base text-slate-900 dark:text-white">Record Invoice Payment</h3>
+                <button onclick="closeModal('paymentModal')" class="p-1 text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <form onsubmit="handlePaymentSubmit(event)" class="space-y-4 text-xs">
+                <input type="hidden" id="payBillId">
+                <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-darkBorder space-y-1">
+                    <p class="font-bold text-slate-900 dark:text-white text-sm" id="payBillNum">Invoice #INV-202608-001</p>
+                    <p class="text-slate-500" id="payBillCustomer">Rajesh Sharma</p>
+                    <p class="text-sm font-black text-blue-600" id="payBillAmount">Payable: ₹366.63</p>
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">Amount Paid (₹) *</label>
+                    <input type="number" step="0.01" id="payAmount" required class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder">
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">Payment Mode *</label>
+                    <select id="payMode" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder">
+                        <option value="UPI">UPI (Google Pay / PhonePe / Paytm)</option>
+                        <option value="CREDIT_CARD">Credit Card</option>
+                        <option value="DEBIT_CARD">Debit Card</option>
+                        <option value="NET_BANKING">Net Banking / NEFT</option>
+                        <option value="CASH">Cash Over-the-Counter</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">Transaction Ref / UTR</label>
+                    <input type="text" id="payRef" placeholder="e.g. UPI/202609/78129" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder">
+                </div>
+                <div class="flex justify-end space-x-2 pt-2">
+                    <button type="button" onclick="closeModal('paymentModal')" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 font-semibold">Cancel</button>
+                    <button type="submit" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold">Confirm & Settle</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="app.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

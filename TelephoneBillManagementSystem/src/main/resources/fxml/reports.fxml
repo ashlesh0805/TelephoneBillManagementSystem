@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="20.0" styleClass="content-area" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.telecom.controller.ReportsController">
+   <children>
+      <!-- Financial Summary Cards -->
+      <HBox spacing="18.0">
+         <children>
+            <VBox HBox.hgrow="ALWAYS" styleClass="stat-card" style="-fx-border-left-color: #2563eb; -fx-border-left-width: 4px;">
+               <children>
+                  <Label styleClass="stat-title" text="CUMULATIVE INVOICED" />
+                  <Label fx:id="totalBilledLabel" styleClass="stat-value" text="₹0.00" />
+                  <Label styleClass="stat-subtitle" text="Gross billing value across all periods" />
+               </children>
+            </VBox>
+
+            <VBox HBox.hgrow="ALWAYS" styleClass="stat-card" style="-fx-border-left-color: #10b981; -fx-border-left-width: 4px;">
+               <children>
+                  <Label styleClass="stat-title" text="TOTAL SETTLED &amp; COLLECTED" />
+                  <Label fx:id="totalCollectedLabel" styleClass="stat-value" style="-fx-text-fill: #16a34a;" text="₹0.00" />
+                  <Label styleClass="stat-subtitle" text="Payments received via UPI / Cards / Cash" />
+               </children>
+            </VBox>
+
+            <VBox HBox.hgrow="ALWAYS" styleClass="stat-card" style="-fx-border-left-color: #f59e0b; -fx-border-left-width: 4px;">
+               <children>
+                  <Label styleClass="stat-title" text="OUTSTANDING RECEIVABLES" />
+                  <Label fx:id="outstandingLabel" styleClass="stat-value" style="-fx-text-fill: #d97706;" text="₹0.00" />
+                  <Label styleClass="stat-subtitle" text="Pending unpaid &amp; overdue balances" />
+               </children>
+            </VBox>
+
+            <VBox HBox.hgrow="ALWAYS" styleClass="stat-card" style="-fx-border-left-color: #6366f1; -fx-border-left-width: 4px;">
+               <children>
+                  <Label styleClass="stat-title" text="ACTIVE CONNECTIONS" />
+                  <Label fx:id="activeSubsLabel" styleClass="stat-value" text="0" />
+                  <Label styleClass="stat-subtitle" text="Current billing-eligible accounts" />
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+
+      <!-- Top Callers Leaderboard Table Card -->
+      <VBox VBox.vgrow="ALWAYS" styleClass="card-panel">
+         <children>
+            <HBox alignment="CENTER_LEFT">
+               <children>
+                  <VBox spacing="2.0">
+                     <children>
+                        <Label styleClass="panel-title" text="Top Calling Subscribers Leaderboard" />
+                        <Label styleClass="panel-subtitle" text="Subscribers ranked by total CDR telephone traffic &amp; billable duration" />
+                     </children>
+                  </VBox>
+                  <Region HBox.hgrow="ALWAYS" />
+                  <HBox spacing="10.0">
+                     <children>
+                        <Button onAction="#loadReportData" styleClass="btn-secondary" text="🔄 Refresh" />
+                        <Button onAction="#handleExportTopCallersCsv" styleClass="btn-primary" text="📊 Export Top Callers CSV" />
+                     </children>
+                  </HBox>
+               </children>
+            </HBox>
+
+            <TableView fx:id="topCallersTable" VBox.vgrow="ALWAYS">
+               <columns>
+                  <TableColumn fx:id="colCallerName" prefWidth="180.0" text="Customer Name" />
+                  <TableColumn fx:id="colCallerPhone" prefWidth="140.0" text="Phone Number" />
+                  <TableColumn fx:id="colCallerPlan" prefWidth="160.0" text="Assigned Plan" />
+                  <TableColumn fx:id="colCallerCalls" prefWidth="100.0" text="Total Calls" />
+                  <TableColumn fx:id="colCallerDuration" prefWidth="140.0" text="Total Duration" />
+                  <TableColumn fx:id="colCallerSpent" prefWidth="130.0" text="Cumulative Spend (₹)" />
+               </columns>
+               <columnResizePolicy>
+                  <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+               </columnResizePolicy>
+            </TableView>
+         </children>
+      </VBox>
+   </children>
+</VBox>

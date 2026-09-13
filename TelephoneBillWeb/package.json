@@ -1,0 +1,9 @@
+{
+  "name": "apex-telecom-billing",
+  "version": "1.0.0",
+  "description": "Telephone Billing and Subscriber Management System",
+  "private": true,
+  "scripts": {
+    "start": "npx serve ."
+  }
+}

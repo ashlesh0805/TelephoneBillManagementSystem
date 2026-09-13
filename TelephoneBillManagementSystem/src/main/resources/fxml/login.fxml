@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<HBox prefHeight="620.0" prefWidth="950.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.telecom.controller.LoginController">
+   <children>
+      <!-- Left Hero Banner -->
+      <VBox alignment="CENTER_LEFT" prefWidth="420.0" spacing="22.0" style="-fx-background-color: linear-gradient(to bottom right, #0f172a, #1e293b); -fx-padding: 45px 40px;">
+         <children>
+            <VBox spacing="6.0">
+               <children>
+                  <Label text="⚡ APEX TELECOM" textFill="#38bdf8" style="-fx-font-size: 24px; -fx-font-weight: 900; -fx-letter-spacing: 1px;" />
+                  <Label text="Enterprise Billing &amp; Subscriber Management" textFill="#94a3b8" style="-fx-font-size: 13px;" />
+               </children>
+            </VBox>
+            
+            <Separator opacity="0.15" />
+            
+            <VBox spacing="16.0">
+               <children>
+                  <HBox spacing="12.0" alignment="CENTER_LEFT">
+                     <children>
+                        <Label text="✓" textFill="#10b981" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+                        <VBox>
+                           <children>
+                              <Label text="Automatic Bill Calculation" textFill="#f1f5f9" style="-fx-font-weight: bold;" />
+                              <Label text="Free-minutes allowance, call tariffs, &amp; GST" textFill="#94a3b8" style="-fx-font-size: 11.5px;" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+                  
+                  <HBox spacing="12.0" alignment="CENTER_LEFT">
+                     <children>
+                        <Label text="✓" textFill="#10b981" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+                        <VBox>
+                           <children>
+                              <Label text="Itemized CDR Invoicing" textFill="#f1f5f9" style="-fx-font-weight: bold;" />
+                              <Label text="Real-world Airtel/Jio format PDF generation" textFill="#94a3b8" style="-fx-font-size: 11.5px;" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+                  
+                  <HBox spacing="12.0" alignment="CENTER_LEFT">
+                     <children>
+                        <Label text="✓" textFill="#10b981" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+                        <VBox>
+                           <children>
+                              <Label text="Real-time Call Prefix Detection" textFill="#f1f5f9" style="-fx-font-weight: bold;" />
+                              <Label text="Automated Local, STD &amp; ISD classification" textFill="#94a3b8" style="-fx-font-size: 11.5px;" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+                  
+                  <HBox spacing="12.0" alignment="CENTER_LEFT">
+                     <children>
+                        <Label text="✓" textFill="#10b981" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+                        <VBox>
+                           <children>
+                              <Label text="Multi-mode Payment Tracking" textFill="#f1f5f9" style="-fx-font-weight: bold;" />
+                              <Label text="Settlement via UPI, NetBanking, Cards &amp; Cash" textFill="#94a3b8" style="-fx-font-size: 11.5px;" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            
+            <Region VBox.vgrow="ALWAYS" />
+            
+            <Label text="Major Academic Project — Java 21 &amp; JavaFX" textFill="#64748b" style="-fx-font-size: 11px;" />
+         </children>
+      </VBox>
+
+      <!-- Right Login Form -->
+      <VBox alignment="CENTER" HBox.hgrow="ALWAYS" spacing="22.0" style="-fx-background-color: #f8fafc; -fx-padding: 40px 60px;">
+         <children>
+            <VBox maxWidth="380.0" spacing="20.0">
+               <children>
+                  <VBox spacing="4.0">
+                     <children>
+                        <Label text="Welcome back" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #0f172a;" />
+                        <Label text="Enter your operator credentials to access the portal" style="-fx-font-size: 13px; -fx-text-fill: #64748b;" />
+                     </children>
+                  </VBox>
+
+                  <Label fx:id="errorLabel" style="-fx-background-color: #fee2e2; -fx-text-fill: #b91c1c; -fx-padding: 8px 12px; -fx-background-radius: 6px; -fx-font-size: 12px;" text="Error message" visible="false" />
+
+                  <VBox spacing="6.0">
+                     <children>
+                        <Label text="Username" style="-fx-font-weight: 600; -fx-text-fill: #334155; -fx-font-size: 12.5px;" />
+                        <TextField fx:id="usernameField" promptText="e.g. admin or staff" style="-fx-padding: 10px 14px; -fx-background-radius: 8px;" />
+                     </children>
+                  </VBox>
+
+                  <VBox spacing="6.0">
+                     <children>
+                        <Label text="Password" style="-fx-font-weight: 600; -fx-text-fill: #334155; -fx-font-size: 12.5px;" />
+                        <PasswordField fx:id="passwordField" promptText="Enter password" onAction="#handleLogin" style="-fx-padding: 10px 14px; -fx-background-radius: 8px;" />
+                     </children>
+                  </VBox>
+
+                  <Button onAction="#handleLogin" prefWidth="380.0" style="-fx-background-color: #2563eb; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 11px; -fx-background-radius: 8px; -fx-font-size: 14px; -fx-cursor: hand;" text="Sign In to System" />
+
+                  <Separator />
+
+                  <VBox spacing="10.0" alignment="CENTER">
+                     <children>
+                        <Label text="DEMO SHORTCUTS (FOR EXAMINER / VIVA)" style="-fx-font-size: 10.5px; -fx-font-weight: bold; -fx-text-fill: #94a3b8; -fx-letter-spacing: 0.5px;" />
+                        <HBox spacing="10.0" alignment="CENTER">
+                           <children>
+                              <Button onAction="#handleFillAdmin" styleClass="btn-secondary, btn-sm" text="🔑 Admin Login" />
+                              <Button onAction="#handleFillStaff" styleClass="btn-secondary, btn-sm" text="👤 Staff Login" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+         </children>
+      </VBox>
+   </children>
+</HBox>

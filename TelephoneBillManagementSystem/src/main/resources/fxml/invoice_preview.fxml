@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefHeight="720.0" prefWidth="880.0" style="-fx-background-color: #e2e8f0;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.telecom.controller.InvoicePreviewController">
+   <center>
+      <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-padding: 20px;">
+         <content>
+            <VBox alignment="TOP_CENTER">
+               <children>
+                  <!-- Printable Paper Sheet (A4 Styling) -->
+                  <VBox fx:id="printableInvoiceArea" maxWidth="800.0" spacing="16.0" style="-fx-background-color: white; -fx-padding: 30px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.12), 12, 0, 0, 4); -fx-border-color: #cbd5e1; -fx-border-radius: 4px;">
+                     <children>
+                        <!-- Header Bar -->
+                        <HBox alignment="CENTER_LEFT">
+                           <children>
+                              <VBox spacing="3.0">
+                                 <children>
+                                    <Label text="⚡ APEX TELECOM" style="-fx-font-size: 20px; -fx-font-weight: 900; -fx-text-fill: #0f172a;" />
+                                    <Label text="Next-Gen Global Telecommunications &amp; Broadband" style="-fx-font-size: 11px; -fx-text-fill: #64748b;" />
+                                    <Label text="GSTIN: 27AAACA1234F1Z5 | Telco Lic: IND-98234-DOT" style="-fx-font-size: 10px; -fx-text-fill: #94a3b8;" />
+                                    <Label text="Support: 1800-11-2233 | care@apextelecom.com" style="-fx-font-size: 10px; -fx-text-fill: #94a3b8;" />
+                                 </children>
+                              </VBox>
+                              <Region HBox.hgrow="ALWAYS" />
+                              <VBox alignment="TOP_RIGHT" spacing="4.0">
+                                 <children>
+                                    <Label text="TAX INVOICE" style="-fx-font-size: 16px; -fx-font-weight: 900; -fx-text-fill: #2563eb;" />
+                                    <Label fx:id="invoiceNumberLabel" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #1e293b;" text="INVOICE #INV-202608-001" />
+                                    <Label fx:id="billDateLabel" style="-fx-font-size: 11px; -fx-text-fill: #475569;" text="Bill Date: 01 Sep 2026" />
+                                    <Label fx:id="dueDateLabel" style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #dc2626;" text="Due Date: 15 Sep 2026" />
+                                    <Label fx:id="statusStampLabel" text="PAID" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+
+                        <Separator />
+
+                        <!-- Customer & Plan Metadata Cards -->
+                        <HBox spacing="16.0">
+                           <children>
+                              <!-- Customer Details Box -->
+                              <VBox HBox.hgrow="ALWAYS" spacing="4.0" style="-fx-background-color: #f8fafc; -fx-padding: 12px; -fx-border-color: #e2e8f0; -fx-border-radius: 6px;">
+                                 <children>
+                                    <Label text="BILLED TO" style="-fx-font-size: 10px; -fx-font-weight: bold; -fx-text-fill: #2563eb;" />
+                                    <Label fx:id="customerNameLabel" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #0f172a;" text="Rajesh Sharma" />
+                                    <Label fx:id="customerPhoneLabel" style="-fx-font-size: 11.5px; -fx-text-fill: #475569;" text="Mobile: +91 98200 11223" />
+                                    <Label fx:id="customerAddressLabel" style="-fx-font-size: 11px; -fx-text-fill: #64748b;" text="Flat 402, Sea View Apartments, Bandra West, Mumbai - 400050" wrapText="true" />
+                                    <Label fx:id="customerIdLabel" style="-fx-font-size: 10px; -fx-text-fill: #94a3b8;" text="Account ID: TELCO-00001" />
+                                 </children>
+                              </VBox>
+
+                              <!-- Subscription & Billing Period Box -->
+                              <VBox HBox.hgrow="ALWAYS" spacing="4.0" style="-fx-background-color: #f8fafc; -fx-padding: 12px; -fx-border-color: #e2e8f0; -fx-border-radius: 6px;">
+                                 <children>
+                                    <Label text="PLAN &amp; BILLING DETAILS" style="-fx-font-size: 10px; -fx-font-weight: bold; -fx-text-fill: #2563eb;" />
+                                    <Label fx:id="planNameLabel" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #0f172a;" text="Postpaid Silver" />
+                                    <Label fx:id="billingPeriodLabel" style="-fx-font-size: 11.5px; -fx-text-fill: #475569;" text="Billing Cycle: 08/2026" />
+                                    <Label text="Payment Terms: Net 15 Days" style="-fx-font-size: 11px; -fx-text-fill: #64748b;" />
+                                    <Label text="Currency: Indian Rupee (INR ₹)" style="-fx-font-size: 10px; -fx-text-fill: #94a3b8;" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+
+                        <!-- Summary of Charges Table -->
+                        <VBox spacing="6.0">
+                           <children>
+                              <Label text="SUMMARY OF CHARGES" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #0f172a;" />
+                              <GridPane style="-fx-border-color: #e2e8f0; -fx-border-radius: 4px; -fx-padding: 10px; -fx-hgap: 16px; -fx-vgap: 6px;">
+                                 <columnConstraints>
+                                    <ColumnConstraints hgrow="ALWAYS" />
+                                    <ColumnConstraints halignment="RIGHT" prefWidth="140.0" />
+                                 </columnConstraints>
+                                 <children>
+                                    <Label text="Monthly Tariff Plan Rental" style="-fx-text-fill: #334155; -fx-font-size: 12px;" GridPane.rowIndex="0" />
+                                    <Label fx:id="rentalChargesLabel" style="-fx-font-weight: 600;" text="₹249.00" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+                                    <Label text="Itemized Call Usage &amp; Pulse Charges" style="-fx-text-fill: #334155; -fx-font-size: 12px;" GridPane.rowIndex="1" />
+                                    <Label fx:id="callChargesLabel" style="-fx-font-weight: 600;" text="₹61.70" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                                    <Separator GridPane.columnSpan="2" GridPane.rowIndex="2" />
+
+                                    <Label text="Subtotal (Taxable Amount)" style="-fx-font-weight: bold; -fx-text-fill: #0f172a; -fx-font-size: 12px;" GridPane.rowIndex="3" />
+                                    <Label fx:id="subtotalLabel" style="-fx-font-weight: bold;" text="₹310.70" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+                                    <Label text="Central GST (CGST @ 9%)" style="-fx-text-fill: #64748b; -fx-font-size: 11.5px;" GridPane.rowIndex="4" />
+                                    <Label fx:id="cgstLabel" text="₹27.96" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+
+                                    <Label text="State GST (SGST @ 9%)" style="-fx-text-fill: #64748b; -fx-font-size: 11.5px;" GridPane.rowIndex="5" />
+                                    <Label fx:id="sgstLabel" text="₹27.96" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+
+                                    <Label text="Late Payment Surcharge / Fine" style="-fx-text-fill: #dc2626; -fx-font-size: 11.5px;" GridPane.rowIndex="6" />
+                                    <Label fx:id="lateFeeLabel" style="-fx-text-fill: #dc2626;" text="₹0.00" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+
+                                    <Label text="Discount / Promotional Credit" style="-fx-text-fill: #16a34a; -fx-font-size: 11.5px;" GridPane.rowIndex="7" />
+                                    <Label fx:id="discountLabel" style="-fx-text-fill: #16a34a;" text="-₹0.00" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+
+                                    <Separator GridPane.columnSpan="2" GridPane.rowIndex="8" />
+
+                                    <Label text="TOTAL AMOUNT DUE &amp; PAYABLE" style="-fx-font-size: 14px; -fx-font-weight: 900; -fx-text-fill: #0f172a;" GridPane.rowIndex="9" />
+                                    <Label fx:id="totalPayableLabel" style="-fx-font-size: 16px; -fx-font-weight: 900; -fx-text-fill: #2563eb;" text="₹366.63" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                                 </children>
+                              </GridPane>
+                           </children>
+                        </VBox>
+
+                        <!-- Itemized CDR Calls Table -->
+                        <VBox spacing="6.0">
+                           <children>
+                              <Label text="ITEMIZED CALL DETAIL RECORDS (CDR)" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #0f172a;" />
+                              <TableView fx:id="itemizedCallsTable" prefHeight="180.0">
+                                 <columns>
+                                    <TableColumn fx:id="colCallDate" prefWidth="170.0" text="Date &amp; Time" />
+                                    <TableColumn fx:id="colCallDest" prefWidth="170.0" text="Dialed Destination" />
+                                    <TableColumn fx:id="colCallCategory" prefWidth="120.0" text="Category" />
+                                    <TableColumn fx:id="colCallDuration" prefWidth="120.0" text="Duration (mm:ss)" />
+                                    <TableColumn fx:id="colCallCost" prefWidth="120.0" text="Cost (₹)" />
+                                 </columns>
+                                 <columnResizePolicy>
+                                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                 </columnResizePolicy>
+                              </TableView>
+                           </children>
+                        </VBox>
+
+                        <!-- Remittance & Bank Info -->
+                        <VBox spacing="3.0" style="-fx-background-color: #f8fafc; -fx-padding: 10px; -fx-border-color: #e2e8f0; -fx-border-radius: 4px;">
+                           <children>
+                              <Label text="Payment Options: UPI (apextelecom@upi) | Net Banking / NEFT: A/C 982001928374, IFSC: APEX000123" style="-fx-font-size: 10px; -fx-text-fill: #475569;" />
+                              <Label text="Please pay on or before due date to avoid service disconnection and late fee charges." style="-fx-font-size: 10px; -fx-text-fill: #64748b;" />
+                              <Label text="This is a computer-generated statement and does not require an ink signature." style="-fx-font-size: 9.5px; -fx-text-fill: #94a3b8;" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </center>
+   <!-- Bottom Actions Bar -->
+   <bottom>
+      <HBox alignment="CENTER_RIGHT" spacing="12.0" style="-fx-background-color: white; -fx-padding: 14px 24px; -fx-border-color: #cbd5e1; -fx-border-width: 1 0 0 0;" BorderPane.alignment="CENTER">
+         <children>
+            <Button onAction="#handlePrintInvoice" styleClass="btn-secondary" text="🖨️ Print Invoice" />
+            <Button onAction="#handleDownloadPdf" styleClass="btn-primary" text="💾 Download PDF Invoice" />
+            <Button onAction="#handleClose" styleClass="btn-secondary" text="Close" />
+         </children>
+      </HBox>
+   </bottom>
+</BorderPane>
