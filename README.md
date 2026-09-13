@@ -1,6 +1,7 @@
 # ⚡ APEX TELECOM — Telephone Bill Management System
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://apex-telecom-billing-gurramashlesh-8133s-projects.vercel.app)
+[![Presentation PPTX](https://img.shields.io/badge/Presentation-Team%2007%20PPTX-D24726?style=for-the-badge&logo=microsoftpowerpoint&logoColor=white)](Telephone_Bill_Management_System_Team07.pptx)
 [![Java Version](https://img.shields.io/badge/Java-21%20LTS-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://www.oracle.com/java/technologies/downloads/)
 [![JavaFX](https://img.shields.io/badge/GUI-JavaFX%2021-FF5722?style=for-the-badge&logo=javafx&logoColor=white)](https://openjfx.io/)
 [![Database](https://img.shields.io/badge/Database-SQLite%20JDBC-003B57?style=for-the-badge&logo=sqlite&logoColor=white)](https://sqlite.org/)
