@@ -12,22 +12,33 @@ def create_deck():
     prs.slide_height = Inches(7.5)
     blank_layout = prs.slide_layouts[6]
 
-    # Color Palette
-    C_BG = RGBColor(11, 15, 25)          # #0B0F19 Deep Tech Navy
-    C_CARD = RGBColor(19, 26, 43)        # #131A2B Dark Card
-    C_CARD_BORDER = RGBColor(37, 51, 82) # #253352 Card Border
-    C_BLUE = RGBColor(37, 99, 235)       # #2563EB Vibrant Blue
-    C_CYAN = RGBColor(6, 182, 212)       # #06B6D4 Electric Cyan
-    C_EMERALD = RGBColor(16, 185, 129)   # #10B981 Emerald Green
-    C_AMBER = RGBColor(245, 158, 11)     # #F59E0B Amber
-    C_WHITE = RGBColor(255, 255, 255)
-    C_SLATE_200 = RGBColor(226, 232, 240)
-    C_SLATE_400 = RGBColor(148, 163, 184)
-    C_SLATE_500 = RGBColor(100, 116, 139)
+    # Decent Professional White Color Palette
+    C_BG = RGBColor(255, 255, 255)            # Crisp Pure White
+    C_CARD = RGBColor(248, 250, 252)          # #F8FAFC Soft Glacier / Light Slate 50
+    C_CARD_WHITE = RGBColor(255, 255, 255)    # Pure White Card
+    C_CARD_BORDER = RGBColor(226, 232, 240)   # #E2E8F0 Subtle Slate Border
+    C_BORDER_ACCENT = RGBColor(203, 213, 225) # #CBD5E1 Defined Slate Border
+    
+    C_TEXT_HEAD = RGBColor(15, 23, 42)        # #0F172A Dark Charcoal Navy (Titles & Headers)
+    C_TEXT_SUB = RGBColor(51, 65, 85)         # #334155 Deep Slate (Subtitles & Section Heads)
+    C_TEXT_BODY = RGBColor(71, 85, 105)       # #475569 Slate 600 (Body text & Descriptions)
+    C_TEXT_MUTED = RGBColor(100, 116, 139)    # #64748B Slate 500 (Muted details & captions)
+    
+    C_BLUE = RGBColor(29, 78, 216)            # #1D4ED8 Royal Blue (Primary Accent)
+    C_BLUE_LIGHT = RGBColor(239, 246, 255)    # #EFF6FF Soft Blue Tint for Badges
+    C_BLUE_BORDER = RGBColor(191, 219, 254)   # #BFDBFE Light Blue Border
+    
+    C_TEAL = RGBColor(14, 116, 144)           # #0E7490 Deep Cyan / Ocean Teal
+    C_EMERALD = RGBColor(16, 122, 87)         # #107A57 Deep Forest Emerald
+    C_EMERALD_LIGHT = RGBColor(236, 253, 245) # #ECFDF5 Soft Mint Tint
+    C_EMERALD_BORDER = RGBColor(167, 243, 208)# #A7F3D0 Mint Border
+    
+    C_AMBER = RGBColor(180, 83, 9)            # #B45309 Rich Amber
+    C_RED = RGBColor(185, 28, 28)             # #B91C1C Crimson Red
 
     assets_dir = 'presentation_assets'
 
-    # Team Members (Strictly Name & Roll Number only)
+    # Team Members (Strictly Name & Roll Number only - NO roles, NO task descriptions)
     members = [
         ("M. Akshitha", "24241-CS-033"),
         ("G. Ashlesh", "24241-CS-034"),
@@ -44,7 +55,7 @@ def create_deck():
         return bg
 
     def add_header(slide, category, title, subtitle):
-        tb = slide.shapes.add_textbox(Inches(0.8), Inches(0.5), Inches(11.7), Inches(1.1))
+        tb = slide.shapes.add_textbox(Inches(0.8), Inches(0.45), Inches(11.7), Inches(1.15))
         tf = tb.text_frame
         tf.word_wrap = True
         tf.margin_left = tf.margin_top = tf.margin_right = tf.margin_bottom = 0
@@ -52,9 +63,9 @@ def create_deck():
         p0 = tf.paragraphs[0]
         p0.text = category.upper()
         p0.font.name = "Segoe UI"
-        p0.font.size = Pt(11)
+        p0.font.size = Pt(10.5)
         p0.font.bold = True
-        p0.font.color.rgb = C_CYAN
+        p0.font.color.rgb = C_BLUE
         p0.space_after = Pt(2)
 
         p1 = tf.add_paragraph()
@@ -62,18 +73,24 @@ def create_deck():
         p1.font.name = "Segoe UI"
         p1.font.size = Pt(22)
         p1.font.bold = True
-        p1.font.color.rgb = C_WHITE
+        p1.font.color.rgb = C_TEXT_HEAD
         p1.space_after = Pt(2)
 
         if subtitle:
             p2 = tf.add_paragraph()
             p2.text = subtitle
             p2.font.name = "Segoe UI"
-            p2.font.size = Pt(12)
-            p2.font.color.rgb = C_SLATE_400
+            p2.font.size = Pt(11.5)
+            p2.font.color.rgb = C_TEXT_BODY
 
     def add_footer(slide, slide_num):
-        tb = slide.shapes.add_textbox(Inches(0.8), Inches(6.9), Inches(11.7), Inches(0.4))
+        # Subtle horizontal divider line
+        sep = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.8), Inches(6.8), Inches(11.733), Inches(0.015))
+        sep.fill.solid()
+        sep.fill.fore_color.rgb = C_CARD_BORDER
+        sep.line.fill.background()
+
+        tb = slide.shapes.add_textbox(Inches(0.8), Inches(6.9), Inches(11.7), Inches(0.35))
         tf = tb.text_frame
         tf.word_wrap = True
         tf.margin_left = tf.margin_top = tf.margin_right = tf.margin_bottom = 0
@@ -81,7 +98,7 @@ def create_deck():
         p.text = f"APEX TELECOM — Major Project Presentation  |  Team 07  |  Slide {slide_num} of 13"
         p.font.name = "Segoe UI"
         p.font.size = Pt(9.5)
-        p.font.color.rgb = C_SLATE_500
+        p.font.color.rgb = C_TEXT_MUTED
 
     def create_card(slide, left, top, width, height, fill_color=C_CARD, border_color=C_CARD_BORDER):
         shape = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, left, top, width, height)
@@ -97,27 +114,28 @@ def create_deck():
     s1 = prs.slides.add_slide(blank_layout)
     add_bg(s1)
 
+    # Top Royal Blue accent bar
     bar = s1.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, prs.slide_width, Inches(0.1))
     bar.fill.solid()
     bar.fill.fore_color.rgb = C_BLUE
     bar.line.fill.background()
 
     # Brand pill badge
-    badge = s1.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.8), Inches(0.8), Inches(3.2), Inches(0.45))
+    badge = s1.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.8), Inches(0.8), Inches(3.4), Inches(0.45))
     badge.fill.solid()
-    badge.fill.fore_color.rgb = RGBColor(30, 41, 59)
-    badge.line.color.rgb = C_BLUE
+    badge.fill.fore_color.rgb = C_BLUE_LIGHT
+    badge.line.color.rgb = C_BLUE_BORDER
     badge.line.width = Pt(1)
     tf_b = badge.text_frame
     tf_b.text = "⚡ COLLEGE MAJOR PROJECT 2026"
     tf_b.paragraphs[0].font.name = "Segoe UI"
     tf_b.paragraphs[0].font.size = Pt(10.5)
     tf_b.paragraphs[0].font.bold = True
-    tf_b.paragraphs[0].font.color.rgb = C_CYAN
+    tf_b.paragraphs[0].font.color.rgb = C_BLUE
     tf_b.paragraphs[0].alignment = PP_ALIGN.CENTER
 
-    # Project Title
-    tb_title = s1.shapes.add_textbox(Inches(0.8), Inches(1.4), Inches(7.5), Inches(2.2))
+    # Project Title & Description
+    tb_title = s1.shapes.add_textbox(Inches(0.8), Inches(1.45), Inches(7.4), Inches(2.2))
     tf_t = tb_title.text_frame
     tf_t.word_wrap = True
     p = tf_t.paragraphs[0]
@@ -125,64 +143,77 @@ def create_deck():
     p.font.name = "Segoe UI"
     p.font.size = Pt(36)
     p.font.bold = True
-    p.font.color.rgb = C_WHITE
-    p.space_after = Pt(8)
+    p.font.color.rgb = C_TEXT_HEAD
+    p.space_after = Pt(10)
 
     p_sub = tf_t.add_paragraph()
-    p_sub.text = "An Enterprise-Grade Telecom Billing & Subscriber Management Suite\nDeveloped in Java 21 (JavaFX + SQLite + OpenPDF) with Live Cloud Web Deployment"
+    p_sub.text = "An Enterprise-Grade Telecom Billing & Subscriber Management Suite\nEngineered in Java 21 (JavaFX + SQLite + OpenPDF) with Live Cloud Web Deployment"
     p_sub.font.name = "Segoe UI"
     p_sub.font.size = Pt(13)
-    p_sub.font.color.rgb = C_SLATE_400
+    p_sub.font.color.rgb = C_TEXT_BODY
 
     # Live Badge pill
-    live_badge = s1.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.8), Inches(3.8), Inches(4.8), Inches(0.5))
+    live_badge = s1.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.8), Inches(3.9), Inches(5.0), Inches(0.48))
     live_badge.fill.solid()
-    live_badge.fill.fore_color.rgb = RGBColor(6, 78, 59)
-    live_badge.line.color.rgb = C_EMERALD
+    live_badge.fill.fore_color.rgb = C_EMERALD_LIGHT
+    live_badge.line.color.rgb = C_EMERALD_BORDER
     tf_lb = live_badge.text_frame
     tf_lb.text = "🟢 Live Web App: apex-telecom-billing.vercel.app"
     tf_lb.paragraphs[0].font.name = "Segoe UI"
     tf_lb.paragraphs[0].font.size = Pt(10.5)
     tf_lb.paragraphs[0].font.bold = True
-    tf_lb.paragraphs[0].font.color.rgb = RGBColor(167, 243, 208)
+    tf_lb.paragraphs[0].font.color.rgb = C_EMERALD
     tf_lb.paragraphs[0].alignment = PP_ALIGN.CENTER
 
+    # GitHub link badge pill
+    git_badge = s1.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.8), Inches(4.55), Inches(5.0), Inches(0.48))
+    git_badge.fill.solid()
+    git_badge.fill.fore_color.rgb = C_BLUE_LIGHT
+    git_badge.line.color.rgb = C_BLUE_BORDER
+    tf_gb = git_badge.text_frame
+    tf_gb.text = "📂 GitHub: github.com/ashlesh0805/TelephoneBillManagementSystem"
+    tf_gb.paragraphs[0].font.name = "Segoe UI"
+    tf_gb.paragraphs[0].font.size = Pt(9.5)
+    tf_gb.paragraphs[0].font.bold = True
+    tf_gb.paragraphs[0].font.color.rgb = C_BLUE
+    tf_gb.paragraphs[0].alignment = PP_ALIGN.CENTER
+
     # Right Card: Presented by Team 07 (Names and Roll Numbers ONLY)
-    create_card(s1, Inches(8.5), Inches(0.8), Inches(4.0), Inches(5.8), C_CARD, C_BLUE)
-    tb_team = s1.shapes.add_textbox(Inches(8.8), Inches(1.1), Inches(3.4), Inches(5.2))
+    create_card(s1, Inches(8.5), Inches(0.8), Inches(4.0), Inches(5.7), C_CARD, C_BORDER_ACCENT)
+    tb_team = s1.shapes.add_textbox(Inches(8.8), Inches(1.05), Inches(3.4), Inches(5.2))
     tf_team = tb_team.text_frame
     tf_team.word_wrap = True
 
     p = tf_team.paragraphs[0]
     p.text = "TEAM 07"
     p.font.name = "Segoe UI"
-    p.font.size = Pt(15)
+    p.font.size = Pt(16)
     p.font.bold = True
-    p.font.color.rgb = C_CYAN
+    p.font.color.rgb = C_BLUE
     p.space_after = Pt(2)
 
     p = tf_team.add_paragraph()
     p.text = "Department of Computer Science & Engineering"
     p.font.name = "Segoe UI"
-    p.font.size = Pt(10)
-    p.font.color.rgb = C_SLATE_400
+    p.font.size = Pt(10.5)
+    p.font.color.rgb = C_TEXT_MUTED
     p.space_after = Pt(16)
 
     p = tf_team.add_paragraph()
     p.text = "Presented by:"
     p.font.name = "Segoe UI"
-    p.font.size = Pt(13)
+    p.font.size = Pt(13.5)
     p.font.bold = True
-    p.font.color.rgb = C_WHITE
+    p.font.color.rgb = C_TEXT_HEAD
     p.space_after = Pt(12)
 
     for name, roll in members:
         p = tf_team.add_paragraph()
-        p.text = f"•  {name} ({roll})"
+        p.text = f"•  {name}  ({roll})"
         p.font.name = "Segoe UI"
         p.font.size = Pt(12)
         p.font.bold = True
-        p.font.color.rgb = C_SLATE_200
+        p.font.color.rgb = C_TEXT_SUB
         p.space_after = Pt(10)
 
     add_footer(s1, 1)
@@ -194,7 +225,7 @@ def create_deck():
     add_bg(s2)
     add_header(s2, "Introduction", "Problem Statement & Project Objectives", "Overcoming legacy telecom billing bottlenecks through modern automated software architecture")
 
-    create_card(s2, Inches(0.8), Inches(1.8), Inches(5.6), Inches(4.8))
+    create_card(s2, Inches(0.8), Inches(1.8), Inches(5.6), Inches(4.8), C_CARD, RGBColor(254, 202, 202))
     tb = s2.shapes.add_textbox(Inches(1.1), Inches(2.0), Inches(5.0), Inches(4.4))
     tf = tb.text_frame
     tf.word_wrap = True
@@ -202,9 +233,9 @@ def create_deck():
     p = tf.paragraphs[0]
     p.text = "⚠️ Challenges in Legacy Telecom Billing"
     p.font.name = "Segoe UI"
-    p.font.size = Pt(16)
+    p.font.size = Pt(15.5)
     p.font.bold = True
-    p.font.color.rgb = RGBColor(248, 113, 113)
+    p.font.color.rgb = C_RED
     p.space_after = Pt(12)
 
     problems = [
@@ -220,15 +251,15 @@ def create_deck():
         p.font.name = "Segoe UI"
         p.font.size = Pt(12)
         p.font.bold = True
-        p.font.color.rgb = C_WHITE
+        p.font.color.rgb = C_TEXT_HEAD
         p_desc = tf.add_paragraph()
         p_desc.text = f"    {desc}"
         p_desc.font.name = "Segoe UI"
         p_desc.font.size = Pt(10.5)
-        p_desc.font.color.rgb = C_SLATE_400
+        p_desc.font.color.rgb = C_TEXT_BODY
         p_desc.space_after = Pt(8)
 
-    create_card(s2, Inches(6.9), Inches(1.8), Inches(5.6), Inches(4.8))
+    create_card(s2, Inches(6.9), Inches(1.8), Inches(5.6), Inches(4.8), C_CARD, C_EMERALD_BORDER)
     tb2 = s2.shapes.add_textbox(Inches(7.2), Inches(2.0), Inches(5.0), Inches(4.4))
     tf2 = tb2.text_frame
     tf2.word_wrap = True
@@ -236,7 +267,7 @@ def create_deck():
     p = tf2.paragraphs[0]
     p.text = "🎯 Proposed Solution & Key Objectives"
     p.font.name = "Segoe UI"
-    p.font.size = Pt(16)
+    p.font.size = Pt(15.5)
     p.font.bold = True
     p.font.color.rgb = C_EMERALD
     p.space_after = Pt(12)
@@ -254,12 +285,12 @@ def create_deck():
         p.font.name = "Segoe UI"
         p.font.size = Pt(12)
         p.font.bold = True
-        p.font.color.rgb = C_WHITE
+        p.font.color.rgb = C_TEXT_HEAD
         p_desc = tf2.add_paragraph()
         p_desc.text = f"    {desc}"
         p_desc.font.name = "Segoe UI"
         p_desc.font.size = Pt(10.5)
-        p_desc.font.color.rgb = C_SLATE_400
+        p_desc.font.color.rgb = C_TEXT_BODY
         p_desc.space_after = Pt(8)
 
     add_footer(s2, 2)
@@ -272,9 +303,9 @@ def create_deck():
     add_header(s3, "Engineering Design", "System Architecture & MVC Pattern", "Clean separation of presentation, business rules, and persistence layers for maximum maintainability")
 
     cols = [
-        ("VIEW LAYER", C_CYAN, [
-            ("JavaFX 21 (FXML)", "Declarative XML UI views with CSS styling and dark/light themes."),
-            ("Custom CSS3", "Modern sleek design with responsive layouts and glowing accent pills."),
+        ("VIEW LAYER", C_TEAL, [
+            ("JavaFX 21 (FXML)", "Declarative XML UI views with CSS styling and clean desktop ergonomics."),
+            ("Custom CSS3", "Modern sleek design with responsive layouts and accessible contrast."),
             ("Chart Visualizations", "JavaFX BarChart & PieChart + Web Chart.js for operational analytics."),
             ("Invoice Templates", "Printable and exportable Airtel/Jio styled vector PDF templates.")
         ]),
@@ -304,7 +335,7 @@ def create_deck():
 
     for i, (col_title, color, items) in enumerate(cols):
         cx = start_x + i * (card_w + card_gap)
-        create_card(s3, cx, Inches(1.8), card_w, Inches(4.8), C_CARD, color)
+        create_card(s3, cx, Inches(1.8), card_w, Inches(4.8), C_CARD, C_CARD_BORDER)
 
         tb = s3.shapes.add_textbox(cx + Inches(0.2), Inches(2.0), card_w - Inches(0.4), Inches(4.4))
         tf = tb.text_frame
@@ -324,13 +355,13 @@ def create_deck():
             p.font.name = "Segoe UI"
             p.font.size = Pt(11)
             p.font.bold = True
-            p.font.color.rgb = C_WHITE
+            p.font.color.rgb = C_TEXT_HEAD
 
             p2 = tf.add_paragraph()
             p2.text = idesc
             p2.font.name = "Segoe UI"
             p2.font.size = Pt(9.5)
-            p2.font.color.rgb = C_SLATE_400
+            p2.font.color.rgb = C_TEXT_BODY
             p2.space_after = Pt(8)
 
     add_footer(s3, 3)
@@ -343,11 +374,11 @@ def create_deck():
     add_header(s4, "Technology Matrix", "Enterprise Technology Stack", "Robust industrial libraries chosen for performance, standards compliance, and zero deployment friction")
 
     tech_cards = [
-        ("Java 21 (LTS)", "Core Runtime", C_CYAN, "Latest Long-Term Support release offering enhanced pattern matching, record types, virtual threads readiness, and superior enterprise stability."),
-        ("JavaFX 21", "Desktop GUI", C_BLUE, "Modern GUI framework utilizing FXML separation of design and logic, CSS3 skinning, smooth hardware-accelerated animations, and responsive scene graphs."),
+        ("Java 21 (LTS)", "Core Runtime", C_BLUE, "Latest Long-Term Support release offering enhanced pattern matching, record types, virtual threads readiness, and superior enterprise stability."),
+        ("JavaFX 21", "Desktop GUI", C_TEAL, "Modern GUI framework utilizing FXML separation of design and logic, CSS3 skinning, smooth hardware-accelerated animations, and responsive scene graphs."),
         ("SQLite 3 via JDBC", "Relational Database", C_EMERALD, "Serverless, zero-configuration local database engine. Eliminates external DBMS setup while maintaining full ACID compliance and relational integrity."),
         ("OpenPDF 1.3.40", "Invoice PDF Engine", C_AMBER, "LGPL/MPL compliant vector PDF library generating authentic pixel-perfect billing statements with dynamic tables, borders, and status watermarks."),
-        ("Apache Maven 3.9+", "Build & Dependency", C_CYAN, "Standardized project lifecycle management, automated compilation, dependency management, and reproducible packaging into standalone executable JARs."),
+        ("Apache Maven 3.9+", "Build & Dependency", C_BLUE, "Standardized project lifecycle management, automated compilation, dependency management, and reproducible packaging into standalone executable JARs."),
         ("Vercel Cloud & JS", "Web Deployment", C_EMERALD, "Hoisted on Vercel's global edge network. Single Page Application (SPA) with Chart.js analytics, html2pdf export, and mobile responsiveness.")
     ]
 
@@ -374,26 +405,27 @@ def create_deck():
         p = tf.add_paragraph()
         p.text = tech
         p.font.name = "Segoe UI"
-        p.font.size = Pt(15)
+        p.font.size = Pt(14.5)
         p.font.bold = True
-        p.font.color.rgb = C_WHITE
+        p.font.color.rgb = C_TEXT_HEAD
         p.space_after = Pt(6)
 
         p = tf.add_paragraph()
         p.text = desc
         p.font.name = "Segoe UI"
         p.font.size = Pt(10)
-        p.font.color.rgb = C_SLATE_400
+        p.font.color.rgb = C_TEXT_BODY
 
     add_footer(s4, 4)
 
-    # Helper for App Feature Slides (with Screenshot on right or left)
+    # Helper for App Feature Slides (with Screenshot on right)
     def add_feature_slide(slide_num, tag, title, subtitle, bullets, img_name, img_caption):
         s = prs.slides.add_slide(blank_layout)
         add_bg(s)
         add_header(s, tag, title, subtitle)
 
-        create_card(s, Inches(0.8), Inches(1.8), Inches(5.5), Inches(4.8))
+        # Left explanation card
+        create_card(s, Inches(0.8), Inches(1.8), Inches(5.5), Inches(4.8), C_CARD, C_CARD_BORDER)
         tb = s.shapes.add_textbox(Inches(1.1), Inches(2.0), Inches(4.9), Inches(4.4))
         tf = tb.text_frame
         tf.word_wrap = True
@@ -402,19 +434,20 @@ def create_deck():
             p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
             p.text = f"•  {btitle}"
             p.font.name = "Segoe UI"
-            p.font.size = Pt(12.5)
+            p.font.size = Pt(12)
             p.font.bold = True
-            p.font.color.rgb = C_CYAN if i == 0 else C_WHITE
+            p.font.color.rgb = C_BLUE if i == 0 else C_TEXT_HEAD
 
             p_desc = tf.add_paragraph()
             p_desc.text = f"   {bdesc}"
             p_desc.font.name = "Segoe UI"
             p_desc.font.size = Pt(10.5)
-            p_desc.font.color.rgb = C_SLATE_400
-            p_desc.space_after = Pt(10)
+            p_desc.font.color.rgb = C_TEXT_BODY
+            p_desc.space_after = Pt(9)
 
+        # Right screenshot card container
         img_path = os.path.join(assets_dir, img_name)
-        create_card(s, Inches(6.6), Inches(1.8), Inches(5.9), Inches(4.8), C_CARD, C_BLUE)
+        create_card(s, Inches(6.6), Inches(1.8), Inches(5.9), Inches(4.8), C_CARD_WHITE, C_BORDER_ACCENT)
 
         if os.path.exists(img_path):
             s.shapes.add_picture(img_path, Inches(6.75), Inches(1.95), Inches(5.6), Inches(4.2))
@@ -424,7 +457,8 @@ def create_deck():
             p_c.text = f"📷 Live System Screen: {img_caption}"
             p_c.font.name = "Segoe UI"
             p_c.font.size = Pt(9.5)
-            p_c.font.color.rgb = C_CYAN
+            p_c.font.bold = True
+            p_c.font.color.rgb = C_TEXT_MUTED
             p_c.alignment = PP_ALIGN.CENTER
 
         add_footer(s, slide_num)
@@ -531,7 +565,7 @@ def create_deck():
     add_header(s11, "Verification & Testing", "Automated Testing & Quality Assurance", "10/10 automated JUnit 5 test cases passing with 100% build success across all modules")
 
     tests = [
-        ("BillingEngineTest (5/5 Passing)", C_CYAN, [
+        ("BillingEngineTest (5/5 Passing)", C_BLUE, [
             ("testUnderFreeMinutesAllowance", "Verifies 80 mins <= 100 free mins results in ₹0.00 call charge; only rental ₹200 + 18% GST (₹236.00) is billed."),
             ("testExceedingFreeMinutesAllowance", "Verifies 120 mins local call correctly consumes 100 free mins and bills only the remaining 20 excess minutes."),
             ("testMixedCallCategories", "Validates simultaneous Local, STD, and ISD calls with duration ceiling and appropriate tariff application."),
@@ -554,7 +588,7 @@ def create_deck():
 
     for i, (suite_name, color, suite_tests) in enumerate(tests):
         cx = start_x + i * (card_w + Inches(0.2))
-        create_card(s11, cx, Inches(1.8), card_w, Inches(4.8), C_CARD, color)
+        create_card(s11, cx, Inches(1.8), card_w, Inches(4.8), C_CARD, C_CARD_BORDER)
 
         tb = s11.shapes.add_textbox(cx + Inches(0.25), Inches(2.0), card_w - Inches(0.5), Inches(4.4))
         tf = tb.text_frame
@@ -574,13 +608,13 @@ def create_deck():
             p.font.name = "Consolas"
             p.font.size = Pt(10.5)
             p.font.bold = True
-            p.font.color.rgb = C_WHITE
+            p.font.color.rgb = C_TEXT_HEAD
 
             p2 = tf.add_paragraph()
             p2.text = tdesc
             p2.font.name = "Segoe UI"
             p2.font.size = Pt(9.5)
-            p2.font.color.rgb = C_SLATE_400
+            p2.font.color.rgb = C_TEXT_BODY
             p2.space_after = Pt(8)
 
     add_footer(s11, 11)
@@ -599,7 +633,7 @@ def create_deck():
             ("Full Feature Parity", "Replicates Java billing engine, interactive Chart.js graphs, prefix classifier, and in-browser PDF generator."),
             ("Zero-Install Evaluation", "Allows external evaluators and professors to test the system directly from any laptop, tablet, or smartphone.")
         ]),
-        ("Public GitHub Repository", C_CYAN, [
+        ("Public GitHub Repository", C_BLUE, [
             ("Repository Link", "https://github.com/ashlesh0805/TelephoneBillManagementSystem"),
             ("Clean Commit History", "Version-controlled with sanitized configuration and complete automated build scripts."),
             ("Documentation & Badges", "Comprehensive README with architecture diagrams, setup instructions, and college viva Q&A."),
@@ -615,7 +649,7 @@ def create_deck():
 
     for i, (dtitle, dcolor, ditems) in enumerate(dep_cards):
         cx = start_x + i * (card_w + Inches(0.2))
-        create_card(s12, cx, Inches(1.8), card_w, Inches(4.8), C_CARD, dcolor)
+        create_card(s12, cx, Inches(1.8), card_w, Inches(4.8), C_CARD, C_CARD_BORDER)
 
         tb = s12.shapes.add_textbox(cx + Inches(0.25), Inches(2.0), card_w - Inches(0.5), Inches(4.4))
         tf = tb.text_frame
@@ -635,13 +669,13 @@ def create_deck():
             p.font.name = "Segoe UI"
             p.font.size = Pt(10.5)
             p.font.bold = True
-            p.font.color.rgb = C_WHITE
+            p.font.color.rgb = C_TEXT_HEAD
 
             p2 = tf.add_paragraph()
             p2.text = idesc
             p2.font.name = "Segoe UI"
             p2.font.size = Pt(9.5)
-            p2.font.color.rgb = C_SLATE_400
+            p2.font.color.rgb = C_TEXT_BODY
             p2.space_after = Pt(8)
 
     add_footer(s12, 12)
@@ -653,7 +687,7 @@ def create_deck():
     add_bg(s13)
     add_header(s13, "Conclusion & Roadmap", "Project Outcomes & Future Scope", "Reflections on project milestones and future directions for telecommunication infrastructure")
 
-    create_card(s13, Inches(0.8), Inches(1.8), Inches(5.6), Inches(4.8), C_CARD, C_EMERALD)
+    create_card(s13, Inches(0.8), Inches(1.8), Inches(5.6), Inches(4.8), C_CARD, C_EMERALD_BORDER)
     tb = s13.shapes.add_textbox(Inches(1.1), Inches(2.0), Inches(5.0), Inches(4.4))
     tf = tb.text_frame
     tf.word_wrap = True
@@ -679,15 +713,15 @@ def create_deck():
         p.font.name = "Segoe UI"
         p.font.size = Pt(12)
         p.font.bold = True
-        p.font.color.rgb = C_WHITE
+        p.font.color.rgb = C_TEXT_HEAD
         p2 = tf.add_paragraph()
         p2.text = f"    {adesc}"
         p2.font.name = "Segoe UI"
         p2.font.size = Pt(10)
-        p2.font.color.rgb = C_SLATE_400
+        p2.font.color.rgb = C_TEXT_BODY
         p2.space_after = Pt(8)
 
-    create_card(s13, Inches(6.9), Inches(1.8), Inches(5.6), Inches(4.8), C_CARD, C_CYAN)
+    create_card(s13, Inches(6.9), Inches(1.8), Inches(5.6), Inches(4.8), C_CARD, C_BLUE_BORDER)
     tb2 = s13.shapes.add_textbox(Inches(7.2), Inches(2.0), Inches(5.0), Inches(4.4))
     tf2 = tb2.text_frame
     tf2.word_wrap = True
@@ -697,7 +731,7 @@ def create_deck():
     p.font.name = "Segoe UI"
     p.font.size = Pt(16)
     p.font.bold = True
-    p.font.color.rgb = C_CYAN
+    p.font.color.rgb = C_BLUE
     p.space_after = Pt(12)
 
     roadmap = [
@@ -713,12 +747,12 @@ def create_deck():
         p.font.name = "Segoe UI"
         p.font.size = Pt(12)
         p.font.bold = True
-        p.font.color.rgb = C_WHITE
+        p.font.color.rgb = C_TEXT_HEAD
         p2 = tf2.add_paragraph()
         p2.text = f"    {rdesc}"
         p2.font.name = "Segoe UI"
         p2.font.size = Pt(10)
-        p2.font.color.rgb = C_SLATE_400
+        p2.font.color.rgb = C_TEXT_BODY
         p2.space_after = Pt(8)
 
     p = tf2.add_paragraph()
