@@ -178,43 +178,90 @@ def create_deck():
     tf_gb.paragraphs[0].font.color.rgb = C_BLUE
     tf_gb.paragraphs[0].alignment = PP_ALIGN.CENTER
 
-    # Right Card: Presented by Team 07 (Names and Roll Numbers ONLY)
-    create_card(s1, Inches(8.5), Inches(0.8), Inches(4.0), Inches(5.7), C_CARD, C_BORDER_ACCENT)
-    tb_team = s1.shapes.add_textbox(Inches(8.8), Inches(1.05), Inches(3.4), Inches(5.2))
-    tf_team = tb_team.text_frame
-    tf_team.word_wrap = True
-
-    p = tf_team.paragraphs[0]
+    # Right Card: Presented by Team 07 (Neat Mini-Cards inside, Comfortable Padding)
+    create_card(s1, Inches(8.3), Inches(0.75), Inches(4.2), Inches(5.75), C_CARD, C_BORDER_ACCENT)
+    
+    tb_head = s1.shapes.add_textbox(Inches(8.55), Inches(0.95), Inches(3.7), Inches(0.9))
+    tf_h = tb_head.text_frame
+    tf_h.word_wrap = True
+    tf_h.margin_left = tf_h.margin_top = tf_h.margin_right = tf_h.margin_bottom = 0
+    p = tf_h.paragraphs[0]
     p.text = "TEAM 07"
     p.font.name = "Segoe UI"
-    p.font.size = Pt(16)
+    p.font.size = Pt(15)
     p.font.bold = True
     p.font.color.rgb = C_BLUE
-    p.space_after = Pt(2)
-
-    p = tf_team.add_paragraph()
+    
+    p = tf_h.add_paragraph()
     p.text = "Department of Computer Science & Engineering"
     p.font.name = "Segoe UI"
-    p.font.size = Pt(10.5)
+    p.font.size = Pt(9.5)
     p.font.color.rgb = C_TEXT_MUTED
-    p.space_after = Pt(16)
+    p.space_after = Pt(4)
 
-    p = tf_team.add_paragraph()
+    p = tf_h.add_paragraph()
     p.text = "Presented by:"
     p.font.name = "Segoe UI"
-    p.font.size = Pt(13.5)
+    p.font.size = Pt(12)
     p.font.bold = True
     p.font.color.rgb = C_TEXT_HEAD
-    p.space_after = Pt(12)
 
-    for name, roll in members:
-        p = tf_team.add_paragraph()
-        p.text = f"•  {name}  ({roll})"
-        p.font.name = "Segoe UI"
-        p.font.size = Pt(12)
-        p.font.bold = True
-        p.font.color.rgb = C_TEXT_SUB
-        p.space_after = Pt(10)
+    # 5 Neat Student Mini-Cards
+    m_top = Inches(2.05)
+    m_height = Inches(0.68)
+    m_gap = Inches(0.12)
+
+    for i, (m_name, m_roll) in enumerate(members):
+        cur_y = m_top + i * (m_height + m_gap)
+        create_card(s1, Inches(8.55), cur_y, Inches(3.7), m_height, C_CARD_WHITE, C_CARD_BORDER)
+
+        # Number circle badge
+        num_circ = s1.shapes.add_shape(MSO_SHAPE.OVAL, Inches(8.7), cur_y + Inches(0.14), Inches(0.4), Inches(0.4))
+        num_circ.fill.solid()
+        num_circ.fill.fore_color.rgb = C_BLUE_LIGHT
+        num_circ.line.color.rgb = C_BLUE_BORDER
+        num_circ.line.width = Pt(1)
+        tf_nc = num_circ.text_frame
+        p_nc = tf_nc.paragraphs[0]
+        p_nc.text = f"0{i+1}"
+        p_nc.font.name = "Segoe UI"
+        p_nc.font.size = Pt(9.5)
+        p_nc.font.bold = True
+        p_nc.font.color.rgb = C_BLUE
+        p_nc.alignment = PP_ALIGN.CENTER
+
+        # Member Name
+        tb_mn = s1.shapes.add_textbox(Inches(9.2), cur_y + Inches(0.08), Inches(1.8), Inches(0.52))
+        tf_mn = tb_mn.text_frame
+        tf_mn.word_wrap = True
+        tf_mn.margin_left = tf_mn.margin_top = tf_mn.margin_right = tf_mn.margin_bottom = 0
+        p_mn = tf_mn.paragraphs[0]
+        p_mn.text = m_name
+        p_mn.font.name = "Segoe UI"
+        p_mn.font.size = Pt(12)
+        p_mn.font.bold = True
+        p_mn.font.color.rgb = C_TEXT_HEAD
+        
+        p_dept = tf_mn.add_paragraph()
+        p_dept.text = "B.Tech CSE"
+        p_dept.font.name = "Segoe UI"
+        p_dept.font.size = Pt(8.5)
+        p_dept.font.color.rgb = C_TEXT_MUTED
+
+        # Roll Number Badge on Right
+        roll_pill = s1.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(10.9), cur_y + Inches(0.16), Inches(1.25), Inches(0.36))
+        roll_pill.fill.solid()
+        roll_pill.fill.fore_color.rgb = C_CARD
+        roll_pill.line.color.rgb = C_BLUE_BORDER
+        roll_pill.line.width = Pt(1)
+        tf_rp = roll_pill.text_frame
+        p_rp = tf_rp.paragraphs[0]
+        p_rp.text = m_roll
+        p_rp.font.name = "Consolas"
+        p_rp.font.size = Pt(8.5)
+        p_rp.font.bold = True
+        p_rp.font.color.rgb = C_BLUE
+        p_rp.alignment = PP_ALIGN.CENTER
 
     add_footer(s1, 1)
 
@@ -225,18 +272,22 @@ def create_deck():
     add_bg(s2)
     add_header(s2, "Introduction", "Problem Statement & Project Objectives", "Overcoming legacy telecom billing bottlenecks through modern automated software architecture")
 
-    create_card(s2, Inches(0.8), Inches(1.8), Inches(5.6), Inches(4.8), C_CARD, RGBColor(254, 202, 202))
-    tb = s2.shapes.add_textbox(Inches(1.1), Inches(2.0), Inches(5.0), Inches(4.4))
+    card_top = Inches(1.65)
+    card_h = Inches(4.95)
+
+    create_card(s2, Inches(0.8), card_top, Inches(5.7), card_h, C_CARD, RGBColor(254, 202, 202))
+    tb = s2.shapes.add_textbox(Inches(1.05), card_top + Inches(0.18), Inches(5.2), card_h - Inches(0.36))
     tf = tb.text_frame
     tf.word_wrap = True
+    tf.margin_left = tf.margin_top = tf.margin_right = tf.margin_bottom = 0
 
     p = tf.paragraphs[0]
     p.text = "⚠️ Challenges in Legacy Telecom Billing"
     p.font.name = "Segoe UI"
-    p.font.size = Pt(15.5)
+    p.font.size = Pt(14.5)
     p.font.bold = True
     p.font.color.rgb = C_RED
-    p.space_after = Pt(12)
+    p.space_after = Pt(10)
 
     problems = [
         ("Manual Rating Inefficiencies", "Legacy systems struggle with real-time classification of call logs into Local, STD, and ISD categories, causing calculation delays."),
@@ -249,28 +300,29 @@ def create_deck():
         p = tf.add_paragraph()
         p.text = f"•  {title}:"
         p.font.name = "Segoe UI"
-        p.font.size = Pt(12)
+        p.font.size = Pt(11.5)
         p.font.bold = True
         p.font.color.rgb = C_TEXT_HEAD
         p_desc = tf.add_paragraph()
-        p_desc.text = f"    {desc}"
+        p_desc.text = f"   {desc}"
         p_desc.font.name = "Segoe UI"
-        p_desc.font.size = Pt(10.5)
+        p_desc.font.size = Pt(9.5)
         p_desc.font.color.rgb = C_TEXT_BODY
-        p_desc.space_after = Pt(8)
+        p_desc.space_after = Pt(6)
 
-    create_card(s2, Inches(6.9), Inches(1.8), Inches(5.6), Inches(4.8), C_CARD, C_EMERALD_BORDER)
-    tb2 = s2.shapes.add_textbox(Inches(7.2), Inches(2.0), Inches(5.0), Inches(4.4))
+    create_card(s2, Inches(6.8), card_top, Inches(5.7), card_h, C_CARD, C_EMERALD_BORDER)
+    tb2 = s2.shapes.add_textbox(Inches(7.05), card_top + Inches(0.18), Inches(5.2), card_h - Inches(0.36))
     tf2 = tb2.text_frame
     tf2.word_wrap = True
+    tf2.margin_left = tf2.margin_top = tf2.margin_right = tf2.margin_bottom = 0
 
     p = tf2.paragraphs[0]
     p.text = "🎯 Proposed Solution & Key Objectives"
     p.font.name = "Segoe UI"
-    p.font.size = Pt(15.5)
+    p.font.size = Pt(14.5)
     p.font.bold = True
     p.font.color.rgb = C_EMERALD
-    p.space_after = Pt(12)
+    p.space_after = Pt(10)
 
     solutions = [
         ("Automated Telecom Rating Engine", "Instant duration pulse conversion (60s ceil), free minutes deduction, and multi-tier rate calculation (Local, STD, ISD)."),
@@ -283,15 +335,15 @@ def create_deck():
         p = tf2.add_paragraph()
         p.text = f"✓  {title}:"
         p.font.name = "Segoe UI"
-        p.font.size = Pt(12)
+        p.font.size = Pt(11.5)
         p.font.bold = True
         p.font.color.rgb = C_TEXT_HEAD
         p_desc = tf2.add_paragraph()
-        p_desc.text = f"    {desc}"
+        p_desc.text = f"   {desc}"
         p_desc.font.name = "Segoe UI"
-        p_desc.font.size = Pt(10.5)
+        p_desc.font.size = Pt(9.5)
         p_desc.font.color.rgb = C_TEXT_BODY
-        p_desc.space_after = Pt(8)
+        p_desc.space_after = Pt(6)
 
     add_footer(s2, 2)
 
@@ -329,40 +381,41 @@ def create_deck():
         ])
     ]
 
-    card_w = Inches(2.75)
+    card_w = Inches(2.78)
     card_gap = Inches(0.2)
     start_x = Inches(0.8)
 
     for i, (col_title, color, items) in enumerate(cols):
         cx = start_x + i * (card_w + card_gap)
-        create_card(s3, cx, Inches(1.8), card_w, Inches(4.8), C_CARD, C_CARD_BORDER)
+        create_card(s3, cx, card_top, card_w, card_h, C_CARD, C_CARD_BORDER)
 
-        tb = s3.shapes.add_textbox(cx + Inches(0.2), Inches(2.0), card_w - Inches(0.4), Inches(4.4))
+        tb = s3.shapes.add_textbox(cx + Inches(0.18), card_top + Inches(0.18), card_w - Inches(0.36), card_h - Inches(0.36))
         tf = tb.text_frame
         tf.word_wrap = True
+        tf.margin_left = tf.margin_top = tf.margin_right = tf.margin_bottom = 0
 
         p = tf.paragraphs[0]
         p.text = col_title
         p.font.name = "Segoe UI"
-        p.font.size = Pt(13)
+        p.font.size = Pt(12)
         p.font.bold = True
         p.font.color.rgb = color
-        p.space_after = Pt(12)
+        p.space_after = Pt(10)
 
         for ititle, idesc in items:
             p = tf.add_paragraph()
             p.text = f"• {ititle}"
             p.font.name = "Segoe UI"
-            p.font.size = Pt(11)
+            p.font.size = Pt(10.5)
             p.font.bold = True
             p.font.color.rgb = C_TEXT_HEAD
 
             p2 = tf.add_paragraph()
             p2.text = idesc
             p2.font.name = "Segoe UI"
-            p2.font.size = Pt(9.5)
+            p2.font.size = Pt(9)
             p2.font.color.rgb = C_TEXT_BODY
-            p2.space_after = Pt(8)
+            p2.space_after = Pt(5)
 
     add_footer(s3, 3)
 
@@ -385,19 +438,20 @@ def create_deck():
     for i, (tech, category, color, desc) in enumerate(tech_cards):
         row = i // 3
         col = i % 3
-        x = Inches(0.8) + col * Inches(3.95)
-        y = Inches(1.8) + row * Inches(2.4)
+        x = Inches(0.8) + col * Inches(3.98)
+        y = card_top + row * Inches(2.52)
 
-        create_card(s4, x, y, Inches(3.75), Inches(2.2), C_CARD, C_CARD_BORDER)
+        create_card(s4, x, y, Inches(3.78), Inches(2.32), C_CARD, C_CARD_BORDER)
 
-        tb = s4.shapes.add_textbox(x + Inches(0.25), y + Inches(0.2), Inches(3.25), Inches(1.8))
+        tb = s4.shapes.add_textbox(x + Inches(0.22), y + Inches(0.18), Inches(3.34), Inches(1.96))
         tf = tb.text_frame
         tf.word_wrap = True
+        tf.margin_left = tf.margin_top = tf.margin_right = tf.margin_bottom = 0
 
         p = tf.paragraphs[0]
         p.text = category.upper()
         p.font.name = "Segoe UI"
-        p.font.size = Pt(9.5)
+        p.font.size = Pt(9)
         p.font.bold = True
         p.font.color.rgb = color
         p.space_after = Pt(2)
@@ -405,58 +459,83 @@ def create_deck():
         p = tf.add_paragraph()
         p.text = tech
         p.font.name = "Segoe UI"
-        p.font.size = Pt(14.5)
+        p.font.size = Pt(13.5)
         p.font.bold = True
         p.font.color.rgb = C_TEXT_HEAD
-        p.space_after = Pt(6)
+        p.space_after = Pt(4)
 
         p = tf.add_paragraph()
         p.text = desc
         p.font.name = "Segoe UI"
-        p.font.size = Pt(10)
+        p.font.size = Pt(9.5)
         p.font.color.rgb = C_TEXT_BODY
 
     add_footer(s4, 4)
 
-    # Helper for App Feature Slides (with Screenshot on right)
+    # Helper for App Feature Slides (with Screenshot centered, comfortable padding, not coming out)
     def add_feature_slide(slide_num, tag, title, subtitle, bullets, img_name, img_caption):
         s = prs.slides.add_slide(blank_layout)
         add_bg(s)
         add_header(s, tag, title, subtitle)
 
-        # Left explanation card
-        create_card(s, Inches(0.8), Inches(1.8), Inches(5.5), Inches(4.8), C_CARD, C_CARD_BORDER)
-        tb = s.shapes.add_textbox(Inches(1.1), Inches(2.0), Inches(4.9), Inches(4.4))
+        card_top = Inches(1.65)
+        card_h = Inches(4.95)
+
+        # Left explanation card - comfortable breathing room, no text coming out
+        create_card(s, Inches(0.8), card_top, Inches(5.4), card_h, C_CARD, C_CARD_BORDER)
+        tb = s.shapes.add_textbox(Inches(1.05), card_top + Inches(0.18), Inches(4.9), card_h - Inches(0.36))
         tf = tb.text_frame
         tf.word_wrap = True
+        tf.margin_left = tf.margin_top = tf.margin_right = tf.margin_bottom = 0
 
         for i, (btitle, bdesc) in enumerate(bullets):
             p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
             p.text = f"•  {btitle}"
             p.font.name = "Segoe UI"
-            p.font.size = Pt(12)
+            p.font.size = Pt(11.5)
             p.font.bold = True
             p.font.color.rgb = C_BLUE if i == 0 else C_TEXT_HEAD
 
             p_desc = tf.add_paragraph()
             p_desc.text = f"   {bdesc}"
             p_desc.font.name = "Segoe UI"
-            p_desc.font.size = Pt(10.5)
+            p_desc.font.size = Pt(9.5)
             p_desc.font.color.rgb = C_TEXT_BODY
-            p_desc.space_after = Pt(9)
+            p_desc.space_after = Pt(6)
 
         # Right screenshot card container
-        img_path = os.path.join(assets_dir, img_name)
-        create_card(s, Inches(6.6), Inches(1.8), Inches(5.9), Inches(4.8), C_CARD_WHITE, C_BORDER_ACCENT)
+        card_w = Inches(6.05)
+        card_l = Inches(6.48)
+        create_card(s, card_l, card_top, card_w, card_h, C_CARD_WHITE, C_BORDER_ACCENT)
 
+        img_path = os.path.join(assets_dir, img_name)
         if os.path.exists(img_path):
-            s.shapes.add_picture(img_path, Inches(6.75), Inches(1.95), Inches(5.6), Inches(4.2))
-            cap = s.shapes.add_textbox(Inches(6.75), Inches(6.2), Inches(5.6), Inches(0.3))
-            tf_c = cap.text_frame
+            # Natural aspect ratio: 1980 / 1530 = 1.2941
+            # Perfectly centered inside the card
+            img_h = Inches(3.9)
+            img_w = Inches(3.9 * 1.2941)  # 5.047 inches
+            img_l = card_l + (card_w - img_w) / 2
+            img_t = card_top + Inches(0.2)
+
+            s.shapes.add_picture(img_path, img_l, img_t, img_w, img_h)
+
+            # Centered caption pill badge at bottom
+            cap_w = Inches(5.4)
+            cap_h = Inches(0.38)
+            cap_l = card_l + (card_w - cap_w) / 2
+            cap_t = card_top + Inches(4.35)
+
+            cap_pill = s.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, cap_l, cap_t, cap_w, cap_h)
+            cap_pill.fill.solid()
+            cap_pill.fill.fore_color.rgb = C_CARD
+            cap_pill.line.color.rgb = C_CARD_BORDER
+            cap_pill.line.width = Pt(1)
+            tf_c = cap_pill.text_frame
+            tf_c.margin_left = tf_c.margin_top = tf_c.margin_right = tf_c.margin_bottom = 0
             p_c = tf_c.paragraphs[0]
-            p_c.text = f"📷 Live System Screen: {img_caption}"
+            p_c.text = f"📷 Live Screen: {img_caption}"
             p_c.font.name = "Segoe UI"
-            p_c.font.size = Pt(9.5)
+            p_c.font.size = Pt(9)
             p_c.font.bold = True
             p_c.font.color.rgb = C_TEXT_MUTED
             p_c.alignment = PP_ALIGN.CENTER
@@ -585,37 +664,40 @@ def create_deck():
 
     card_w = Inches(3.75)
     start_x = Inches(0.8)
+    card_top = Inches(1.65)
+    card_h = Inches(4.95)
 
     for i, (suite_name, color, suite_tests) in enumerate(tests):
         cx = start_x + i * (card_w + Inches(0.2))
-        create_card(s11, cx, Inches(1.8), card_w, Inches(4.8), C_CARD, C_CARD_BORDER)
+        create_card(s11, cx, card_top, card_w, card_h, C_CARD, C_CARD_BORDER)
 
-        tb = s11.shapes.add_textbox(cx + Inches(0.25), Inches(2.0), card_w - Inches(0.5), Inches(4.4))
+        tb = s11.shapes.add_textbox(cx + Inches(0.18), card_top + Inches(0.16), card_w - Inches(0.36), card_h - Inches(0.32))
         tf = tb.text_frame
         tf.word_wrap = True
+        tf.margin_left = tf.margin_top = tf.margin_right = tf.margin_bottom = 0
 
         p = tf.paragraphs[0]
         p.text = f"✓ {suite_name}"
         p.font.name = "Segoe UI"
-        p.font.size = Pt(13)
+        p.font.size = Pt(12)
         p.font.bold = True
         p.font.color.rgb = color
-        p.space_after = Pt(12)
+        p.space_after = Pt(8)
 
         for tname, tdesc in suite_tests:
             p = tf.add_paragraph()
             p.text = f"• {tname}"
             p.font.name = "Consolas"
-            p.font.size = Pt(10.5)
+            p.font.size = Pt(9.5)
             p.font.bold = True
             p.font.color.rgb = C_TEXT_HEAD
 
             p2 = tf.add_paragraph()
             p2.text = tdesc
             p2.font.name = "Segoe UI"
-            p2.font.size = Pt(9.5)
+            p2.font.size = Pt(8.5)
             p2.font.color.rgb = C_TEXT_BODY
-            p2.space_after = Pt(8)
+            p2.space_after = Pt(4)
 
     add_footer(s11, 11)
 
@@ -649,34 +731,35 @@ def create_deck():
 
     for i, (dtitle, dcolor, ditems) in enumerate(dep_cards):
         cx = start_x + i * (card_w + Inches(0.2))
-        create_card(s12, cx, Inches(1.8), card_w, Inches(4.8), C_CARD, C_CARD_BORDER)
+        create_card(s12, cx, card_top, card_w, card_h, C_CARD, C_CARD_BORDER)
 
-        tb = s12.shapes.add_textbox(cx + Inches(0.25), Inches(2.0), card_w - Inches(0.5), Inches(4.4))
+        tb = s12.shapes.add_textbox(cx + Inches(0.18), card_top + Inches(0.16), card_w - Inches(0.36), card_h - Inches(0.32))
         tf = tb.text_frame
         tf.word_wrap = True
+        tf.margin_left = tf.margin_top = tf.margin_right = tf.margin_bottom = 0
 
         p = tf.paragraphs[0]
         p.text = dtitle
         p.font.name = "Segoe UI"
-        p.font.size = Pt(13)
+        p.font.size = Pt(12)
         p.font.bold = True
         p.font.color.rgb = dcolor
-        p.space_after = Pt(12)
+        p.space_after = Pt(8)
 
         for ititle, idesc in ditems:
             p = tf.add_paragraph()
             p.text = f"• {ititle}:"
             p.font.name = "Segoe UI"
-            p.font.size = Pt(10.5)
+            p.font.size = Pt(9.5)
             p.font.bold = True
             p.font.color.rgb = C_TEXT_HEAD
 
             p2 = tf.add_paragraph()
             p2.text = idesc
             p2.font.name = "Segoe UI"
-            p2.font.size = Pt(9.5)
+            p2.font.size = Pt(8.5)
             p2.font.color.rgb = C_TEXT_BODY
-            p2.space_after = Pt(8)
+            p2.space_after = Pt(4)
 
     add_footer(s12, 12)
 
@@ -687,18 +770,19 @@ def create_deck():
     add_bg(s13)
     add_header(s13, "Conclusion & Roadmap", "Project Outcomes & Future Scope", "Reflections on project milestones and future directions for telecommunication infrastructure")
 
-    create_card(s13, Inches(0.8), Inches(1.8), Inches(5.6), Inches(4.8), C_CARD, C_EMERALD_BORDER)
-    tb = s13.shapes.add_textbox(Inches(1.1), Inches(2.0), Inches(5.0), Inches(4.4))
+    create_card(s13, Inches(0.8), card_top, Inches(5.7), card_h, C_CARD, C_EMERALD_BORDER)
+    tb = s13.shapes.add_textbox(Inches(1.05), card_top + Inches(0.18), Inches(5.2), card_h - Inches(0.36))
     tf = tb.text_frame
     tf.word_wrap = True
+    tf.margin_left = tf.margin_top = tf.margin_right = tf.margin_bottom = 0
 
     p = tf.paragraphs[0]
     p.text = "🏆 Key Milestones Achieved"
     p.font.name = "Segoe UI"
-    p.font.size = Pt(16)
+    p.font.size = Pt(14.5)
     p.font.bold = True
     p.font.color.rgb = C_EMERALD
-    p.space_after = Pt(12)
+    p.space_after = Pt(8)
 
     achievements = [
         ("Production-Grade Java Desktop System", "Fully working Java 21 / JavaFX desktop software following rigorous MVC separation, equipped with dark/light themes and SQLite persistence."),
@@ -711,28 +795,29 @@ def create_deck():
         p = tf.add_paragraph()
         p.text = f"✓  {atitle}"
         p.font.name = "Segoe UI"
-        p.font.size = Pt(12)
+        p.font.size = Pt(11)
         p.font.bold = True
         p.font.color.rgb = C_TEXT_HEAD
         p2 = tf.add_paragraph()
         p2.text = f"    {adesc}"
         p2.font.name = "Segoe UI"
-        p2.font.size = Pt(10)
+        p2.font.size = Pt(9)
         p2.font.color.rgb = C_TEXT_BODY
-        p2.space_after = Pt(8)
+        p2.space_after = Pt(5)
 
-    create_card(s13, Inches(6.9), Inches(1.8), Inches(5.6), Inches(4.8), C_CARD, C_BLUE_BORDER)
-    tb2 = s13.shapes.add_textbox(Inches(7.2), Inches(2.0), Inches(5.0), Inches(4.4))
+    create_card(s13, Inches(6.83), card_top, Inches(5.7), card_h, C_CARD, C_BLUE_BORDER)
+    tb2 = s13.shapes.add_textbox(Inches(7.08), card_top + Inches(0.18), Inches(5.2), card_h - Inches(0.95))
     tf2 = tb2.text_frame
     tf2.word_wrap = True
+    tf2.margin_left = tf2.margin_top = tf2.margin_right = tf2.margin_bottom = 0
 
     p = tf2.paragraphs[0]
     p.text = "🚀 Future Enhancement Roadmap"
     p.font.name = "Segoe UI"
-    p.font.size = Pt(16)
+    p.font.size = Pt(14.5)
     p.font.bold = True
     p.font.color.rgb = C_BLUE
-    p.space_after = Pt(12)
+    p.space_after = Pt(8)
 
     roadmap = [
         ("Online Payment Gateway Integration", "Direct integration with Razorpay / Stripe webhooks for instant automated invoice settlement without manual intervention."),
@@ -745,23 +830,31 @@ def create_deck():
         p = tf2.add_paragraph()
         p.text = f"➔  {rtitle}"
         p.font.name = "Segoe UI"
-        p.font.size = Pt(12)
+        p.font.size = Pt(11)
         p.font.bold = True
         p.font.color.rgb = C_TEXT_HEAD
         p2 = tf2.add_paragraph()
         p2.text = f"    {rdesc}"
         p2.font.name = "Segoe UI"
-        p2.font.size = Pt(10)
+        p2.font.size = Pt(9)
         p2.font.color.rgb = C_TEXT_BODY
-        p2.space_after = Pt(8)
+        p2.space_after = Pt(5)
 
-    p = tf2.add_paragraph()
-    p.text = "Thank You! Questions & Discussion Welcome."
-    p.font.name = "Segoe UI"
-    p.font.size = Pt(12.5)
-    p.font.bold = True
-    p.font.color.rgb = C_AMBER
-    p.alignment = PP_ALIGN.CENTER
+    # Centered Thank You pill badge at bottom of right card
+    thank_pill = s13.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(7.08), card_top + card_h - Inches(0.65), Inches(5.2), Inches(0.48))
+    thank_pill.fill.solid()
+    thank_pill.fill.fore_color.rgb = C_BLUE_LIGHT
+    thank_pill.line.color.rgb = C_BLUE_BORDER
+    thank_pill.line.width = Pt(1)
+    tf_tp = thank_pill.text_frame
+    tf_tp.margin_left = tf_tp.margin_top = tf_tp.margin_right = tf_tp.margin_bottom = 0
+    p_tp = tf_tp.paragraphs[0]
+    p_tp.text = "🎉 Thank You! Questions & Discussion Welcome."
+    p_tp.font.name = "Segoe UI"
+    p_tp.font.size = Pt(11)
+    p_tp.font.bold = True
+    p_tp.font.color.rgb = C_BLUE
+    p_tp.alignment = PP_ALIGN.CENTER
 
     add_footer(s13, 13)
 
