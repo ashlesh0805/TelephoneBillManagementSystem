@@ -1,28 +1,41 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Apex Telecom — Telephone Billing & Subscriber Management</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Apex Vintage Telecom — STD Booth & Telephone Bills</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
-                        brand: {
-                            50: '#eff6ff',
-                            100: '#dbeafe',
-                            500: '#3b82f6',
-                            600: '#2563eb',
-                            700: '#1d4ed8',
-                            900: '#1e3a8a',
+                        jio: {
+                            navy: '#061b58',
+                            blue: '#0a2885',
+                            royal: '#0050d8',
+                            electric: '#0f60ff',
+                            light: '#eef4ff',
+                            dark: '#030d2d',
                         },
-                        darkBg: '#0b0f19',
-                        darkCard: '#111827',
-                        darkBorder: '#1f2937'
+                        vintage: {
+                            brass: '#d97706',
+                            cream: '#fef3c7',
+                            pco: '#b45309',
+                            paper: '#faf8f5',
+                            stamp: '#b91c1c'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+                        mono: ['Consolas', 'Courier New', 'monospace'],
+                        voucher: ['Courier Prime', 'Courier', 'monospace']
+                    },
+                    boxShadow: {
+                        'jio': '0 10px 25px -5px rgba(10, 40, 133, 0.2), 0 8px 10px -6px rgba(10, 40, 133, 0.1)',
+                        'card': '0 4px 20px -2px rgba(15, 23, 42, 0.06)',
+                        'glow': '0 0 20px rgba(15, 96, 255, 0.35)'
                     }
                 }
             }
@@ -30,794 +43,1031 @@
     </script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- jsPDF & html2pdf -->
+    <!-- html2pdf for vector invoice export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=VT323&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f1f4f9;
+            color: #0f172a;
+            -webkit-tap-highlight-color: transparent;
         }
-        /* Custom scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.3); border-radius: 4px; }
-        .tab-btn.active {
-            background-color: #2563eb;
-            color: #ffffff;
-            font-weight: 600;
+        .vfd-display {
+            font-family: 'VT323', monospace;
+            background: #0d1f18;
+            color: #34d399;
+            text-shadow: 0 0 8px rgba(52, 211, 153, 0.7);
+            letter-spacing: 1px;
         }
+        .vintage-receipt {
+            font-family: 'Courier Prime', Courier, monospace;
+            background: #faf8f3;
+            background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
+            background-size: 16px 16px;
+        }
+        /* Mobile Frame Styling on desktop */
+        .mobile-shell {
+            max-width: 440px;
+            width: 100%;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: #ffffff;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.18);
+            transition: max-width 0.3s ease;
+        }
+        .mobile-shell.wide-mode {
+            max-width: 1024px;
+        }
+        /* Pulse wave animation for live call */
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.15); opacity: 0.3; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+        .pulsing-line {
+            animation: pulse-ring 2s infinite ease-in-out;
+        }
+        /* Hide scrollbars but allow scrolling */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="bg-slate-50 dark:bg-darkBg text-slate-800 dark:text-slate-100 min-h-screen flex flex-col md:flex-row antialiased transition-colors duration-200">
+<body class="bg-slate-100 flex flex-col items-center justify-start min-h-screen">
 
-    <!-- Mobile Header -->
-    <div class="md:hidden flex items-center justify-between p-4 bg-white dark:bg-darkCard border-b border-slate-200 dark:border-darkBorder">
+    <!-- Top Floating Controls for Desktop / Presenter Evaluation -->
+    <header class="w-full bg-slate-900 text-white text-xs px-4 py-2 flex items-center justify-between z-50 shrink-0 border-b border-slate-800 shadow-md">
         <div class="flex items-center space-x-2">
-            <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold">⚡</div>
-            <span class="font-extrabold text-lg tracking-wide">APEX TELCO</span>
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span class="font-bold tracking-wider text-blue-400">APEX VINTAGE TELECOM</span>
+            <span class="text-slate-400 hidden sm:inline">| Dept of Telecom (DoT) PCO / STD Booth Suite</span>
         </div>
-        <button id="mobileMenuBtn" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800">
-            <i data-lucide="menu" class="w-5 h-5"></i>
-        </button>
+        <div class="flex items-center space-x-3">
+            <button onclick="toggleViewportMode()" id="viewportToggleBtn" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition flex items-center space-x-1.5 font-medium">
+                <i data-lucide="smartphone" class="w-3.5 h-3.5 text-blue-400"></i>
+                <span id="viewportModeText">Expand to Wide View</span>
+            </button>
+            <button onclick="toggleAudioMute()" id="audioToggleBtn" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition flex items-center space-x-1">
+                <i data-lucide="volume-2" class="w-3.5 h-3.5 text-emerald-400" id="audioIcon"></i>
+                <span id="audioStatusText" class="text-[11px]">Dialer Audio: ON</span>
+            </button>
+            <a href="https://github.com/ashlesh0805/TelephoneBillManagementSystem" target="_blank" class="px-2 py-1 rounded bg-blue-600 hover:bg-blue-500 text-white font-bold transition flex items-center space-x-1">
+                <svg class="w-3 h-3 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                <span>Source</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- FLOATING REAL-TIME SMS NOTIFICATION TOAST (Simulating Live SMS Delivery) -->
+    <div id="smsToast" class="fixed top-12 z-50 max-w-sm w-11/12 bg-white rounded-2xl shadow-2xl border border-blue-200 p-3.5 transition-all duration-300 transform -translate-y-24 opacity-0 pointer-events-none">
+        <div class="flex items-start space-x-3">
+            <div class="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white shrink-0 shadow-md shadow-blue-500/30">
+                <i data-lucide="message-square" class="w-5 h-5"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between">
+                    <span class="text-[11px] font-black uppercase text-blue-700 tracking-wider">JM-APEXTEL (SMS)</span>
+                    <span class="text-[10px] text-slate-400 font-mono" id="smsTime">Just now</span>
+                </div>
+                <p class="text-xs text-slate-800 mt-0.5 leading-snug">
+                    Your OTP for Apex Vintage Telecom STD Booth login is <strong id="smsOtpCode" class="text-blue-600 font-mono text-sm bg-blue-50 px-1 py-0.5 rounded border border-blue-200 font-black">------</strong>. Valid for 10 mins. Do not share.
+                </p>
+                <div class="mt-2 flex items-center space-x-2">
+                    <button onclick="quickFillOtp()" class="px-2 py-0.5 rounded-lg bg-blue-600 text-white text-[11px] font-bold shadow-sm hover:bg-blue-700 transition">
+                        ⚡ Quick Auto-Fill
+                    </button>
+                    <button onclick="dismissSmsToast()" class="text-[11px] text-slate-500 hover:text-slate-800">
+                        Dismiss
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Sidebar Navigation -->
-    <aside id="sidebar" class="hidden md:flex flex-col w-64 bg-slate-900 text-slate-300 p-5 space-y-6 shrink-0 min-h-screen border-r border-slate-800">
-        <!-- Brand Header -->
-        <div class="flex items-center space-x-3 px-2 py-1">
-            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-400 flex items-center justify-center text-white font-black text-xl shadow-lg shadow-blue-500/30">
-                ⚡
-            </div>
-            <div>
-                <h1 class="font-black text-lg tracking-wider text-white">APEX TELCO</h1>
-                <p class="text-[11px] font-medium text-slate-400">Billing & Subscriber Suite</p>
-            </div>
-        </div>
+    <!-- MAIN APP CONTAINER (MyJio-Inspired Mobile Application) -->
+    <main id="mobileShell" class="mobile-shell flex flex-col flex-1 pb-32 overflow-x-hidden">
 
-        <!-- Navigation Links -->
-        <nav class="flex-1 space-y-1.5">
-            <button onclick="switchTab('dashboard')" class="tab-btn w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm transition-all duration-150 active" data-tab="dashboard">
-                <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
-                <span>Dashboard</span>
-            </button>
-            <button onclick="switchTab('customers')" class="tab-btn w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm transition-all duration-150 hover:bg-slate-800 text-slate-300" data-tab="customers">
-                <i data-lucide="users" class="w-4 h-4"></i>
-                <span>Subscribers</span>
-            </button>
-            <button onclick="switchTab('calls')" class="tab-btn w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm transition-all duration-150 hover:bg-slate-800 text-slate-300" data-tab="calls">
-                <i data-lucide="phone-call" class="w-4 h-4"></i>
-                <span>Call Records (CDR)</span>
-            </button>
-            <button onclick="switchTab('bills')" class="tab-btn w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm transition-all duration-150 hover:bg-slate-800 text-slate-300" data-tab="bills">
-                <i data-lucide="receipt" class="w-4 h-4"></i>
-                <span>Bills & Invoices</span>
-            </button>
-            <button onclick="switchTab('plans')" class="tab-btn w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm transition-all duration-150 hover:bg-slate-800 text-slate-300" data-tab="plans">
-                <i data-lucide="tags" class="w-4 h-4"></i>
-                <span>Tariff Plans</span>
-            </button>
-            <button onclick="switchTab('reports')" class="tab-btn w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm transition-all duration-150 hover:bg-slate-800 text-slate-300" data-tab="reports">
-                <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
-                <span>Analytics & Reports</span>
-            </button>
-        </nav>
-
-        <!-- User Profile & Settings Box -->
-        <div class="pt-4 border-t border-slate-800 space-y-3">
-            <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-800/60 border border-slate-700/50">
-                <div class="flex items-center space-x-2.5">
-                    <div class="w-8 h-8 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold text-xs">
-                        AD
+        <!-- ============================================================ -->
+        <!-- SCREEN 0: REAL-TIME SMS OTP LOGIN (When not authenticated) -->
+        <!-- ============================================================ -->
+        <section id="screenLogin" class="p-6 flex flex-col justify-between min-h-[92vh]">
+            <div class="space-y-6 pt-4">
+                <!-- Brand Badge & Header -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-jio-navy via-jio-royal to-jio-electric flex items-center justify-center text-white text-2xl shadow-lg shadow-blue-900/25">
+                        ☎️
                     </div>
                     <div>
-                        <p class="text-xs font-bold text-white" id="currentUserName">Administrator</p>
-                        <p class="text-[10px] text-emerald-400 font-semibold uppercase tracking-wider">System Active</p>
-                    </div>
-                </div>
-                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30">ADMIN</span>
-            </div>
-
-            <div class="flex items-center space-x-2">
-                <button onclick="toggleTheme()" class="flex-1 flex items-center justify-center space-x-2 py-2 px-3 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
-                    <i data-lucide="sun-moon" class="w-3.5 h-3.5"></i>
-                    <span id="themeBtnText">Light Mode</span>
-                </button>
-                <button onclick="resetDemoData()" title="Reset to initial seed data" class="py-2 px-2.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-amber-400 border border-slate-700 transition">
-                    <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
-                </button>
-            </div>
-        </div>
-    </aside>
-
-    <!-- Main Content Area -->
-    <main class="flex-1 flex flex-col min-w-0 overflow-y-auto">
-        <!-- Top Bar Header -->
-        <header class="hidden md:flex items-center justify-between px-8 py-4 bg-white dark:bg-darkCard border-b border-slate-200 dark:border-darkBorder shrink-0">
-            <div>
-                <h2 id="pageTitle" class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Operational Dashboard</h2>
-                <p id="pageSubtitle" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Real-time metrics, revenue performance, and key telecom indicators</p>
-            </div>
-            <div class="flex items-center space-x-4">
-                <span id="liveDate" class="text-xs font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800/80 px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-700"></span>
-                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                    Telecom Engine v1.0
-                </span>
-            </div>
-        </header>
-
-        <!-- View Container -->
-        <div class="p-6 md:p-8 space-y-6 flex-1">
-
-            <!-- 1. DASHBOARD TAB -->
-            <section id="tab-dashboard" class="space-y-6">
-                <!-- 4 KPI Summary Cards -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                    <!-- Monthly Revenue -->
-                    <div class="p-5 rounded-2xl bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder shadow-sm relative overflow-hidden">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Monthly Revenue</span>
-                            <div class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center">
-                                <i data-lucide="indian-rupee" class="w-4 h-4"></i>
-                            </div>
+                        <div class="flex items-center space-x-1.5">
+                            <span class="text-xs font-black tracking-widest text-jio-blue uppercase">APEX VINTAGE</span>
+                            <span class="text-[10px] font-bold bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded border border-amber-300">STD/PCO</span>
                         </div>
-                        <h3 id="statRevenue" class="text-2xl font-black text-slate-900 dark:text-white mt-3">₹0.00</h3>
-                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Current billing period collections</p>
-                        <div class="absolute bottom-0 left-0 right-0 h-1 bg-blue-500"></div>
-                    </div>
-
-                    <!-- Active Subscribers -->
-                    <div class="p-5 rounded-2xl bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder shadow-sm relative overflow-hidden">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Active Subscribers</span>
-                            <div class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-                                <i data-lucide="users" class="w-4 h-4"></i>
-                            </div>
-                        </div>
-                        <h3 id="statSubscribers" class="text-2xl font-black text-slate-900 dark:text-white mt-3">0 Active</h3>
-                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Provisioned & billable lines</p>
-                        <div class="absolute bottom-0 left-0 right-0 h-1 bg-emerald-500"></div>
-                    </div>
-
-                    <!-- Overdue Bills -->
-                    <div class="p-5 rounded-2xl bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder shadow-sm relative overflow-hidden">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Overdue Invoices</span>
-                            <div class="w-8 h-8 rounded-lg bg-rose-50 dark:bg-rose-950 text-rose-600 dark:text-rose-400 flex items-center justify-center">
-                                <i data-lucide="alert-triangle" class="w-4 h-4"></i>
-                            </div>
-                        </div>
-                        <h3 id="statOverdue" class="text-2xl font-black text-rose-600 dark:text-rose-400 mt-3">0 Invoices</h3>
-                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Pending payment past due date</p>
-                        <div class="absolute bottom-0 left-0 right-0 h-1 bg-rose-500"></div>
-                    </div>
-
-                    <!-- Telecom Minutes -->
-                    <div class="p-5 rounded-2xl bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder shadow-sm relative overflow-hidden">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Total Telecom Usage</span>
-                            <div class="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
-                                <i data-lucide="phone-forwarded" class="w-4 h-4"></i>
-                            </div>
-                        </div>
-                        <h3 id="statMinutes" class="text-2xl font-black text-slate-900 dark:text-white mt-3">0 mins</h3>
-                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Logged across CDR database</p>
-                        <div class="absolute bottom-0 left-0 right-0 h-1 bg-indigo-500"></div>
+                        <h1 class="text-2xl font-black text-slate-900 tracking-tight">Telephone Bill Suite</h1>
                     </div>
                 </div>
 
-                <!-- Charts Row -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <!-- Revenue Trends Bar Chart -->
-                    <div class="lg:col-span-2 p-6 rounded-2xl bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder shadow-sm space-y-4">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <h4 class="font-bold text-base text-slate-900 dark:text-white">Monthly Billing Trend</h4>
-                                <p class="text-xs text-slate-500">Invoiced volume across recent billing periods (₹)</p>
-                            </div>
-                            <span class="text-xs font-semibold px-2.5 py-1 rounded bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-400">6 Months</span>
-                        </div>
-                        <div class="h-64">
-                            <canvas id="revenueChart"></canvas>
-                        </div>
-                    </div>
-
-                    <!-- Plan Distribution Doughnut -->
-                    <div class="p-6 rounded-2xl bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder shadow-sm space-y-4">
-                        <div>
-                            <h4 class="font-bold text-base text-slate-900 dark:text-white">Plan Distribution</h4>
-                            <p class="text-xs text-slate-500">Subscriber count by tariff package</p>
-                        </div>
-                        <div class="h-64 flex items-center justify-center">
-                            <canvas id="planChart"></canvas>
-                        </div>
-                    </div>
+                <!-- Welcome Note -->
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50/50 p-4 rounded-2xl border border-blue-100">
+                    <h2 class="text-sm font-bold text-jio-blue flex items-center space-x-1.5">
+                        <i data-lucide="shield-check" class="w-4 h-4 text-jio-electric"></i>
+                        <span>Secure Telecom Subscriber Login</span>
+                    </h2>
+                    <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                        Access your Landline, PCO Booth, and Trunk Call billing records via instant SMS One-Time Password (OTP) verification.
+                    </p>
                 </div>
 
-                <!-- Quick Actions Panel -->
-                <div class="p-6 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-700 text-white shadow-lg shadow-blue-500/20 flex flex-col md:flex-row items-center justify-between gap-4">
-                    <div class="space-y-1 text-center md:text-left">
-                        <h4 class="font-black text-lg">College Viva & Demo Controls</h4>
-                        <p class="text-xs text-blue-100 max-w-xl">Generate a monthly bill, log calls with prefix detection, or inspect the Airtel/Jio styled PDF invoice with a single click.</p>
-                    </div>
-                    <div class="flex flex-wrap gap-2.5">
-                        <button onclick="openGenerateBillModal()" class="px-4 py-2 rounded-xl text-xs font-bold bg-white text-blue-700 hover:bg-blue-50 transition shadow-sm">
-                            + Generate Monthly Bill
-                        </button>
-                        <button onclick="openLogCallModal()" class="px-4 py-2 rounded-xl text-xs font-bold bg-blue-800/70 hover:bg-blue-800 text-white border border-blue-400/30 transition">
-                            + Log Call (CDR)
-                        </button>
-                        <button onclick="openAddCustomerModal()" class="px-4 py-2 rounded-xl text-xs font-bold bg-blue-800/70 hover:bg-blue-800 text-white border border-blue-400/30 transition">
-                            + Add Subscriber
-                        </button>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 2. SUBSCRIBERS TAB -->
-            <section id="tab-customers" class="hidden space-y-6">
-                <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <div class="flex items-center space-x-3 w-full sm:w-auto">
-                        <div class="relative w-full sm:w-72">
-                            <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                            <input type="text" id="customerSearch" oninput="filterCustomers()" placeholder="Search by name, phone, email..." class="w-full pl-9 pr-4 py-2 text-xs rounded-xl bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <!-- STEP 1: ENTER PHONE NUMBER -->
+                <div id="loginStepPhone" class="space-y-4">
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                            Mobile / Landline Number
+                        </label>
+                        <div class="flex items-center rounded-2xl border-2 border-slate-200 bg-white px-3.5 py-2.5 focus-within:border-jio-electric transition-all shadow-sm">
+                            <span class="text-sm font-bold text-slate-500 border-r border-slate-200 pr-3 mr-3 font-mono flex items-center space-x-1">
+                                <span>🇮🇳</span>
+                                <span>+91</span>
+                            </span>
+                            <input type="tel" id="inputPhone" maxlength="10" placeholder="Enter 10-digit number"
+                                   class="w-full text-base font-bold text-slate-900 focus:outline-none placeholder:text-slate-400 font-mono tracking-wider">
                         </div>
-                        <select id="customerStatusFilter" onchange="filterCustomers()" class="py-2 px-3 text-xs rounded-xl bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder focus:outline-none">
-                            <option value="ALL">All Statuses</option>
-                            <option value="ACTIVE">Active</option>
-                            <option value="SUSPENDED">Suspended</option>
-                            <option value="INACTIVE">Inactive</option>
-                        </select>
+                        <p class="text-[11px] text-slate-500 flex items-center space-x-1">
+                            <i data-lucide="info" class="w-3.5 h-3.5 text-blue-500 shrink-0"></i>
+                            <span>Enter any number or pick a demo subscriber below</span>
+                        </p>
                     </div>
-                    <button onclick="openAddCustomerModal()" class="w-full sm:w-auto px-4 py-2 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center space-x-2 transition shadow-sm">
-                        <i data-lucide="user-plus" class="w-4 h-4"></i>
-                        <span>Register New Subscriber</span>
+
+                    <!-- Quick Demo Accounts Chips -->
+                    <div class="space-y-2 pt-1">
+                        <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Quick Demo Subscribers:</span>
+                        <div class="grid grid-cols-1 gap-2">
+                            <button onclick="selectDemoUser('9849012345')" class="demo-chip text-left p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-blue-50/60 hover:border-blue-300 transition flex items-center justify-between">
+                                <div>
+                                    <h4 class="text-xs font-bold text-slate-900">Rajesh Sharma</h4>
+                                    <p class="text-[11px] text-slate-500">Postpaid Silver (Hyderabad STD 040)</p>
+                                </div>
+                                <span class="text-[11px] font-mono font-bold text-jio-blue bg-blue-50 px-2 py-0.5 rounded border border-blue-200">9849012345</span>
+                            </button>
+                            <button onclick="selectDemoUser('9823098765')" class="demo-chip text-left p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-blue-50/60 hover:border-blue-300 transition flex items-center justify-between">
+                                <div>
+                                    <h4 class="text-xs font-bold text-slate-900">Priya Patel</h4>
+                                    <p class="text-[11px] text-slate-500">STD Booth Commercial (Mumbai STD 022)</p>
+                                </div>
+                                <span class="text-[11px] font-mono font-bold text-jio-blue bg-blue-50 px-2 py-0.5 rounded border border-blue-200">9823098765</span>
+                            </button>
+                            <button onclick="selectDemoUser('9440123456')" class="demo-chip text-left p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-blue-50/60 hover:border-blue-300 transition flex items-center justify-between">
+                                <div>
+                                    <h4 class="text-xs font-bold text-slate-900">Sneha Reddy</h4>
+                                    <p class="text-[11px] text-slate-500">DoT Rotary Pulse (Bangalore STD 080)</p>
+                                </div>
+                                <span class="text-[11px] font-mono font-bold text-jio-blue bg-blue-50 px-2 py-0.5 rounded border border-blue-200">9440123456</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button onclick="requestSmsOtp()" id="btnGenerateOtp"
+                            class="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-jio-blue to-jio-electric hover:opacity-95 text-white font-bold text-sm shadow-lg shadow-blue-600/30 transition transform active:scale-[0.99] flex items-center justify-center space-x-2">
+                        <span>Generate SMS OTP</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
                     </button>
                 </div>
 
-                <!-- Table Card -->
-                <div class="rounded-2xl bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder shadow-sm overflow-hidden">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs">
-                            <thead class="bg-slate-50 dark:bg-slate-800/50 text-slate-500 uppercase font-bold text-[10px] tracking-wider border-b border-slate-200 dark:border-darkBorder">
-                                <tr>
-                                    <th class="p-4">ID</th>
-                                    <th class="p-4">Subscriber</th>
-                                    <th class="p-4">Phone</th>
-                                    <th class="p-4">Email</th>
-                                    <th class="p-4">Address</th>
-                                    <th class="p-4">Plan</th>
-                                    <th class="p-4">Status</th>
-                                    <th class="p-4 text-right">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="customersTableBody" class="divide-y divide-slate-100 dark:divide-darkBorder">
-                                <!-- Populated dynamically -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 3. CALL RECORDS TAB -->
-            <section id="tab-calls" class="hidden space-y-6">
-                <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <div class="flex items-center space-x-3 w-full sm:w-auto">
-                        <select id="callCustomerFilter" onchange="filterCalls()" class="py-2 px-3 text-xs rounded-xl bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder focus:outline-none">
-                            <option value="ALL">All Subscribers</option>
-                        </select>
-                        <select id="callTypeFilter" onchange="filterCalls()" class="py-2 px-3 text-xs rounded-xl bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder focus:outline-none">
-                            <option value="ALL">All Call Types</option>
-                            <option value="LOCAL">Local Call</option>
-                            <option value="STD">National STD</option>
-                            <option value="ISD">International ISD</option>
-                        </select>
-                    </div>
-                    <div class="flex items-center space-x-2 w-full sm:w-auto">
-                        <label class="cursor-pointer px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 flex items-center justify-center space-x-2 transition border border-slate-300 dark:border-slate-700">
-                            <i data-lucide="upload" class="w-4 h-4"></i>
-                            <span>Bulk CSV Import</span>
-                            <input type="file" id="csvFileInput" accept=".csv" class="hidden" onchange="handleCsvImport(event)">
-                        </label>
-                        <button onclick="openLogCallModal()" class="px-4 py-2 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center space-x-2 transition shadow-sm">
-                            <i data-lucide="phone-outgoing" class="w-4 h-4"></i>
-                            <span>+ Log Single Call</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Calls Table -->
-                <div class="rounded-2xl bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder shadow-sm overflow-hidden">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs">
-                            <thead class="bg-slate-50 dark:bg-slate-800/50 text-slate-500 uppercase font-bold text-[10px] tracking-wider border-b border-slate-200 dark:border-darkBorder">
-                                <tr>
-                                    <th class="p-4">CDR ID</th>
-                                    <th class="p-4">Timestamp</th>
-                                    <th class="p-4">Calling Subscriber</th>
-                                    <th class="p-4">Dialed Number</th>
-                                    <th class="p-4">Classification</th>
-                                    <th class="p-4">Duration</th>
-                                    <th class="p-4">Tariff Cost</th>
-                                    <th class="p-4 text-right">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="callsTableBody" class="divide-y divide-slate-100 dark:divide-darkBorder">
-                                <!-- Populated dynamically -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 4. BILLS & INVOICES TAB -->
-            <section id="tab-bills" class="hidden space-y-6">
-                <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <div class="flex items-center space-x-3 w-full sm:w-auto">
-                        <div class="relative w-full sm:w-64">
-                            <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                            <input type="text" id="billSearch" oninput="filterBills()" placeholder="Search invoice # or subscriber..." class="w-full pl-9 pr-4 py-2 text-xs rounded-xl bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder focus:outline-none">
+                <!-- STEP 2: ENTER & VERIFY OTP -->
+                <div id="loginStepOtp" class="space-y-5 hidden">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-sm font-bold text-slate-900">Verify One-Time Password</h3>
+                            <p class="text-xs text-slate-500">Sent via SMS to <span id="displayOtpPhone" class="font-mono font-bold text-jio-blue">+91 ----------</span></p>
                         </div>
-                        <select id="billStatusFilter" onchange="filterBills()" class="py-2 px-3 text-xs rounded-xl bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder focus:outline-none">
-                            <option value="ALL">All Invoices</option>
-                            <option value="PAID">Paid</option>
-                            <option value="UNPAID">Unpaid</option>
-                            <option value="OVERDUE">Overdue</option>
-                        </select>
-                    </div>
-                    <div class="flex items-center space-x-2 w-full sm:w-auto">
-                        <button onclick="exportBillsCsv()" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 flex items-center justify-center space-x-2 transition border border-slate-300 dark:border-slate-700">
-                            <i data-lucide="download" class="w-4 h-4"></i>
-                            <span>Export CSV</span>
+                        <button onclick="backToPhoneStep()" class="text-xs text-jio-electric font-bold hover:underline">
+                            Change
                         </button>
-                        <button onclick="openGenerateBillModal()" class="px-4 py-2 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center space-x-2 transition shadow-sm">
-                            <i data-lucide="plus-circle" class="w-4 h-4"></i>
-                            <span>+ Generate Monthly Bill</span>
+                    </div>
+
+                    <!-- 6-Digit PIN Boxes -->
+                    <div class="flex justify-between space-x-2">
+                        <input type="text" maxlength="1" class="otp-box w-12 h-14 text-center font-mono text-xl font-black rounded-2xl border-2 border-slate-200 focus:border-jio-electric focus:bg-blue-50/30 outline-none transition" data-index="0" inputmode="numeric">
+                        <input type="text" maxlength="1" class="otp-box w-12 h-14 text-center font-mono text-xl font-black rounded-2xl border-2 border-slate-200 focus:border-jio-electric focus:bg-blue-50/30 outline-none transition" data-index="1" inputmode="numeric">
+                        <input type="text" maxlength="1" class="otp-box w-12 h-14 text-center font-mono text-xl font-black rounded-2xl border-2 border-slate-200 focus:border-jio-electric focus:bg-blue-50/30 outline-none transition" data-index="2" inputmode="numeric">
+                        <input type="text" maxlength="1" class="otp-box w-12 h-14 text-center font-mono text-xl font-black rounded-2xl border-2 border-slate-200 focus:border-jio-electric focus:bg-blue-50/30 outline-none transition" data-index="3" inputmode="numeric">
+                        <input type="text" maxlength="1" class="otp-box w-12 h-14 text-center font-mono text-xl font-black rounded-2xl border-2 border-slate-200 focus:border-jio-electric focus:bg-blue-50/30 outline-none transition" data-index="4" inputmode="numeric">
+                        <input type="text" maxlength="1" class="otp-box w-12 h-14 text-center font-mono text-xl font-black rounded-2xl border-2 border-slate-200 focus:border-jio-electric focus:bg-blue-50/30 outline-none transition" data-index="5" inputmode="numeric">
+                    </div>
+
+                    <!-- Resend countdown timer -->
+                    <div class="flex items-center justify-between text-xs">
+                        <span id="otpTimerText" class="text-slate-500 font-medium">Resend OTP in <strong id="otpTimerSecs" class="font-mono text-slate-800">30s</strong></span>
+                        <button onclick="resendOtp()" id="btnResendOtp" class="text-jio-electric font-bold hover:underline disabled:opacity-40 disabled:no-underline" disabled>
+                            Resend OTP
+                        </button>
+                    </div>
+
+                    <div id="otpErrorMsg" class="hidden p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-medium flex items-center space-x-1.5">
+                        <i data-lucide="alert-circle" class="w-4 h-4 shrink-0"></i>
+                        <span>Invalid OTP code entered. Please check the SMS banner.</span>
+                    </div>
+
+                    <button onclick="verifyOtpAndLogin()" id="btnVerifyOtp"
+                            class="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-jio-blue to-jio-electric hover:opacity-95 text-white font-bold text-sm shadow-lg shadow-blue-600/30 transition transform active:scale-[0.99] flex items-center justify-center space-x-2">
+                        <i data-lucide="check-circle" class="w-4 h-4"></i>
+                        <span>Verify & Open App</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Vintage PCO Footer Notice -->
+            <div class="pt-6 border-t border-slate-200 text-center space-y-1">
+                <p class="text-[11px] text-slate-500 font-mono">Department of Telecommunications (DoT) Regulations</p>
+                <p class="text-[10px] text-slate-400">Standard 60-Second Pulse Ceiling & Statutory 18% GST Compliance</p>
+            </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- AUTHENTICATED APP SCREENS (Visible after successful SMS OTP) -->
+        <!-- ============================================================ -->
+        <div id="appBody" class="hidden">
+
+            <!-- MYJIO-INSPIRED APP HEADER -->
+            <header class="bg-gradient-to-b from-jio-navy to-jio-blue text-white p-4 pt-5 rounded-b-[2rem] shadow-xl space-y-4">
+                <!-- Top Row: Logo, Switch Account, Profile -->
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-2.5">
+                        <div class="w-8 h-8 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center text-lg border border-white/20">
+                            ☎️
+                        </div>
+                        <div>
+                            <span class="text-[10px] font-black uppercase text-blue-200 tracking-wider">APEX VINTAGE TELECOM</span>
+                            <div class="flex items-center space-x-1 cursor-pointer" onclick="toggleAccountPicker()">
+                                <h2 id="headerSubscriberName" class="text-sm font-black text-white">Rajesh Sharma</h2>
+                                <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-blue-200"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Line Diagnostics & Logout -->
+                    <div class="flex items-center space-x-2">
+                        <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[10px] font-bold flex items-center space-x-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+                            <span>Line Clear</span>
+                        </span>
+                        <button onclick="logout()" title="Logout" class="p-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white transition border border-white/20">
+                            <i data-lucide="log-out" class="w-4 h-4"></i>
                         </button>
                     </div>
                 </div>
 
-                <!-- Bills Table -->
-                <div class="rounded-2xl bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder shadow-sm overflow-hidden">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs">
-                            <thead class="bg-slate-50 dark:bg-slate-800/50 text-slate-500 uppercase font-bold text-[10px] tracking-wider border-b border-slate-200 dark:border-darkBorder">
-                                <tr>
-                                    <th class="p-4">Invoice #</th>
-                                    <th class="p-4">Subscriber</th>
-                                    <th class="p-4">Cycle</th>
-                                    <th class="p-4">Rental (₹)</th>
-                                    <th class="p-4">Calls (₹)</th>
-                                    <th class="p-4">GST 18% (₹)</th>
-                                    <th class="p-4 font-bold text-slate-900 dark:text-white">Payable (₹)</th>
-                                    <th class="p-4">Due Date</th>
-                                    <th class="p-4">Status</th>
-                                    <th class="p-4 text-right">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="billsTableBody" class="divide-y divide-slate-100 dark:divide-darkBorder">
-                                <!-- Populated dynamically -->
-                            </tbody>
-                        </table>
+                <!-- Account Switcher Drawer (Hidden by default) -->
+                <div id="accountPickerDrawer" class="hidden p-3 rounded-2xl bg-white text-slate-900 shadow-2xl border border-blue-200 space-y-2">
+                    <div class="flex items-center justify-between pb-1 border-b border-slate-100">
+                        <span class="text-[11px] font-bold text-slate-500 uppercase">Switch Active STD Connection</span>
+                        <button onclick="toggleAccountPicker()" class="text-xs text-slate-400 hover:text-slate-700 font-bold">✕ Close</button>
+                    </div>
+                    <div id="accountPickerList" class="space-y-1.5 max-h-48 overflow-y-auto">
+                        <!-- Dynamically populated -->
+                    </div>
+                </div>
+
+                <!-- Connection Mini Pills -->
+                <div class="flex items-center justify-between text-[11px] pt-1 text-blue-100/90 font-medium">
+                    <span class="flex items-center space-x-1">
+                        <i data-lucide="phone" class="w-3.5 h-3.5 text-blue-300"></i>
+                        <span id="headerPhone" class="font-mono">040-27654321</span>
+                    </span>
+                    <span class="flex items-center space-x-1">
+                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-amber-300"></i>
+                        <span id="headerCircle">Hyderabad Telecom Circle</span>
+                    </span>
+                    <span class="font-mono bg-blue-900/60 px-2 py-0.5 rounded-md border border-blue-400/30 text-[10px] text-blue-200">
+                        16kHz Pulse Active
+                    </span>
+                </div>
+            </header>
+
+            <!-- ======================================================== -->
+            <!-- TAB 1: HOME (Dashboard, Outstanding Bill, Vintage Gauges) -->
+            <!-- ======================================================== -->
+            <section id="tabHome" class="p-4 space-y-5 tab-content">
+                
+                <!-- MYJIO SIGNATURE HERO BILLING CARD -->
+                <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-jio-navy via-jio-royal to-jio-electric text-white p-5 shadow-jio space-y-4">
+                    <!-- Background ambient light rings -->
+                    <div class="absolute -right-12 -top-12 w-44 h-44 rounded-full bg-white/10 pointer-events-none blur-xl"></div>
+                    <div class="absolute -left-12 -bottom-12 w-36 h-36 rounded-full bg-blue-400/20 pointer-events-none blur-lg"></div>
+
+                    <div class="flex items-center justify-between relative z-10">
+                        <div>
+                            <span class="text-[11px] font-bold text-blue-200 uppercase tracking-wider">Active Telephone Plan</span>
+                            <h3 id="homePlanName" class="text-lg font-black text-white">Postpaid Silver (STD Trunk)</h3>
+                        </div>
+                        <span id="homeBillStatusBadge" class="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-rose-500/20 text-rose-200 border border-rose-400/40">
+                            ⚠️ UNPAID DUE
+                        </span>
+                    </div>
+
+                    <!-- Amount Due Hero Display -->
+                    <div class="py-1 relative z-10">
+                        <span class="text-xs text-blue-200 block font-medium">Total Outstanding Telecom Bill</span>
+                        <div class="flex items-baseline space-x-1.5 mt-0.5">
+                            <span class="text-xl font-bold text-blue-200">₹</span>
+                            <h2 id="homeAmountDue" class="text-4xl font-black tracking-tight text-white font-mono">366.63</h2>
+                        </div>
+                        <p id="homeDueDateText" class="text-xs text-blue-200 mt-1">
+                            Due by <span class="font-bold text-amber-300">25 Sep 2026</span> (Net-15 DoT Cycle)
+                        </p>
+                    </div>
+
+                    <!-- Quick Action Buttons -->
+                    <div class="grid grid-cols-2 gap-2.5 pt-2 relative z-10">
+                        <button onclick="openPaymentModal()" id="btnHomePay"
+                                class="py-2.5 px-4 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs shadow-md transition flex items-center justify-center space-x-1.5">
+                            <i data-lucide="credit-card" class="w-4 h-4"></i>
+                            <span>Pay Bill Now</span>
+                        </button>
+                        <button onclick="viewInvoiceModal()"
+                                class="py-2.5 px-4 rounded-xl bg-white/15 hover:bg-white/25 text-white font-bold text-xs backdrop-blur-md border border-white/20 transition flex items-center justify-center space-x-1.5">
+                            <i data-lucide="file-text" class="w-4 h-4"></i>
+                            <span>View Tax Invoice</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- QUICK ACTIONS CAROUSEL (MyJio-Style Round Icons) -->
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between px-1">
+                        <span class="text-xs font-black text-slate-700 uppercase tracking-wider">Quick PCO Operations</span>
+                        <span class="text-[11px] text-jio-blue font-bold">Vintage STD Suite</span>
+                    </div>
+                    <div class="grid grid-cols-4 gap-2">
+                        <button onclick="switchTab('booth')" class="flex flex-col items-center p-3 rounded-2xl bg-white border border-slate-200 hover:border-blue-400 shadow-sm transition group">
+                            <div class="w-11 h-11 rounded-2xl bg-blue-50 text-jio-blue flex items-center justify-center text-xl group-hover:scale-110 transition shadow-inner">
+                                📞
+                            </div>
+                            <span class="text-[11px] font-bold text-slate-800 mt-2 text-center">Dial STD</span>
+                        </button>
+
+                        <button onclick="switchTab('bills')" class="flex flex-col items-center p-3 rounded-2xl bg-white border border-slate-200 hover:border-blue-400 shadow-sm transition group">
+                            <div class="w-11 h-11 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl group-hover:scale-110 transition shadow-inner">
+                                🧾
+                            </div>
+                            <span class="text-[11px] font-bold text-slate-800 mt-2 text-center">DoT Bills</span>
+                        </button>
+
+                        <button onclick="switchTab('plans')" class="flex flex-col items-center p-3 rounded-2xl bg-white border border-slate-200 hover:border-blue-400 shadow-sm transition group">
+                            <div class="w-11 h-11 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl group-hover:scale-110 transition shadow-inner">
+                                🏷️
+                            </div>
+                            <span class="text-[11px] font-bold text-slate-800 mt-2 text-center">PCO Plans</span>
+                        </button>
+
+                        <button onclick="switchTab('account')" class="flex flex-col items-center p-3 rounded-2xl bg-white border border-slate-200 hover:border-blue-400 shadow-sm transition group">
+                            <div class="w-11 h-11 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl group-hover:scale-110 transition shadow-inner">
+                                📟
+                            </div>
+                            <span class="text-[11px] font-bold text-slate-800 mt-2 text-center">Diagnostics</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- VINTAGE TELECOM USAGE METERS (MyJio-Style Metric Cards, Strictly Vintage) -->
+                <div class="space-y-3">
+                    <span class="text-xs font-black text-slate-700 uppercase tracking-wider px-1">Cycle Telemetry & Meter Units</span>
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <!-- Meter 1: Monthly Free Minutes Allowance -->
+                        <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[11px] font-bold text-slate-500">Free Talk-Time</span>
+                                <i data-lucide="clock" class="w-4 h-4 text-jio-electric"></i>
+                            </div>
+                            <div>
+                                <span id="meterFreeMinsLeft" class="text-2xl font-black text-slate-900 font-mono">144</span>
+                                <span class="text-xs font-bold text-slate-400">/ 150 Mins</span>
+                            </div>
+                            <!-- Progress Bar -->
+                            <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                                <div id="meterFreeMinsBar" class="bg-gradient-to-r from-blue-500 to-jio-electric h-2 rounded-full transition-all" style="width: 96%"></div>
+                            </div>
+                            <p class="text-[10px] text-slate-400">Deducted prior to local call billing</p>
+                        </div>
+
+                        <!-- Meter 2: Gross Pulse Meter (16kHz Pulses) -->
+                        <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[11px] font-bold text-slate-500">Gross Pulse Count</span>
+                                <i data-lucide="activity" class="w-4 h-4 text-amber-500"></i>
+                            </div>
+                            <div>
+                                <span id="meterTotalPulses" class="text-2xl font-black text-slate-900 font-mono">27</span>
+                                <span class="text-xs font-bold text-slate-400">Pulses</span>
+                            </div>
+                            <!-- Progress Bar -->
+                            <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                                <div id="meterPulseBar" class="bg-gradient-to-r from-amber-400 to-amber-600 h-2 rounded-full transition-all" style="width: 45%"></div>
+                            </div>
+                            <p class="text-[10px] text-slate-400">Standard 60-second mechanical ceiling</p>
+                        </div>
+                    </div>
+
+                    <!-- Meter 3: STD Booth Channel Status Banner -->
+                    <div class="p-3.5 rounded-2xl bg-gradient-to-r from-slate-900 to-blue-950 text-white flex items-center justify-between shadow-md">
+                        <div class="flex items-center space-x-2.5">
+                            <div class="w-8 h-8 rounded-xl bg-blue-600/30 border border-blue-400/40 flex items-center justify-center text-sm">
+                                🎛️
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold">PCO Master Switch Telephony</h4>
+                                <p class="text-[10px] text-slate-400">Booth 1: Ready • Booth 2: Ready • Coin Box: Active</p>
+                            </div>
+                        </div>
+                        <button onclick="switchTab('booth')" class="px-2.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-[11px] font-bold text-white transition">
+                            Open Console
+                        </button>
+                    </div>
+                </div>
+
+                <!-- RECENT CALLS FEED (CDR Preview with vintage badges) -->
+                <div class="space-y-2.5 pt-1">
+                    <div class="flex items-center justify-between px-1">
+                        <span class="text-xs font-black text-slate-700 uppercase tracking-wider">Recent Trunk & Local Calls</span>
+                        <button onclick="switchTab('bills')" class="text-xs font-bold text-jio-blue hover:underline">View All CDR</button>
+                    </div>
+                    <div id="homeRecentCallsList" class="space-y-2">
+                        <!-- Populated dynamically -->
                     </div>
                 </div>
             </section>
 
-            <!-- 5. TARIFF PLANS TAB -->
-            <section id="tab-plans" class="hidden space-y-6">
+            <!-- ======================================================== -->
+            <!-- TAB 2: VINTAGE STD BOOTH CONSOLE (Interactive Simulator) -->
+            <!-- ======================================================== -->
+            <section id="tabBooth" class="p-4 space-y-4 tab-content hidden">
+                <!-- Header Banner -->
+                <div class="bg-gradient-to-r from-slate-900 via-jio-navy to-slate-900 text-white p-4 rounded-2xl shadow-md space-y-1">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[10px] font-black uppercase text-amber-400 tracking-wider font-mono">DEPARTMENT OF TELECOM (DoT) PCO CONSOLE</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">OPERATOR ACTIVE</span>
+                    </div>
+                    <h2 class="text-lg font-black text-white flex items-center space-x-2">
+                        <span>Interactive STD Booth Call Simulator</span>
+                    </h2>
+                    <p class="text-[11px] text-slate-400">
+                        Dial local, national STD, or international ISD lines. Watch the pulse counter tick and generate authentic trunk call slips.
+                    </p>
+                </div>
+
+                <!-- Booth Selection Pills -->
+                <div class="flex items-center space-x-2">
+                    <span class="text-xs font-bold text-slate-700 shrink-0">Select Booth:</span>
+                    <div class="flex space-x-1.5 flex-1">
+                        <button onclick="selectBooth(1)" id="boothBtn1" class="booth-selector-btn flex-1 py-1.5 rounded-xl text-xs font-bold bg-jio-blue text-white border border-blue-600 transition text-center shadow-sm">
+                            Booth 1 (Local/STD)
+                        </button>
+                        <button onclick="selectBooth(2)" id="boothBtn2" class="booth-selector-btn flex-1 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 transition text-center">
+                            Booth 2 (ISD Trunk)
+                        </button>
+                        <button onclick="selectBooth(3)" id="boothBtn3" class="booth-selector-btn flex-1 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 transition text-center">
+                            Booth 3 (Coin PCO)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- VINTAGE VFD DIGITAL CALL METER DISPLAY -->
+                <div class="rounded-2xl bg-slate-950 p-4 border-2 border-slate-800 shadow-2xl space-y-3">
+                    <div class="flex items-center justify-between text-xs border-b border-slate-800 pb-2">
+                        <span class="text-slate-400 font-mono flex items-center space-x-1">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                            <span id="boothDisplayLabel">PCO BOOTH #01 • TRUNK LINE</span>
+                        </span>
+                        <span id="callStateBadge" class="font-mono text-emerald-400 font-bold tracking-widest text-[11px] uppercase">
+                            LINE ON HOOK (IDLE)
+                        </span>
+                    </div>
+
+                    <!-- Vacuum Fluorescent Green Display -->
+                    <div class="vfd-display p-3.5 rounded-xl border border-emerald-900/60 flex flex-col space-y-2">
+                        <div class="flex items-center justify-between text-xs">
+                            <span>DIALED NUMBER:</span>
+                            <span id="vfdDialedNumber" class="text-xl font-black tracking-widest text-emerald-300">READY</span>
+                        </div>
+                        <div class="flex items-center justify-between text-xs border-t border-emerald-900/40 pt-1.5">
+                            <span>CALL CATEGORY:</span>
+                            <span id="vfdCategory" class="text-amber-400 font-bold">LOCAL / STD / ISD</span>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 border-t border-emerald-900/40 pt-1.5 text-center">
+                            <div>
+                                <span class="text-[10px] text-emerald-600 block">DURATION</span>
+                                <span id="vfdDuration" class="text-lg font-bold text-emerald-300 font-mono">00:00</span>
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-emerald-600 block">PULSES (60s)</span>
+                                <span id="vfdPulses" class="text-lg font-bold text-amber-300 font-mono">0</span>
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-emerald-600 block">EST. CHARGE</span>
+                                <span id="vfdCharge" class="text-lg font-bold text-emerald-200 font-mono">₹ 0.00</span>
+                            </div>
+                        </div>
+
+                        <!-- Real-Time Audio Oscilloscope & Voice Subtitle -->
+                        <div class="border-t border-emerald-900/50 pt-2 space-y-1">
+                            <div class="flex items-center justify-between text-[10px]">
+                                <span class="flex items-center space-x-1.5">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                                    <span>REAL-TIME VOICE CHANNEL (2-WAY AUDIO)</span>
+                                </span>
+                                <span id="micLiveBadge" class="font-mono text-emerald-400 text-[9px] bg-emerald-950 px-1.5 py-0.5 rounded border border-emerald-800">
+                                    MIC: READY
+                                </span>
+                            </div>
+                            <canvas id="vfdOscilloscope" class="w-full h-10 rounded-lg bg-black/70 border border-emerald-900/70 block"></canvas>
+                            <div id="vfdVoiceTranscript" class="text-[11px] text-emerald-300 font-mono italic tracking-wide truncate">
+                                [Receiver on hook. Lift receiver to dial real-time call]
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Destination Prefix Inspector Pill -->
+                    <div id="prefixInspectorBanner" class="p-2 rounded-xl bg-slate-900 text-xs font-mono text-slate-300 flex items-center justify-between border border-slate-800">
+                        <span id="prefixDetectedText">💡 Dial digits or tap preset numbers below</span>
+                        <span id="prefixRatePill" class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-blue-400">Rate: --</span>
+                    </div>
+                </div>
+
+                <!-- Real-Time Voice Calling Controls Banner -->
+                <div class="flex items-center justify-between p-2.5 rounded-2xl bg-blue-50 border border-blue-200 text-xs shadow-sm">
+                    <div class="flex items-center space-x-1.5">
+                        <button onclick="toggleMicrophone()" id="btnToggleMic" class="px-2.5 py-1.5 rounded-xl bg-white hover:bg-slate-100 text-slate-800 font-bold border border-slate-200 flex items-center space-x-1 shadow-sm transition">
+                            <i data-lucide="mic" class="w-3.5 h-3.5 text-blue-600" id="micBtnIcon"></i>
+                            <span id="micBtnText">Enable Mic</span>
+                        </button>
+                        <button onclick="toggleCalleeVoice()" id="btnToggleVoice" class="px-2.5 py-1.5 rounded-xl bg-white hover:bg-slate-100 text-slate-800 font-bold border border-slate-200 flex items-center space-x-1 shadow-sm transition">
+                            <i data-lucide="volume-2" class="w-3.5 h-3.5 text-emerald-600" id="voiceBtnIcon"></i>
+                            <span id="voiceBtnText">Voice: ON</span>
+                        </button>
+                    </div>
+                    <button onclick="simulateIncomingCall()" class="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-black flex items-center space-x-1 shadow-sm transition">
+                        <span>🔔 Incoming Call Test</span>
+                    </button>
+                </div>
+
+                <!-- KEYPAD & CALL CONTROLS -->
+                <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-card space-y-3">
+                    
+                    <!-- Presets for Fast Viva Testing -->
+                    <div class="flex items-center space-x-1.5 overflow-x-auto no-scrollbar pb-1 text-xs">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase shrink-0">Sample Trunks:</span>
+                        <button onclick="presetDial('01123456789')" class="px-2.5 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 text-jio-blue font-mono text-xs font-bold border border-blue-200 shrink-0">
+                            Delhi STD (011)
+                        </button>
+                        <button onclick="presetDial('02226543210')" class="px-2.5 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-mono text-xs font-bold border border-indigo-200 shrink-0">
+                            Mumbai STD (022)
+                        </button>
+                        <button onclick="presetDial('+14155552671')" class="px-2.5 py-1 rounded-lg bg-purple-50 hover:bg-purple-100 text-purple-700 font-mono text-xs font-bold border border-purple-200 shrink-0">
+                            USA ISD (+1)
+                        </button>
+                        <button onclick="presetDial('9849012345')" class="px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-mono text-xs font-bold border border-emerald-200 shrink-0">
+                            Local Circle
+                        </button>
+                    </div>
+
+                    <!-- Rotary / Touch-Tone Keypad (3x4 Grid) -->
+                    <div class="grid grid-cols-3 gap-2 pt-1 max-w-xs mx-auto">
+                        <button onclick="keypadPress('1')" class="keypad-btn py-3 rounded-2xl bg-slate-100 hover:bg-blue-100 text-slate-900 font-black text-xl shadow-sm transition active:scale-95 flex flex-col items-center">
+                            <span>1</span>
+                            <span class="text-[9px] text-slate-400 font-normal">.</span>
+                        </button>
+                        <button onclick="keypadPress('2')" class="keypad-btn py-3 rounded-2xl bg-slate-100 hover:bg-blue-100 text-slate-900 font-black text-xl shadow-sm transition active:scale-95 flex flex-col items-center">
+                            <span>2</span>
+                            <span class="text-[9px] text-slate-400 font-normal">ABC</span>
+                        </button>
+                        <button onclick="keypadPress('3')" class="keypad-btn py-3 rounded-2xl bg-slate-100 hover:bg-blue-100 text-slate-900 font-black text-xl shadow-sm transition active:scale-95 flex flex-col items-center">
+                            <span>3</span>
+                            <span class="text-[9px] text-slate-400 font-normal">DEF</span>
+                        </button>
+                        <button onclick="keypadPress('4')" class="keypad-btn py-3 rounded-2xl bg-slate-100 hover:bg-blue-100 text-slate-900 font-black text-xl shadow-sm transition active:scale-95 flex flex-col items-center">
+                            <span>4</span>
+                            <span class="text-[9px] text-slate-400 font-normal">GHI</span>
+                        </button>
+                        <button onclick="keypadPress('5')" class="keypad-btn py-3 rounded-2xl bg-slate-100 hover:bg-blue-100 text-slate-900 font-black text-xl shadow-sm transition active:scale-95 flex flex-col items-center">
+                            <span>5</span>
+                            <span class="text-[9px] text-slate-400 font-normal">JKL</span>
+                        </button>
+                        <button onclick="keypadPress('6')" class="keypad-btn py-3 rounded-2xl bg-slate-100 hover:bg-blue-100 text-slate-900 font-black text-xl shadow-sm transition active:scale-95 flex flex-col items-center">
+                            <span>6</span>
+                            <span class="text-[9px] text-slate-400 font-normal">MNO</span>
+                        </button>
+                        <button onclick="keypadPress('7')" class="keypad-btn py-3 rounded-2xl bg-slate-100 hover:bg-blue-100 text-slate-900 font-black text-xl shadow-sm transition active:scale-95 flex flex-col items-center">
+                            <span>7</span>
+                            <span class="text-[9px] text-slate-400 font-normal">PQRS</span>
+                        </button>
+                        <button onclick="keypadPress('8')" class="keypad-btn py-3 rounded-2xl bg-slate-100 hover:bg-blue-100 text-slate-900 font-black text-xl shadow-sm transition active:scale-95 flex flex-col items-center">
+                            <span>8</span>
+                            <span class="text-[9px] text-slate-400 font-normal">TUV</span>
+                        </button>
+                        <button onclick="keypadPress('9')" class="keypad-btn py-3 rounded-2xl bg-slate-100 hover:bg-blue-100 text-slate-900 font-black text-xl shadow-sm transition active:scale-95 flex flex-col items-center">
+                            <span>9</span>
+                            <span class="text-[9px] text-slate-400 font-normal">WXYZ</span>
+                        </button>
+                        <button onclick="keypadPress('+')" class="keypad-btn py-3 rounded-2xl bg-slate-100 hover:bg-blue-100 text-slate-900 font-black text-xl shadow-sm transition active:scale-95 flex flex-col items-center">
+                            <span>+</span>
+                            <span class="text-[9px] text-slate-400 font-normal">ISD</span>
+                        </button>
+                        <button onclick="keypadPress('0')" class="keypad-btn py-3 rounded-2xl bg-slate-100 hover:bg-blue-100 text-slate-900 font-black text-xl shadow-sm transition active:scale-95 flex flex-col items-center">
+                            <span>0</span>
+                            <span class="text-[9px] text-slate-400 font-normal">STD</span>
+                        </button>
+                        <button onclick="keypadBackspace()" class="keypad-btn py-3 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-black text-base shadow-sm transition active:scale-95 flex flex-col items-center justify-center">
+                            <i data-lucide="delete" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+
+                    <!-- Connect / Disconnect Buttons -->
+                    <div class="grid grid-cols-2 gap-3 pt-2">
+                        <button onclick="startCallSimulation()" id="btnStartCall"
+                                class="py-3 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-sm shadow-lg shadow-emerald-600/30 transition flex items-center justify-center space-x-2">
+                            <i data-lucide="phone-call" class="w-4 h-4"></i>
+                            <span>Lift & Dial</span>
+                        </button>
+                        <button onclick="endCallSimulation()" id="btnEndCall" disabled
+                                class="py-3 px-4 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white font-black text-sm shadow-lg shadow-rose-600/30 transition flex items-center justify-center space-x-2 disabled:opacity-40 disabled:pointer-events-none">
+                            <i data-lucide="phone-off" class="w-4 h-4"></i>
+                            <span>Hang Up (Bill)</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- RECENT TRUNK CALL RECEIPTS / SLIPS -->
+                <div class="space-y-2 pt-2">
+                    <span class="text-xs font-black text-slate-700 uppercase tracking-wider px-1">Latest PCO Trunk Slips Generated</span>
+                    <div id="boothReceiptsList" class="space-y-2">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- ======================================================== -->
+            <!-- TAB 3: BILLS & INVOICES (Itemized Accounting & Payments) -->
+            <!-- ======================================================== -->
+            <section id="tabBills" class="p-4 space-y-4 tab-content hidden">
                 <div class="flex items-center justify-between">
                     <div>
-                        <h4 class="font-bold text-base text-slate-900 dark:text-white">Calling Packages & Tariff Tiers</h4>
-                        <p class="text-xs text-slate-500">Configure monthly rentals, free minutes, and per-minute pulse rates</p>
+                        <h2 class="text-lg font-black text-slate-900">Telephone Bills & CDR</h2>
+                        <p class="text-xs text-slate-500">Itemized billing statements and payment settlement</p>
                     </div>
-                    <button onclick="openAddPlanModal()" class="px-4 py-2 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white flex items-center space-x-2 transition shadow-sm">
-                        <i data-lucide="plus" class="w-4 h-4"></i>
-                        <span>+ Create Tariff Plan</span>
+                    <button onclick="generateMonthlyBillForCurrentSubscriber()" class="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-sm transition flex items-center space-x-1">
+                        <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                        <span>Recalculate</span>
                     </button>
                 </div>
 
-                <!-- Plans Cards Grid -->
-                <div id="plansContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Current Bill Card -->
+                <div id="billsCurrentStatementCard" class="p-5 rounded-3xl bg-white border border-slate-200 shadow-card space-y-4">
+                    <!-- Populated dynamically -->
+                </div>
+
+                <!-- Full CDR History Table for Active Subscriber -->
+                <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-card space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-black text-slate-800 uppercase tracking-wider">Itemized Call Log (CDR)</span>
+                        <span id="cdrRecordCount" class="text-xs font-mono font-bold text-jio-blue bg-blue-50 px-2 py-0.5 rounded border border-blue-200">0 Calls</span>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead>
+                                <tr class="text-[11px] font-bold text-slate-400 uppercase border-b border-slate-100">
+                                    <th class="py-2">Time</th>
+                                    <th class="py-2">Destination</th>
+                                    <th class="py-2">Type</th>
+                                    <th class="py-2">Mins</th>
+                                    <th class="py-2 text-right">Cost</th>
+                                </tr>
+                            </thead>
+                            <tbody id="subscriberCdrTableBody" class="divide-y divide-slate-100 font-mono">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Past Historical Invoices -->
+                <div class="space-y-2 pt-2">
+                    <span class="text-xs font-black text-slate-700 uppercase tracking-wider px-1">Historical Billing Cycles</span>
+                    <div id="historicalBillsList" class="space-y-2">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- ======================================================== -->
+            <!-- TAB 4: VINTAGE TARIFF PLANS (Strictly Vintage STD Packs) -->
+            <!-- ======================================================== -->
+            <section id="tabPlans" class="p-4 space-y-4 tab-content hidden">
+                <div>
+                    <span class="text-[10px] font-black uppercase text-jio-blue tracking-wider font-mono">AUTHENTIC DoT TARIFF PACKS</span>
+                    <h2 class="text-lg font-black text-slate-900">Vintage Landline & STD Plans</h2>
+                    <p class="text-xs text-slate-500">Preserving classic pulse rate slabs and commercial PCO booth contracts</p>
+                </div>
+
+                <!-- Plans Container -->
+                <div id="tariffPlansContainer" class="space-y-3.5">
                     <!-- Populated dynamically -->
                 </div>
             </section>
 
-            <!-- 6. ANALYTICS & REPORTS TAB -->
-            <section id="tab-reports" class="hidden space-y-6">
-                <!-- Financial Stats -->
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
-                    <div class="p-5 rounded-2xl bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder shadow-sm">
-                        <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Cumulative Invoiced</span>
-                        <h3 id="reportTotalBilled" class="text-2xl font-black text-slate-900 dark:text-white mt-2">₹0.00</h3>
-                        <p class="text-[11px] text-slate-400 mt-1">Gross billing volume across all cycles</p>
-                    </div>
-                    <div class="p-5 rounded-2xl bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder shadow-sm">
-                        <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Total Settled & Collected</span>
-                        <h3 id="reportTotalCollected" class="text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-2">₹0.00</h3>
-                        <p class="text-[11px] text-slate-400 mt-1">Payments collected via UPI / Cards / Cash</p>
-                    </div>
-                    <div class="p-5 rounded-2xl bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder shadow-sm">
-                        <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Outstanding Receivables</span>
-                        <h3 id="reportOutstanding" class="text-2xl font-black text-amber-500 mt-2">₹0.00</h3>
-                        <p class="text-[11px] text-slate-400 mt-1">Pending unpaid balances</p>
-                    </div>
+            <!-- ======================================================== -->
+            <!-- TAB 5: ACCOUNT & KYC (Subscriber KYC, Line Diagnostics) -->
+            <!-- ======================================================== -->
+            <section id="tabAccount" class="p-4 space-y-4 tab-content hidden">
+                <div>
+                    <h2 class="text-lg font-black text-slate-900">Subscriber KYC & Line Profile</h2>
+                    <p class="text-xs text-slate-500">Registered Department of Telecommunications line details</p>
                 </div>
 
-                <!-- Top Callers Leaderboard Table -->
-                <div class="rounded-2xl bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder shadow-sm overflow-hidden p-6 space-y-4">
+                <!-- KYC Details Card -->
+                <div id="accountKycCard" class="p-5 rounded-3xl bg-white border border-slate-200 shadow-card space-y-3 text-xs">
+                    <!-- Populated dynamically -->
+                </div>
+
+                <!-- Line Diagnostics Simulator -->
+                <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-card space-y-3">
                     <div class="flex items-center justify-between">
-                        <div>
-                            <h4 class="font-bold text-base text-slate-900 dark:text-white">Top Calling Subscribers Leaderboard</h4>
-                            <p class="text-xs text-slate-500">Ranked by total CDR telephone traffic and billable minutes</p>
-                        </div>
-                        <button onclick="exportTopCallersCsv()" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800 hover:bg-blue-100 transition">
-                            📊 Export Top Callers CSV
+                        <span class="text-xs font-black text-slate-800 uppercase tracking-wider">Line Health Diagnostics</span>
+                        <button onclick="runLineDiagnostics()" id="btnRunDiagnostics" class="px-2.5 py-1 rounded-lg bg-blue-50 text-jio-blue font-bold text-xs border border-blue-200 hover:bg-blue-100 transition">
+                            ⚡ Run Test
                         </button>
                     </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs">
-                            <thead class="bg-slate-50 dark:bg-slate-800/50 text-slate-500 uppercase font-bold text-[10px] tracking-wider border-b border-slate-200 dark:border-darkBorder">
-                                <tr>
-                                    <th class="p-3">Rank</th>
-                                    <th class="p-3">Subscriber Name</th>
-                                    <th class="p-3">Phone Number</th>
-                                    <th class="p-3">Plan</th>
-                                    <th class="p-3">Calls Count</th>
-                                    <th class="p-3">Total Duration</th>
-                                    <th class="p-3 text-right">Total Spend (₹)</th>
-                                </tr>
-                            </thead>
-                            <tbody id="topCallersTableBody" class="divide-y divide-slate-100 dark:divide-darkBorder">
-                                <!-- Populated dynamically -->
-                            </tbody>
-                        </table>
+
+                    <div class="space-y-2 text-xs font-mono">
+                        <div class="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-100">
+                            <span class="text-slate-500">Loop Voltage (On-Hook):</span>
+                            <span class="font-bold text-slate-800" id="diagVoltage">48.2 V DC (Optimal)</span>
+                        </div>
+                        <div class="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-100">
+                            <span class="text-slate-500">Continuous Dial Tone:</span>
+                            <span class="font-bold text-emerald-600" id="diagDialTone">400 Hz Steady (Normal)</span>
+                        </div>
+                        <div class="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-100">
+                            <span class="text-slate-500">Metering Frequency:</span>
+                            <span class="font-bold text-blue-600" id="diagMetering">16 kHz Pulse In-Service</span>
+                        </div>
+                        <div class="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-100">
+                            <span class="text-slate-500">Loop Resistance:</span>
+                            <span class="font-bold text-slate-800" id="diagResistance">420 Ω (Acceptable &lt; 1000 Ω)</span>
+                        </div>
                     </div>
+                </div>
+
+                <!-- Logout Card -->
+                <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-card space-y-3">
+                    <button onclick="logout()" class="w-full py-3 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs border border-rose-200 transition flex items-center justify-center space-x-1.5">
+                        <i data-lucide="log-out" class="w-4 h-4"></i>
+                        <span>Sign Out of Current Account</span>
+                    </button>
                 </div>
             </section>
-
         </div>
+
+        <!-- ============================================================ -->
+        <!-- BOTTOM NAVIGATION BAR (MyJio-Inspired Mobile Tabs) -->
+        <!-- ============================================================ -->
+        <nav id="bottomNavBar" class="hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-lg border-t border-slate-200 py-2 shadow-2xl transition-all">
+            <div class="max-w-md mx-auto flex items-center justify-around px-2">
+                <button onclick="switchTab('home')" class="nav-item flex flex-col items-center py-1 px-2.5 rounded-2xl transition text-jio-blue" data-nav="home">
+                    <i data-lucide="home" class="w-5 h-5"></i>
+                    <span class="text-[10px] font-bold mt-1">Home</span>
+                </button>
+
+                <button onclick="switchTab('booth')" class="nav-item flex flex-col items-center py-1 px-2.5 rounded-2xl transition text-slate-400 hover:text-jio-blue" data-nav="booth">
+                    <i data-lucide="phone-call" class="w-5 h-5"></i>
+                    <span class="text-[10px] font-bold mt-1">STD Booth</span>
+                </button>
+
+                <button onclick="switchTab('bills')" class="nav-item flex flex-col items-center py-1 px-2.5 rounded-2xl transition text-slate-400 hover:text-jio-blue" data-nav="bills">
+                    <i data-lucide="receipt" class="w-5 h-5"></i>
+                    <span class="text-[10px] font-bold mt-1">Bills & CDR</span>
+                </button>
+
+                <button onclick="switchTab('plans')" class="nav-item flex flex-col items-center py-1 px-2.5 rounded-2xl transition text-slate-400 hover:text-jio-blue" data-nav="plans">
+                    <i data-lucide="tags" class="w-5 h-5"></i>
+                    <span class="text-[10px] font-bold mt-1">PCO Plans</span>
+                </button>
+
+                <button onclick="switchTab('account')" class="nav-item flex flex-col items-center py-1 px-2.5 rounded-2xl transition text-slate-400 hover:text-jio-blue" data-nav="account">
+                    <i data-lucide="user" class="w-5 h-5"></i>
+                    <span class="text-[10px] font-bold mt-1">Account</span>
+                </button>
+            </div>
+        </nav>
     </main>
 
-    <!-- ==================== MODALS ==================== -->
+    <!-- ================================================================ -->
+    <!-- MODAL 1: VINTAGE DoT TRUNK CALL SLIP / RECEIPT MODAL -->
+    <!-- ================================================================ -->
+    <div id="modalTrunkSlip" class="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="w-full max-w-sm rounded-3xl bg-white shadow-2xl overflow-hidden border border-amber-200 animate-in fade-in zoom-in-95 duration-200">
+            <!-- Modal Header -->
+            <div class="bg-amber-500 text-slate-950 p-3.5 flex items-center justify-between font-bold text-xs">
+                <span class="flex items-center space-x-1.5 font-mono">
+                    <span>📟</span>
+                    <span>TRUNK CALL RECEIPT VOUCHER</span>
+                </span>
+                <button onclick="closeTrunkSlipModal()" class="w-6 h-6 rounded-full bg-slate-950/10 hover:bg-slate-950/20 flex items-center justify-center">
+                    ✕
+                </button>
+            </div>
 
-    <!-- Modal 1: Authentic Telecom Invoice Preview (Centerpiece) -->
-    <div id="invoiceModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-        <div class="bg-slate-100 dark:bg-slate-900 w-full max-w-4xl rounded-2xl shadow-2xl border border-slate-300 dark:border-slate-800 overflow-hidden my-8">
-            <!-- Modal Top Bar -->
-            <div class="px-6 py-4 bg-white dark:bg-darkCard border-b border-slate-200 dark:border-darkBorder flex items-center justify-between">
+            <!-- Vintage Thermal Voucher Paper -->
+            <div id="printableTrunkSlip" class="vintage-receipt p-5 text-slate-800 text-xs space-y-3 border-b border-dashed border-slate-300">
+                <div class="text-center space-y-0.5 border-b border-dashed border-slate-400 pb-2">
+                    <h3 class="font-bold text-sm tracking-wider">DEPARTMENT OF TELECOMMUNICATIONS</h3>
+                    <p class="text-[10px] text-slate-500">PUBLIC CALL OFFICE (PCO / STD / ISD)</p>
+                    <p class="text-[9px] font-mono text-slate-400" id="slipBoothNumber">BOOTH NO: 01 (GENERAL TRUNK)</p>
+                </div>
+
+                <div class="space-y-1 font-mono text-[11px]">
+                    <div class="flex justify-between">
+                        <span>SLIP NO:</span>
+                        <span id="slipVoucherNo" class="font-bold">DOT-PCO-9482</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>DATE & TIME:</span>
+                        <span id="slipDateTime" class="font-bold">19-Sep-2026 19:30</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>SUBSCRIBER:</span>
+                        <span id="slipSubscriberName" class="font-bold">Rajesh Sharma</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>DESTINATION:</span>
+                        <span id="slipDialedNumber" class="font-bold text-blue-700">01123456789</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>CLASSIFICATION:</span>
+                        <span id="slipCallCategory" class="font-bold">STD (DELHI TRUNK)</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>DURATION (M:S):</span>
+                        <span id="slipDuration" class="font-bold">01:42</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>METER PULSES:</span>
+                        <span id="slipPulses" class="font-bold">2 Pulses (120s Ceil)</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>APPLIED RATE:</span>
+                        <span id="slipRate" class="font-bold">₹1.80 / Pulse</span>
+                    </div>
+                </div>
+
+                <div class="border-t border-b border-dashed border-slate-400 py-2 font-mono flex items-center justify-between text-sm font-black">
+                    <span>NET CHARGE:</span>
+                    <span id="slipTotalCost" class="text-base text-slate-950">₹ 3.60</span>
+                </div>
+
+                <!-- Vintage Red Operator Stamp -->
+                <div class="flex items-center justify-between pt-1">
+                    <div class="border-2 border-vintage-stamp text-vintage-stamp px-2 py-0.5 rounded text-[10px] font-black uppercase transform -rotate-3">
+                        DoT PCO PAID
+                    </div>
+                    <div class="text-right text-[10px] text-slate-500 font-mono">
+                        <span>Operator: CASHIER-07</span><br>
+                        <span>Verified 16kHz</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Action Buttons -->
+            <div class="p-3 bg-slate-50 flex items-center space-x-2">
+                <button onclick="window.print()" class="flex-1 py-2 rounded-xl bg-slate-900 text-white font-bold text-xs flex items-center justify-center space-x-1 hover:bg-slate-800 transition">
+                    <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+                    <span>Print Slip</span>
+                </button>
+                <button onclick="closeTrunkSlipModal()" class="flex-1 py-2 rounded-xl bg-jio-blue text-white font-bold text-xs hover:bg-blue-700 transition">
+                    Done
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- MODAL 2: AIRTEL / JIO STYLED TAX INVOICE MODAL -->
+    <!-- ================================================================ -->
+    <div id="modalTaxInvoice" class="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-3 hidden overflow-y-auto">
+        <div class="w-full max-w-2xl rounded-3xl bg-white shadow-2xl overflow-hidden border border-slate-200 my-auto">
+            <!-- Modal Header with download & print buttons -->
+            <div class="bg-gradient-to-r from-jio-navy to-jio-blue text-white p-4 flex items-center justify-between">
+                <div>
+                    <h3 class="font-bold text-sm">TRAI & DoT Compliant Telephone Tax Invoice</h3>
+                    <p class="text-[11px] text-blue-200">Itemized statement with 18% GST and Call Detail Records</p>
+                </div>
                 <div class="flex items-center space-x-2">
-                    <i data-lucide="file-text" class="w-5 h-5 text-blue-600"></i>
-                    <h3 class="font-bold text-base text-slate-900 dark:text-white" id="invModalTitle">Invoice Preview</h3>
-                </div>
-                <div class="flex items-center space-x-2">
-                    <button onclick="downloadInvoicePdf()" class="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-blue-600 text-white hover:bg-blue-700 flex items-center space-x-1.5 transition">
-                        <i data-lucide="download" class="w-4 h-4"></i>
-                        <span>Download PDF</span>
+                    <button onclick="downloadInvoicePdf()" class="px-2.5 py-1.5 rounded-lg bg-white/20 hover:bg-white/30 text-white text-xs font-bold transition flex items-center space-x-1">
+                        <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                        <span>PDF</span>
                     </button>
-                    <button onclick="printInvoice()" class="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-300 flex items-center space-x-1.5 transition">
-                        <i data-lucide="printer" class="w-4 h-4"></i>
-                        <span>Print</span>
-                    </button>
-                    <button onclick="closeModal('invoiceModal')" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-white">
-                        <i data-lucide="x" class="w-5 h-5"></i>
+                    <button onclick="closeInvoiceModal()" class="p-1.5 rounded-lg bg-white/20 hover:bg-white/30 text-white transition">
+                        ✕
                     </button>
                 </div>
             </div>
 
-            <!-- Printable Sheet Area (Airtel / Jio Style) -->
-            <div class="p-6 md:p-8 flex justify-center">
-                <div id="invoicePaperSheet" class="w-full bg-white text-slate-800 p-8 rounded-xl shadow-md border border-slate-200 space-y-6 text-xs">
-                    <!-- Brand & Invoice Header -->
-                    <div class="flex justify-between items-start border-b border-slate-200 pb-5">
-                        <div class="space-y-1">
-                            <div class="flex items-center space-x-2">
-                                <span class="text-blue-600 font-black text-2xl">⚡</span>
-                                <span class="text-xl font-black tracking-wider text-slate-900">APEX TELECOM</span>
-                            </div>
-                            <p class="text-[10px] text-slate-500 font-medium">Next-Gen Global Telecommunications & Broadband</p>
-                            <p class="text-[9px] text-slate-400">GSTIN: 27AAACA1234F1Z5 | Lic: IND-98234-DOT</p>
-                            <p class="text-[9px] text-slate-400">Toll-Free Support: 1800-11-2233 | care@apextelecom.com</p>
-                        </div>
-                        <div class="text-right space-y-1">
-                            <span class="inline-block px-3 py-1 font-black text-sm tracking-wider uppercase text-blue-600 bg-blue-50 border border-blue-200 rounded">TAX INVOICE</span>
-                            <p class="font-bold text-slate-900 text-sm mt-1" id="invPaperNum">INV-202608-001</p>
-                            <p class="text-[10px] text-slate-600" id="invPaperDate">Bill Date: 01 Sep 2026</p>
-                            <p class="text-[10px] font-bold text-rose-600" id="invPaperDueDate">Due Date: 15 Sep 2026</p>
-                            <span id="invPaperStatusStamp" class="inline-block mt-2 px-3 py-0.5 text-xs font-black uppercase border-2 rounded">PAID</span>
-                        </div>
-                    </div>
+            <!-- Tax Invoice Printable Document Content -->
+            <div id="printableTaxInvoice" class="p-6 bg-white text-slate-800 text-xs space-y-4 max-h-[75vh] overflow-y-auto">
+                <!-- Injected dynamically by app.js -->
+            </div>
+        </div>
+    </div>
 
-                    <!-- Billed To & Subscription Cards -->
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200 space-y-1">
-                            <p class="text-[10px] font-bold uppercase tracking-wider text-blue-600">BILLED TO</p>
-                            <p class="font-bold text-slate-900 text-sm" id="invPaperCustomer">Rajesh Sharma</p>
-                            <p class="text-slate-600" id="invPaperPhone">Phone: +91 98200 11223</p>
-                            <p class="text-slate-500 text-[11px]" id="invPaperAddress">Flat 402, Sea View Apartments, Bandra West, Mumbai</p>
-                            <p class="text-slate-400 text-[10px]" id="invPaperCustId">Account ID: TELCO-00001</p>
-                        </div>
-                        <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200 space-y-1">
-                            <p class="text-[10px] font-bold uppercase tracking-wider text-blue-600">PLAN & BILLING CYCLE</p>
-                            <p class="font-bold text-slate-900 text-sm" id="invPaperPlan">Postpaid Silver</p>
-                            <p class="text-slate-600" id="invPaperCycle">Billing Cycle: 08/2026</p>
-                            <p class="text-slate-500 text-[11px]">Payment Terms: Net 15 Days</p>
-                            <p class="text-slate-400 text-[10px]">Currency: Indian Rupee (INR ₹)</p>
+    <!-- ================================================================ -->
+    <!-- MODAL 3: UPI / CASH BILL PAYMENT MODAL -->
+    <!-- ================================================================ -->
+    <div id="modalPayment" class="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="w-full max-w-sm rounded-3xl bg-white shadow-2xl overflow-hidden border border-slate-200 p-5 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div>
+                    <span class="text-[10px] font-bold text-jio-blue uppercase tracking-wider">SECURE PAYMENT</span>
+                    <h3 class="text-base font-black text-slate-900">Settle Telephone Bill</h3>
+                </div>
+                <button onclick="closePaymentModal()" class="text-slate-400 hover:text-slate-700 text-sm font-bold">✕</button>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-blue-50/70 border border-blue-100 text-center space-y-1">
+                <span class="text-xs text-slate-500 font-medium">Net Amount Payable</span>
+                <div class="text-3xl font-black text-jio-blue font-mono" id="payModalAmount">₹ 366.63</div>
+                <p class="text-[11px] text-slate-400" id="payModalBillNo">Bill: APEX-202608-001</p>
+            </div>
+
+            <div class="space-y-2">
+                <span class="text-xs font-bold text-slate-700">Select Settlement Method:</span>
+                
+                <label class="p-3 rounded-xl border-2 border-jio-blue bg-blue-50/30 flex items-center justify-between cursor-pointer">
+                    <div class="flex items-center space-x-2.5">
+                        <span class="text-lg">📲</span>
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-900">Instant UPI Payment</h4>
+                            <p class="text-[10px] text-slate-500">GPay, PhonePe, Paytm, BHIM</p>
                         </div>
                     </div>
+                    <input type="radio" name="payMethod" value="upi" checked class="text-jio-blue focus:ring-jio-blue">
+                </label>
 
-                    <!-- Summary of Charges Breakdown -->
-                    <div class="space-y-2">
-                        <p class="font-bold text-slate-900 uppercase text-[11px]">SUMMARY OF CHARGES</p>
-                        <table class="w-full border border-slate-200 rounded">
-                            <thead class="bg-slate-100 text-slate-600 uppercase text-[9.5px]">
-                                <tr>
-                                    <th class="p-2.5 text-left">Description</th>
-                                    <th class="p-2.5 text-center">Type / Rate</th>
-                                    <th class="p-2.5 text-right">Amount (INR)</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-200 text-[11px]">
-                                <tr>
-                                    <td class="p-2.5">Monthly Tariff Plan Rental</td>
-                                    <td class="p-2.5 text-center text-slate-500">Fixed Package</td>
-                                    <td class="p-2.5 text-right font-semibold" id="invPaperRental">₹249.00</td>
-                                </tr>
-                                <tr>
-                                    <td class="p-2.5">Itemized Telephone Usage & Pulse Charges</td>
-                                    <td class="p-2.5 text-center text-slate-500">CDR Itemized</td>
-                                    <td class="p-2.5 text-right font-semibold" id="invPaperCalls">₹61.70</td>
-                                </tr>
-                                <tr class="bg-slate-50/70 font-semibold">
-                                    <td class="p-2.5">Subtotal (Taxable Value)</td>
-                                    <td class="p-2.5 text-center"></td>
-                                    <td class="p-2.5 text-right" id="invPaperSubtotal">₹310.70</td>
-                                </tr>
-                                <tr>
-                                    <td class="p-2.5 text-slate-600">Central GST (CGST @ 9%)</td>
-                                    <td class="p-2.5 text-center text-slate-400">9.0%</td>
-                                    <td class="p-2.5 text-right" id="invPaperCgst">₹27.96</td>
-                                </tr>
-                                <tr>
-                                    <td class="p-2.5 text-slate-600">State GST (SGST @ 9%)</td>
-                                    <td class="p-2.5 text-center text-slate-400">9.0%</td>
-                                    <td class="p-2.5 text-right" id="invPaperSgst">₹27.96</td>
-                                </tr>
-                                <tr id="invPaperLateFeeRow">
-                                    <td class="p-2.5 text-rose-600">Late Payment Surcharge / Fine</td>
-                                    <td class="p-2.5 text-center text-rose-400">Late Fee</td>
-                                    <td class="p-2.5 text-right text-rose-600" id="invPaperLateFee">₹0.00</td>
-                                </tr>
-                                <tr class="bg-blue-50/80 font-black text-slate-900 text-xs">
-                                    <td class="p-3" colspan="2">TOTAL AMOUNT DUE & PAYABLE</td>
-                                    <td class="p-3 text-right text-blue-700 text-sm" id="invPaperTotal">₹366.63</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                <label class="p-3 rounded-xl border border-slate-200 hover:bg-slate-50 flex items-center justify-between cursor-pointer">
+                    <div class="flex items-center space-x-2.5">
+                        <span class="text-lg">💵</span>
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-900">Cash at PCO Booth Counter</h4>
+                            <p class="text-[10px] text-slate-500">Official DoT Cash Voucher Receipt</p>
+                        </div>
                     </div>
+                    <input type="radio" name="payMethod" value="cash" class="text-jio-blue focus:ring-jio-blue">
+                </label>
+            </div>
 
-                    <!-- Itemized CDR List -->
-                    <div class="space-y-2">
-                        <p class="font-bold text-slate-900 uppercase text-[11px]">ITEMIZED CALL DETAIL RECORDS (CDR)</p>
-                        <table class="w-full border border-slate-200 text-[10.5px]">
-                            <thead class="bg-slate-100 text-slate-600 uppercase text-[9px]">
-                                <tr>
-                                    <th class="p-2 text-left">Date & Time</th>
-                                    <th class="p-2 text-left">Dialed Destination</th>
-                                    <th class="p-2 text-left">Classification</th>
-                                    <th class="p-2 text-center">Duration</th>
-                                    <th class="p-2 text-right">Cost (₹)</th>
-                                </tr>
-                            </thead>
-                            <tbody id="invPaperCdrBody" class="divide-y divide-slate-100">
-                                <!-- Populated dynamically -->
-                            </tbody>
-                        </table>
-                    </div>
+            <button onclick="processBillPayment()" id="btnConfirmPay"
+                    class="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:opacity-95 text-white font-bold text-sm shadow-lg shadow-emerald-600/30 transition flex items-center justify-center space-x-2">
+                <i data-lucide="check" class="w-4 h-4"></i>
+                <span>Confirm & Pay Instantly</span>
+            </button>
+        </div>
+    </div>
 
-                    <!-- Remittance Footer -->
-                    <div class="p-3 rounded bg-slate-50 border border-slate-200 text-[9.5px] text-slate-500 space-y-1">
-                        <p class="font-bold text-slate-700">PAYMENT & REMITTANCE INSTRUCTIONS:</p>
-                        <p>• Scan & Pay via UPI: <strong class="text-slate-800">apextelecom@upi</strong> | Net Banking / NEFT: A/C 982001928374, IFSC: APEX000123</p>
-                        <p>• Pay before the due date to avoid service suspension and standard late penalty fees of ₹50.00.</p>
-                        <p>• This is an electronically generated tax invoice and does not require an ink signature.</p>
-                    </div>
-                </div>
+    <!-- ================================================================ -->
+    <!-- MODAL 4: INCOMING CALL SIMULATION ALERT -->
+    <!-- ================================================================ -->
+    <div id="modalIncomingCall" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
+        <div class="w-full max-w-sm rounded-3xl bg-slate-900 border-2 border-emerald-500 shadow-2xl p-6 text-center space-y-4 text-white">
+            <div class="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-3xl mx-auto border-2 border-emerald-400/60 animate-bounce">
+                🔔
+            </div>
+            <div>
+                <span class="text-[10px] font-mono uppercase tracking-widest text-emerald-400 font-bold bg-emerald-950 px-2 py-0.5 rounded border border-emerald-800">
+                    INCOMING TRUNK CALL RINGING
+                </span>
+                <h3 class="text-xl font-black text-white mt-2" id="incomingCallerName">New Delhi Central Trunk Exchange</h3>
+                <p class="text-sm font-mono text-blue-300 mt-0.5" id="incomingCallerNumber">011-23344556</p>
+            </div>
+            <div class="p-3 rounded-2xl bg-slate-950/70 border border-slate-800 text-xs text-slate-300 font-mono">
+                Ring cadence: 400Hz+425Hz Indian Standard • 16kHz Pulse Telemetry Ready
+            </div>
+            <div class="grid grid-cols-2 gap-3 pt-2">
+                <button onclick="answerIncomingCall()" class="py-3 px-4 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm shadow-lg shadow-emerald-500/30 transition flex items-center justify-center space-x-1.5 active:scale-95">
+                    <i data-lucide="phone-call" class="w-4 h-4"></i>
+                    <span>Lift Receiver</span>
+                </button>
+                <button onclick="rejectIncomingCall()" class="py-3 px-4 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white font-black text-sm shadow-lg shadow-rose-600/30 transition flex items-center justify-center space-x-1.5 active:scale-95">
+                    <i data-lucide="phone-off" class="w-4 h-4"></i>
+                    <span>Reject</span>
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- Modal 2: Generate Monthly Bill -->
-    <div id="genBillModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-darkCard w-full max-w-lg rounded-2xl shadow-2xl border border-slate-200 dark:border-darkBorder p-6 space-y-5">
-            <div class="flex items-center justify-between border-b border-slate-100 dark:border-darkBorder pb-4">
-                <h3 class="font-bold text-base text-slate-900 dark:text-white">Generate Monthly Telephone Bill</h3>
-                <button onclick="closeModal('genBillModal')" class="p-1 text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
-            </div>
-            <form onsubmit="handleGenerateBillSubmit(event)" class="space-y-4 text-xs">
-                <div>
-                    <label class="block font-semibold mb-1">Select Subscriber *</label>
-                    <select id="genBillCustomer" onchange="updateLiveBillCalculation()" required class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder focus:outline-none"></select>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block font-semibold mb-1">Billing Month *</label>
-                        <select id="genBillMonth" onchange="updateLiveBillCalculation()" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder focus:outline-none">
-                            <option value="1">01 - January</option>
-                            <option value="2">02 - February</option>
-                            <option value="3">03 - March</option>
-                            <option value="4">04 - April</option>
-                            <option value="5">05 - May</option>
-                            <option value="6">06 - June</option>
-                            <option value="7">07 - July</option>
-                            <option value="8" selected>08 - August</option>
-                            <option value="9">09 - September</option>
-                            <option value="10">10 - October</option>
-                            <option value="11">11 - November</option>
-                            <option value="12">12 - December</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block font-semibold mb-1">Billing Year *</label>
-                        <select id="genBillYear" onchange="updateLiveBillCalculation()" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder focus:outline-none">
-                            <option value="2025">2025</option>
-                            <option value="2026" selected>2026</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block font-semibold mb-1">Promotional Discount (₹)</label>
-                        <input type="number" step="0.01" id="genBillDiscount" value="0.00" oninput="updateLiveBillCalculation()" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder">
-                    </div>
-                    <div>
-                        <label class="block font-semibold mb-1">Late Surcharge (₹)</label>
-                        <input type="number" step="0.01" id="genBillLateFee" value="0.00" oninput="updateLiveBillCalculation()" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder">
-                    </div>
-                </div>
-
-                <!-- Live Calculation Preview -->
-                <div class="p-3 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/50 space-y-1">
-                    <span class="text-[10px] font-bold text-blue-600 uppercase tracking-wider">Live Calculation Breakdown</span>
-                    <p id="genBillPreviewSummary" class="text-xs font-semibold text-blue-900 dark:text-blue-300">Select subscriber and cycle</p>
-                </div>
-
-                <div class="flex justify-end space-x-2 pt-2">
-                    <button type="button" onclick="closeModal('genBillModal')" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-semibold">Cancel</button>
-                    <button type="submit" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold">Generate Bill</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal 3: Log Call with Real-time Prefix Detection -->
-    <div id="logCallModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-darkCard w-full max-w-md rounded-2xl shadow-2xl border border-slate-200 dark:border-darkBorder p-6 space-y-5">
-            <div class="flex items-center justify-between border-b border-slate-100 dark:border-darkBorder pb-4">
-                <h3 class="font-bold text-base text-slate-900 dark:text-white">Log Telephone Call (CDR)</h3>
-                <button onclick="closeModal('logCallModal')" class="p-1 text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
-            </div>
-            <form onsubmit="handleLogCallSubmit(event)" class="space-y-4 text-xs">
-                <div>
-                    <label class="block font-semibold mb-1">Subscriber *</label>
-                    <select id="logCallCustomer" onchange="updateLiveCallCost()" required class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder"></select>
-                </div>
-                <div>
-                    <label class="block font-semibold mb-1">Destination Number *</label>
-                    <input type="text" id="logCallDest" oninput="handleDestNumberChange()" required placeholder="e.g. +14155552671, 02224567890, +919820011223" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder">
-                </div>
-                <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder">
-                    <span class="text-[11px] font-medium text-slate-500">Prefix Classification:</span>
-                    <span id="logCallTypeBadge" class="px-2.5 py-0.5 rounded text-[11px] font-bold bg-blue-100 text-blue-700">LOCAL</span>
-                </div>
-                <div>
-                    <label class="block font-semibold mb-1">Call Duration (seconds) *</label>
-                    <input type="number" id="logCallDuration" value="180" oninput="updateLiveCallCost()" min="1" required class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder">
-                </div>
-                <div class="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 font-bold flex justify-between items-center">
-                    <span>Estimated Tariff Cost:</span>
-                    <span id="logCallCostPreview" class="text-sm">₹0.00</span>
-                </div>
-                <div class="flex justify-end space-x-2 pt-2">
-                    <button type="button" onclick="closeModal('logCallModal')" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 font-semibold">Cancel</button>
-                    <button type="submit" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold">Record Call</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal 4: Add / Edit Subscriber -->
-    <div id="customerModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-darkCard w-full max-w-md rounded-2xl shadow-2xl border border-slate-200 dark:border-darkBorder p-6 space-y-5">
-            <div class="flex items-center justify-between border-b border-slate-100 dark:border-darkBorder pb-4">
-                <h3 id="custModalTitle" class="font-bold text-base text-slate-900 dark:text-white">Register Subscriber</h3>
-                <button onclick="closeModal('customerModal')" class="p-1 text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
-            </div>
-            <form onsubmit="handleCustomerSubmit(event)" class="space-y-3.5 text-xs">
-                <input type="hidden" id="custEditId">
-                <div>
-                    <label class="block font-semibold mb-1">Full Name *</label>
-                    <input type="text" id="custName" required placeholder="e.g. Rahul Sharma" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder">
-                </div>
-                <div>
-                    <label class="block font-semibold mb-1">Phone Number *</label>
-                    <input type="text" id="custPhone" required placeholder="e.g. +919820011223" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder">
-                </div>
-                <div>
-                    <label class="block font-semibold mb-1">Email Address</label>
-                    <input type="email" id="custEmail" placeholder="e.g. rahul@example.com" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder">
-                </div>
-                <div>
-                    <label class="block font-semibold mb-1">Billing Address</label>
-                    <input type="text" id="custAddress" placeholder="Flat / Street, City, Pincode" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder">
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block font-semibold mb-1">Tariff Plan *</label>
-                        <select id="custPlan" required class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder"></select>
-                    </div>
-                    <div>
-                        <label class="block font-semibold mb-1">Status *</label>
-                        <select id="custStatus" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder">
-                            <option value="ACTIVE">ACTIVE</option>
-                            <option value="SUSPENDED">SUSPENDED</option>
-                            <option value="INACTIVE">INACTIVE</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="flex justify-end space-x-2 pt-3">
-                    <button type="button" onclick="closeModal('customerModal')" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 font-semibold">Cancel</button>
-                    <button type="submit" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold">Save Subscriber</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal 5: Record Payment -->
-    <div id="paymentModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-darkCard w-full max-w-md rounded-2xl shadow-2xl border border-slate-200 dark:border-darkBorder p-6 space-y-5">
-            <div class="flex items-center justify-between border-b border-slate-100 dark:border-darkBorder pb-4">
-                <h3 class="font-bold text-base text-slate-900 dark:text-white">Record Invoice Payment</h3>
-                <button onclick="closeModal('paymentModal')" class="p-1 text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
-            </div>
-            <form onsubmit="handlePaymentSubmit(event)" class="space-y-4 text-xs">
-                <input type="hidden" id="payBillId">
-                <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-darkBorder space-y-1">
-                    <p class="font-bold text-slate-900 dark:text-white text-sm" id="payBillNum">Invoice #INV-202608-001</p>
-                    <p class="text-slate-500" id="payBillCustomer">Rajesh Sharma</p>
-                    <p class="text-sm font-black text-blue-600" id="payBillAmount">Payable: ₹366.63</p>
-                </div>
-                <div>
-                    <label class="block font-semibold mb-1">Amount Paid (₹) *</label>
-                    <input type="number" step="0.01" id="payAmount" required class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder">
-                </div>
-                <div>
-                    <label class="block font-semibold mb-1">Payment Mode *</label>
-                    <select id="payMode" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder">
-                        <option value="UPI">UPI (Google Pay / PhonePe / Paytm)</option>
-                        <option value="CREDIT_CARD">Credit Card</option>
-                        <option value="DEBIT_CARD">Debit Card</option>
-                        <option value="NET_BANKING">Net Banking / NEFT</option>
-                        <option value="CASH">Cash Over-the-Counter</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block font-semibold mb-1">Transaction Ref / UTR</label>
-                    <input type="text" id="payRef" placeholder="e.g. UPI/202609/78129" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder">
-                </div>
-                <div class="flex justify-end space-x-2 pt-2">
-                    <button type="button" onclick="closeModal('paymentModal')" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 font-semibold">Cancel</button>
-                    <button type="submit" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold">Confirm & Settle</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Scripts -->
+    <!-- Application Script -->
     <script src="app.js"></script>
-    <script>
-        lucide.createIcons();
-    </script>
 </body>
 </html>
