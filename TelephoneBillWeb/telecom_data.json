@@ -1,0 +1,100 @@
+{
+  "gateway": {
+    "provider": "simulation",
+    "fast2sms_key": "",
+    "twilio_sid": "",
+    "twilio_token": "",
+    "twilio_from": "",
+    "callmebot_phone": "",
+    "callmebot_key": "",
+    "telegram_token": "",
+    "telegram_chat_id": ""
+  },
+  "otp_sessions": {
+    "9849012345": {
+      "otp": "784366",
+      "expires_at": 1789830101294,
+      "verified": true
+    }
+  },
+  "subscribers": [
+    {
+      "id": "sub_001",
+      "name": "Rajesh Sharma",
+      "phone": "9849012345",
+      "landline": "040-27654321",
+      "circle": "Hyderabad Telecom Circle",
+      "plan": "Postpaid Silver (STD Trunk)",
+      "monthly_rental": 249,
+      "free_minutes": 150,
+      "pulse_rate": 1.8,
+      "balance": 366.63,
+      "due_date": "25 Sep 2026",
+      "status": "ACTIVE",
+      "joined": "2024-03-15"
+    },
+    {
+      "id": "sub_002",
+      "name": "Priya Patel",
+      "phone": "9823098765",
+      "landline": "022-26543210",
+      "circle": "Mumbai Central Circle",
+      "plan": "STD / PCO Commercial Pack",
+      "monthly_rental": 399,
+      "free_minutes": 250,
+      "pulse_rate": 1.5,
+      "balance": 184.2,
+      "due_date": "28 Sep 2026",
+      "status": "ACTIVE",
+      "joined": "2024-01-10"
+    },
+    {
+      "id": "sub_003",
+      "name": "Sneha Reddy",
+      "phone": "9440123456",
+      "landline": "080-22114455",
+      "circle": "Bangalore East Circle",
+      "plan": "DoT Standard Landline 100",
+      "monthly_rental": 199,
+      "free_minutes": 100,
+      "pulse_rate": 1.8,
+      "balance": 0,
+      "due_date": "02 Oct 2026",
+      "status": "ACTIVE",
+      "joined": "2023-11-20"
+    }
+  ],
+  "cdrs": [
+    {
+      "id": "CDR-901",
+      "phone": "9849012345",
+      "destination": "04023456789",
+      "category": "LOCAL",
+      "duration_sec": 180,
+      "pulses": 3,
+      "cost": 0,
+      "timestamp": "2026-08-05 10:15"
+    },
+    {
+      "id": "CDR-902",
+      "phone": "9849012345",
+      "destination": "02226543210",
+      "category": "STD",
+      "duration_sec": 240,
+      "pulses": 4,
+      "cost": 6.4,
+      "timestamp": "2026-08-08 14:30"
+    },
+    {
+      "id": "CDR-903",
+      "phone": "9849012345",
+      "destination": "+14155552671",
+      "category": "ISD",
+      "duration_sec": 360,
+      "pulses": 6,
+      "cost": 48,
+      "timestamp": "2026-08-12 18:45"
+    }
+  ],
+  "payments": []
+}
