@@ -450,6 +450,27 @@ class TelecomAudio {
             osc.stop(this.ctx.currentTime + 0.26);
         } catch (e) {}
     }
+
+    playRotaryRatchet(clicks = 4) {
+        if (state.audioMuted) return;
+        try {
+            this.init();
+            if (!this.ctx) return;
+            const now = this.ctx.currentTime;
+            for (let i = 0; i < clicks; i++) {
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(320 + (i * 25), now + (i * 0.04));
+                gain.gain.setValueAtTime(0.08, now + (i * 0.04));
+                gain.gain.exponentialRampToValueAtTime(0.001, now + (i * 0.04) + 0.025);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now + (i * 0.04));
+                osc.stop(now + (i * 0.04) + 0.028);
+            }
+        } catch (e) {}
+    }
 }
 
 const audio = new TelecomAudio();
@@ -842,12 +863,12 @@ function updateHeaderInfo() {
     const list = document.getElementById('accountPickerList');
     if (list) {
         list.innerHTML = state.subscribers.map(sub => `
-            <button onclick="switchSubscriber('${sub.mobile}')" class="w-full text-left p-2 rounded-xl flex items-center justify-between hover:bg-blue-50 transition ${sub.mobile === state.currentUser.mobile ? 'bg-blue-100/70 border border-blue-300 font-bold' : 'border border-slate-100'}">
+            <button onclick="switchSubscriber('${sub.mobile}')" class="w-full text-left p-2.5 rounded-xl flex items-center justify-between hover:bg-blue-50 transition ${sub.mobile === state.currentUser.mobile ? 'bg-blue-50 border border-blue-300 font-bold' : 'border border-slate-100'}">
                 <div>
-                    <h4 class="text-xs text-slate-900">${sub.name}</h4>
-                    <p class="text-[10px] text-slate-600 font-mono">${sub.landline} (${sub.circle.split(' ')[0]})</p>
+                    <h4 class="text-xs text-slate-900 font-bold">${sub.name}</h4>
+                    <p class="text-[10px] text-slate-500 font-mono">${sub.landline} (${sub.circle.split(' ')[0]})</p>
                 </div>
-                <span class="text-[10px] font-mono text-jio-blue font-bold">₹${sub.balance.toFixed(2)}</span>
+                <span class="text-[10px] font-mono text-blue-600 font-bold">₹${sub.balance.toFixed(2)}</span>
             </button>
         `).join('');
     }
@@ -883,8 +904,10 @@ function switchTab(tabId) {
     const navButtons = document.querySelectorAll('.nav-item');
     navButtons.forEach(btn => {
         const isSelected = btn.getAttribute('data-nav') === tabId;
-        btn.classList.toggle('text-jio-blue', isSelected);
-        btn.classList.toggle('text-slate-600', !isSelected);
+        btn.classList.toggle('text-blue-600', isSelected);
+        btn.classList.toggle('font-bold', isSelected);
+        btn.classList.toggle('text-slate-400', !isSelected);
+        btn.classList.toggle('font-medium', !isSelected);
     });
 
     // Re-render specific views on open
@@ -1012,7 +1035,7 @@ function selectBooth(boothNum) {
     document.querySelectorAll('.booth-selector-btn').forEach((btn, idx) => {
         const isActive = (idx + 1) === boothNum;
         btn.className = isActive 
-            ? 'booth-selector-btn flex-1 py-1.5 rounded-xl text-xs font-bold bg-jio-blue text-white border border-blue-600 transition text-center shadow-sm'
+            ? 'booth-selector-btn flex-1 py-1.5 rounded-xl text-xs font-bold bg-blue-600 text-white border border-blue-600 transition text-center shadow-sm'
             : 'booth-selector-btn flex-1 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 transition text-center';
     });
 
@@ -1042,6 +1065,84 @@ function presetDial(number) {
     state.dialedNumber = number;
     updateVfdDisplay();
     audio.playDtmf('1');
+}
+
+function switchKeypadMode(mode) {
+    const roundView = document.getElementById('viewRoundButtons');
+    const rotaryView = document.getElementById('viewRotaryDial');
+    const btnRound = document.getElementById('btnModeRound');
+    const btnRotary = document.getElementById('btnModeRotary');
+
+    if (mode === 'rotary') {
+        if (roundView) roundView.classList.add('hidden');
+        if (rotaryView) rotaryView.classList.remove('hidden');
+        if (btnRound) {
+            btnRound.className = 'px-2.5 py-1 rounded-lg text-slate-600 hover:text-slate-900 transition';
+        }
+        if (btnRotary) {
+            btnRotary.className = 'px-2.5 py-1 rounded-lg bg-amber-500 text-slate-950 font-bold shadow-sm transition';
+        }
+    } else {
+        if (roundView) roundView.classList.remove('hidden');
+        if (rotaryView) rotaryView.classList.add('hidden');
+        if (btnRound) {
+            btnRound.className = 'px-2.5 py-1 rounded-lg bg-amber-500 text-slate-950 font-bold shadow-sm transition';
+        }
+        if (btnRotary) {
+            btnRotary.className = 'px-2.5 py-1 rounded-lg text-slate-600 hover:text-slate-900 transition';
+        }
+    }
+}
+
+function dialRotaryDigit(digit) {
+    if (state.isCallActive || state.isRotarySpinning) return;
+    state.isRotarySpinning = true;
+
+    const wheel = document.getElementById('rotaryWheelElem');
+    audio.init();
+
+    // Radial angles for each digit to rotate clockwise to the stop hook at bottom-right
+    const angles = {
+        '1': 60,
+        '2': 85,
+        '3': 110,
+        '4': 135,
+        '5': 160,
+        '6': 185,
+        '7': 210,
+        '8': 235,
+        '9': 260,
+        '0': 290
+    };
+    const angle = angles[digit] || 60;
+
+    // Wind wheel clockwise to stop hook
+    if (wheel) {
+        wheel.style.transition = 'transform 0.32s cubic-bezier(0.25, 1, 0.5, 1)';
+        wheel.style.transform = `rotate(${angle}deg)`;
+    }
+
+    // Play winding click sound
+    audio.playRelayPulse();
+
+    // Release and spring back counter-clockwise with ratchet clicks
+    setTimeout(() => {
+        if (wheel) {
+            wheel.style.transition = 'transform 0.45s cubic-bezier(0.4, 0, 0.2, 1)';
+            wheel.style.transform = 'rotate(0deg)';
+        }
+
+        const pulseCount = digit === '0' ? 10 : parseInt(digit, 10);
+        audio.playRotaryRatchet(pulseCount);
+
+        state.dialedNumber += digit;
+        updateVfdDisplay();
+        audio.playDtmf(digit);
+
+        setTimeout(() => {
+            state.isRotarySpinning = false;
+        }, 480);
+    }, 340);
 }
 
 function classifyPrefix(dest) {
@@ -1271,6 +1372,9 @@ function startCallSimulation() {
 
     const num = state.dialedNumber;
     const prefixInfo = classifyPrefix(num);
+
+    // Attempt real outbound cellular carrier call to smartphone
+    attemptRealPhoneOutboundCall(num);
 
     // Phase 1: Dialing State
     document.getElementById('callStateBadge').textContent = 'DIALING TRUNK ROUTE...';
@@ -1522,10 +1626,10 @@ function renderBillsScreen() {
         currentCard.innerHTML = `
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                 <div>
-                    <span class="text-[10px] font-bold text-jio-blue uppercase tracking-wider">Current Cycle Statement</span>
+                    <span class="text-[10px] font-black text-blue-600 uppercase tracking-wider font-mono">Current Cycle Statement</span>
                     <h3 class="text-base font-black text-slate-900">August 2026 Billing Period</h3>
                 </div>
-                <span class="px-2.5 py-1 rounded-full text-xs font-bold ${user.balance <= 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}">
+                <span class="px-2.5 py-1 rounded-full text-xs font-bold ${user.balance <= 0 ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
                     ${user.balance <= 0 ? '✓ SETTLED' : '⚠️ PAYMENT DUE'}
                 </span>
             </div>
@@ -1538,7 +1642,7 @@ function renderBillsScreen() {
                 </div>
                 <div class="flex justify-between">
                     <span class="text-slate-600">Free Talk-Time Allowance:</span>
-                    <span class="font-mono text-emerald-600 font-bold">${plan.freeMinutes} Mins Covered</span>
+                    <span class="font-mono text-emerald-700 font-bold">${plan.freeMinutes} Mins Covered</span>
                 </div>
                 <div class="flex justify-between">
                     <span class="text-slate-600">Itemized CDR Calls Charge:</span>
@@ -1550,19 +1654,19 @@ function renderBillsScreen() {
                 </div>
                 <div class="flex justify-between border-t border-slate-200 pt-2 text-sm font-black">
                     <span class="text-slate-900">Total Outstanding Amount:</span>
-                    <span class="font-mono text-jio-blue text-base">₹${user.balance.toFixed(2)}</span>
+                    <span class="font-mono text-blue-700 text-base">₹${user.balance.toFixed(2)}</span>
                 </div>
             </div>
 
             <!-- Action buttons -->
             <div class="grid grid-cols-2 gap-2 pt-2">
                 <button onclick="openPaymentModal()" ${user.balance <= 0 ? 'disabled' : ''}
-                        class="py-2.5 px-3 rounded-xl bg-gradient-to-r from-jio-blue to-jio-electric text-white font-bold text-xs shadow-md transition disabled:opacity-40">
-                    Pay Now
+                        class="py-3 px-3 rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs shadow-lg shadow-amber-500/30 transition disabled:opacity-40 flex items-center justify-center space-x-1">
+                    <span>Pay Bill Now (UPI)</span>
                 </button>
                 <button onclick="viewInvoiceModal()"
-                        class="py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs transition border border-slate-300 flex items-center justify-center space-x-1">
-                    <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                        class="py-3 px-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs transition border border-slate-700 flex items-center justify-center space-x-1 shadow-sm">
+                    <i data-lucide="file-text" class="w-3.5 h-3.5 text-amber-400"></i>
                     <span>Tax Invoice</span>
                 </button>
             </div>
@@ -1743,7 +1847,7 @@ function viewInvoiceModal() {
                     </tr>
                     <tr class="bg-blue-50 font-black text-sm">
                         <td colspan="3" class="p-2 border border-slate-300 text-right text-slate-900">TOTAL AMOUNT PAYABLE:</td>
-                        <td class="p-2 border border-slate-300 text-right font-mono text-jio-blue">₹${grandTotal.toFixed(2)}</td>
+                        <td class="p-2 border border-slate-300 text-right font-mono text-blue-700">₹${grandTotal.toFixed(2)}</td>
                     </tr>
                 </tbody>
             </table>
@@ -1820,10 +1924,10 @@ function renderTariffPlansScreen() {
     container.innerHTML = Object.values(DEFAULT_PLANS).map(p => {
         const isCurrent = p.id === currentPlanId;
         return `
-            <div class="p-4 rounded-3xl bg-white border ${isCurrent ? 'border-2 border-jio-blue shadow-lg' : 'border-slate-200'} shadow-sm space-y-3">
+            <div class="p-4 rounded-3xl bg-white border ${isCurrent ? 'border-2 border-blue-600 shadow-md' : 'border-slate-200'} shadow-sm space-y-3">
                 <div class="flex items-center justify-between">
                     <div>
-                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-50 text-jio-blue uppercase tracking-wider">${p.badge}</span>
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 uppercase tracking-wider">${p.badge}</span>
                         <h3 class="text-base font-black text-slate-900 mt-1">${p.name}</h3>
                     </div>
                     <div class="text-right">
@@ -1857,7 +1961,7 @@ function renderTariffPlansScreen() {
                             ✓ Currently Active
                         </span>
                     ` : `
-                        <button onclick="activatePlan('${p.id}')" class="px-3.5 py-1.5 rounded-xl bg-jio-blue hover:bg-blue-700 text-white font-bold text-xs shadow-sm transition">
+                        <button onclick="activatePlan('${p.id}')" class="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-sm transition">
                             Switch to Plan
                         </button>
                     `}
@@ -1895,7 +1999,7 @@ function renderAccountScreen() {
     if (kyc) {
         kyc.innerHTML = `
             <div class="flex items-center space-x-3 border-b border-slate-100 pb-3">
-                <div class="w-12 h-12 rounded-2xl bg-jio-blue text-white flex items-center justify-center font-black text-xl shadow-md">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-700 to-blue-500 text-white flex items-center justify-center font-black text-xl shadow-md">
                     ${user.name.charAt(0)}
                 </div>
                 <div>
@@ -1919,7 +2023,7 @@ function renderAccountScreen() {
                 </div>
                 <div class="flex justify-between">
                     <span class="text-slate-600">Enrolled Plan:</span>
-                    <span class="font-bold text-jio-blue">${plan.name}</span>
+                    <span class="font-bold text-blue-700">${plan.name}</span>
                 </div>
                 <div class="flex justify-between">
                     <span class="text-slate-600">Line Activation Date:</span>
@@ -2261,6 +2365,90 @@ async function testGatewayPing() {
     } catch (e) {
         statusBox.className = 'p-2.5 rounded-xl text-xs font-mono bg-amber-50 text-amber-800 border border-amber-200 block';
         statusBox.textContent = 'ℹ️ Note: Running in local simulation mode. Real gateway requires active Node.js server.';
+    }
+}
+
+async function testRealCarrierCall() {
+    const statusBox = document.getElementById('gatewayPingStatus');
+    statusBox.className = 'p-2.5 rounded-xl text-xs font-mono bg-blue-50 text-blue-800 border border-blue-200 block';
+    statusBox.textContent = '⏳ Preparing outbound phone call to your smartphone...';
+
+    const promptDefault = state.currentUser ? `+91${state.currentUser.mobile}` : '+91';
+    const destPhone = prompt('Enter your smartphone number to receive the real phone call (with country code, e.g. +919849012345):', promptDefault);
+    if (!destPhone) {
+        statusBox.className = 'hidden';
+        return;
+    }
+
+    try {
+        const res = await fetch('/api/voice/call-real-phone', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ phone: destPhone })
+        });
+        const data = await res.json();
+        if (data.success) {
+            statusBox.className = 'p-2.5 rounded-xl text-xs font-mono bg-emerald-50 text-emerald-800 border border-emerald-200 block';
+            statusBox.textContent = `✅ Outbound call dispatched! Your smartphone should ring shortly. (Call SID: ${data.callSid || 'ACTIVE'})`;
+        } else {
+            statusBox.className = 'p-2.5 rounded-xl text-xs font-mono bg-rose-50 text-rose-800 border border-rose-200 block';
+            statusBox.textContent = `❌ Call Error: ${data.error || 'Failed to place carrier call'}`;
+        }
+    } catch (e) {
+        statusBox.className = 'p-2.5 rounded-xl text-xs font-mono bg-rose-50 text-rose-800 border border-rose-200 block';
+        statusBox.textContent = `❌ Network Error: ${e.message}`;
+    }
+}
+
+async function attemptRealPhoneOutboundCall(phone) {
+    const clean = phone.replace(/\D/g, '');
+    // Only attempt outbound carrier calling if it's a 10-digit number or +...
+    if (clean.length < 10 && !phone.startsWith('+')) return;
+
+    try {
+        const res = await fetch('/api/voice/call-real-phone', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ phone: phone })
+        });
+        const data = await res.json();
+        if (data.configured === false) {
+            // Twilio not configured yet - show prompt modal
+            setTimeout(() => {
+                showVoiceGatewayPrompt(phone);
+            }, 1000);
+        } else if (data.success) {
+            const transcript = document.getElementById('vfdVoiceTranscript');
+            if (transcript) {
+                transcript.textContent = `📞 REAL CALL PLACED! Carrier is ringing ${phone}... (SID: ${data.callSid || 'ACTIVE'})`;
+            }
+        } else {
+            console.log('[Outbound Carrier Call Note]:', data.error);
+        }
+    } catch (e) {
+        console.log('[Voice Call Note]:', e);
+    }
+}
+
+function showVoiceGatewayPrompt(phone) {
+    const modal = document.getElementById('modalVoiceGatewayPrompt');
+    const phoneEl = document.getElementById('voicePromptPhone');
+    if (phoneEl) phoneEl.textContent = phone;
+    if (modal) modal.classList.remove('hidden');
+}
+
+function closeVoiceGatewayPrompt() {
+    const modal = document.getElementById('modalVoiceGatewayPrompt');
+    if (modal) modal.classList.add('hidden');
+}
+
+function openGatewaySettingsForVoice() {
+    closeVoiceGatewayPrompt();
+    openGatewayModal();
+    const select = document.getElementById('gatewayProviderSelect');
+    if (select) {
+        select.value = 'twilio';
+        onGatewayProviderChange();
     }
 }
 

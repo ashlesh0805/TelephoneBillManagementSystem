@@ -252,6 +252,52 @@ async function dispatchOTPMessage(phone, otp, gatewayConfig) {
     };
 }
 
+// Dispatch actual outbound phone call to smartphone via Twilio Voice API
+async function dispatchRealCarrierPhoneCall(phoneNumber, gatewayConfig) {
+    if (!gatewayConfig.twilio_sid || !gatewayConfig.twilio_token || !gatewayConfig.twilio_from) {
+        return {
+            success: false,
+            configured: false,
+            error: 'Twilio Voice credentials (Account SID, Auth Token, and Phone Number) are not configured yet in Gateway Settings.'
+        };
+    }
+
+    const clean = phoneNumber.trim().replace(/\D/g, '');
+    const formattedTo = phoneNumber.trim().startsWith('+') ? phoneNumber.trim() : (clean.length === 10 ? `+91${clean}` : `+${clean}`);
+    console.log(`[Twilio Voice] Placing real outbound carrier call to ${formattedTo}...`);
+
+    const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${gatewayConfig.twilio_sid}/Calls.json`;
+    const authHeader = 'Basic ' + Buffer.from(`${gatewayConfig.twilio_sid}:${gatewayConfig.twilio_token}`).toString('base64');
+    
+    // TwiML payload: speaks official vintage DoT operator greeting when user answers their phone
+    const twiml = `<Response>
+        <Pause length="1"/>
+        <Say voice="Polly.Aditi" language="en-IN">Namaste! This is an official Department of Telecommunications trunk call from Apex PCO Booth 01. Your STD line is connected. 16 kilohertz pulse metering active.</Say>
+        <Pause length="1"/>
+        <Say voice="Polly.Aditi" language="en-IN">Two-way carrier line active. Current call duration is running. Thank you for using Apex Vintage Telecom.</Say>
+    </Response>`;
+
+    const postData = new URLSearchParams({
+        To: formattedTo,
+        From: gatewayConfig.twilio_from,
+        Twiml: twiml
+    }).toString();
+
+    const res = await makeExternalRequest(twilioUrl, 'POST', {
+        'Authorization': authHeader,
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Length': Buffer.byteLength(postData)
+    }, postData);
+
+    return {
+        success: res.statusCode === 201 || res.statusCode === 200,
+        configured: true,
+        callSid: res.body ? res.body.sid : null,
+        status: res.body ? res.body.status : null,
+        details: res.body
+    };
+}
+
 // Find local IPv4 address
 function getLocalIP() {
     const interfaces = os.networkInterfaces();
@@ -480,6 +526,23 @@ const server = http.createServer(async (req, res) => {
             return sendJSON(200, { success: true, txn: txn, new_balance: 0.00 });
         }
         return sendJSON(404, { success: false, error: 'Subscriber not found' });
+    }
+
+    // 9. POST /api/voice/call-real-phone - Real Outbound Carrier Call to Smartphone via Twilio Voice
+    if (req.method === 'POST' && pathname === '/api/voice/call-real-phone') {
+        const body = await parseBody();
+        const phone = body.phone || '';
+        if (!phone || phone.length < 5) {
+            return sendJSON(400, { success: false, error: 'Valid telephone or mobile number required' });
+        }
+
+        try {
+            const result = await dispatchRealCarrierPhoneCall(phone, db.gateway);
+            return sendJSON(200, result);
+        } catch (err) {
+            console.error('[Voice Call Error]:', err);
+            return sendJSON(500, { success: false, error: 'Twilio Voice call failed: ' + err.message });
+        }
     }
 
     // -------------------------------------------------------------

@@ -11,13 +11,33 @@
             theme: {
                 extend: {
                     colors: {
+                        sanchar: {
+                            obsidian: '#08111e',
+                            navy: '#0d1e38',
+                            blue: '#1a60ff',
+                            royal: '#0052cc',
+                            light: '#edf4ff',
+                            border: '#cfe2fe'
+                        },
+                        bharat: {
+                            saffron: '#ff7a00',
+                            amber: '#ff9500',
+                            gold: '#ffb800',
+                            cream: '#fff9ed',
+                            border: '#fde68a'
+                        },
+                        pulse: {
+                            green: '#00c853',
+                            emerald: '#10b981',
+                            dark: '#03200e'
+                        },
                         jio: {
-                            navy: '#061b58',
-                            blue: '#0a2885',
-                            royal: '#0050d8',
-                            electric: '#0f60ff',
-                            light: '#eef4ff',
-                            dark: '#030d2d',
+                            navy: '#08111e',
+                            blue: '#1a60ff',
+                            royal: '#0d1e38',
+                            electric: '#0052cc',
+                            light: '#edf4ff',
+                            dark: '#050b14'
                         },
                         vintage: {
                             brass: '#d97706',
@@ -33,9 +53,13 @@
                         voucher: ['Courier Prime', 'Courier', 'monospace']
                     },
                     boxShadow: {
-                        'jio': '0 10px 25px -5px rgba(10, 40, 133, 0.2), 0 8px 10px -6px rgba(10, 40, 133, 0.1)',
-                        'card': '0 4px 20px -2px rgba(15, 23, 42, 0.06)',
-                        'glow': '0 0 20px rgba(15, 96, 255, 0.35)'
+                        'app': '0 2px 10px -1px rgba(8, 17, 30, 0.08), 0 1px 3px -1px rgba(8, 17, 30, 0.04)',
+                        'card': '0 1px 4px 0 rgba(8, 17, 30, 0.06), 0 4px 14px -2px rgba(8, 17, 30, 0.05)',
+                        'hero': '0 14px 32px -6px rgba(13, 30, 56, 0.28), 0 6px 16px -4px rgba(8, 17, 30, 0.15)',
+                        'amber': '0 8px 20px -3px rgba(255, 149, 0, 0.35)',
+                        'pulse': '0 0 16px rgba(0, 200, 83, 0.45)',
+                        'jio': '0 14px 32px -6px rgba(13, 30, 56, 0.28), 0 6px 16px -4px rgba(8, 17, 30, 0.15)',
+                        'glow': '0 0 20px rgba(26, 96, 255, 0.35)'
                     }
                 }
             }
@@ -56,22 +80,25 @@
     <style>
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #f1f4f9;
+            background-color: #0c1524;
             color: #0f172a;
             -webkit-tap-highlight-color: transparent;
         }
+        /* High-Definition CRT / VFD Display */
         .vfd-display {
             font-family: 'VT323', monospace;
-            background: #0d1f18;
-            color: #34d399;
-            text-shadow: 0 0 8px rgba(52, 211, 153, 0.7);
-            letter-spacing: 1px;
+            background: #061510;
+            color: #10b981;
+            text-shadow: 0 0 8px rgba(16, 185, 129, 0.7);
+            letter-spacing: 1.5px;
+            background-image: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+            background-size: 100% 4px;
         }
         .vintage-receipt {
             font-family: 'Courier Prime', Courier, monospace;
             background: #faf8f3;
-            background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
-            background-size: 16px 16px;
+            background-image: radial-gradient(#e2e8f0 1.2px, transparent 1.2px);
+            background-size: 14px 14px;
         }
         /* Mobile Frame Styling on desktop */
         .mobile-shell {
@@ -79,19 +106,19 @@
             width: 100%;
             margin: 0 auto;
             min-height: 100vh;
-            background: #ffffff;
+            background: #f1f5f9;
             position: relative;
-            box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.18);
-            transition: max-width 0.3s ease;
+            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1);
+            transition: max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .mobile-shell.wide-mode {
             max-width: 1024px;
         }
         /* Pulse wave animation for live call */
         @keyframes pulse-ring {
-            0% { transform: scale(0.95); opacity: 0.8; }
+            0% { transform: scale(0.95); opacity: 0.9; }
             50% { transform: scale(1.15); opacity: 0.3; }
-            100% { transform: scale(0.95); opacity: 0.8; }
+            100% { transform: scale(0.95); opacity: 0.9; }
         }
         .pulsing-line {
             animation: pulse-ring 2s infinite ease-in-out;
@@ -99,31 +126,143 @@
         /* Hide scrollbars but allow scrolling */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Vintage Round Keypad Ergonomics (Authentic ITI Push-Button Phone) */
+        .vintage-round-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, #ffffff 0%, #fef3c7 65%, #fde68a 100%);
+            border: 2.5px solid #d97706;
+            box-shadow: 0 5px 10px -2px rgba(15, 23, 42, 0.2), inset 0 2px 3px #ffffff, inset 0 -3px 4px rgba(180, 83, 9, 0.35);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+            user-select: none;
+            cursor: pointer;
+        }
+        .vintage-round-btn:hover {
+            transform: scale(1.05) translateY(-1px);
+            box-shadow: 0 8px 16px -2px rgba(217, 119, 6, 0.35), inset 0 2px 4px #ffffff;
+        }
+        .vintage-round-btn:active {
+            transform: scale(0.93) translateY(2px);
+            box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.35);
+        }
+
+        /* Vintage Rotary Wheel Dial */
+        .rotary-dial-container {
+            width: 252px;
+            height: 252px;
+            margin: 0 auto;
+            position: relative;
+            border-radius: 50%;
+            background: radial-gradient(circle, #222e3e 0%, #151d29 75%, #0d131b 100%);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55), inset 0 2px 4px rgba(255, 255, 255, 0.2), inset 0 -4px 8px rgba(0, 0, 0, 0.7);
+            border: 6px solid #b45309;
+        }
+        .rotary-wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            transform-origin: center center;
+        }
+        .rotary-hole {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            position: absolute;
+            background: radial-gradient(circle at 40% 40%, #ffffff 0%, #fef3c7 60%, #e2e8f0 100%);
+            border: 2.5px solid #d97706;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.35), 0 2px 5px rgba(0,0,0,0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 17px;
+            color: #0f172a;
+            cursor: pointer;
+            user-select: none;
+            transition: transform 0.1s;
+        }
+        .rotary-hole:hover {
+            transform: scale(1.12);
+        }
+        .rotary-center {
+            width: 82px;
+            height: 82px;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, #fef3c7 0%, #d97706 70%, #92400e 100%);
+            border: 3.5px solid #78350f;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.45);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #451a03;
+            text-align: center;
+            pointer-events: none;
+        }
+        .rotary-stop-hook {
+            position: absolute;
+            bottom: 22px;
+            right: 32px;
+            width: 22px;
+            height: 18px;
+            border-top: 4px solid #d97706;
+            border-left: 4px solid #d97706;
+            border-top-left-radius: 6px;
+            transform: rotate(35deg);
+            pointer-events: none;
+            box-shadow: -1px -1px 3px rgba(0,0,0,0.4);
+        }
+
+        /* Mechanical Pulse Counter Styling */
+        .pulse-digit-reel {
+            background: #050b14;
+            color: #ffb800;
+            font-family: 'Courier Prime', monospace;
+            font-weight: 900;
+            border-radius: 4px;
+            padding: 2px 6px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.8), 0 1px 1px rgba(255,255,255,0.1);
+            border: 1px solid #1e293b;
+        }
     </style>
 </head>
 <body class="bg-slate-100 flex flex-col items-center justify-start min-h-screen">
 
     <!-- Top Floating Controls for Desktop / Presenter Evaluation -->
-    <header class="w-full bg-slate-900 text-white text-xs px-4 py-2 flex items-center justify-between z-50 shrink-0 border-b border-slate-800 shadow-md">
+    <header class="w-full bg-[#08111e] text-white text-xs px-4 py-2 flex items-center justify-between z-50 shrink-0 border-b border-slate-800 shadow-md">
         <div class="flex items-center space-x-2">
-            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span class="font-bold tracking-wider text-blue-400">APEX VINTAGE TELECOM</span>
-            <span class="text-slate-400 hidden sm:inline">| Dept of Telecom (DoT) PCO / STD Booth Suite</span>
+            <span class="w-2.5 h-2.5 rounded-full bg-pulse-green animate-pulse"></span>
+            <span class="font-black tracking-wider text-bharat-amber">SANCHAR BHARAT</span>
+            <span class="text-slate-400 hidden sm:inline">| Dept of Telecommunications (DoT) STD / PCO Billing</span>
         </div>
         <div class="flex items-center space-x-3">
-            <button onclick="toggleViewportMode()" id="viewportToggleBtn" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition flex items-center space-x-1.5 font-medium">
+            <button onclick="toggleViewportMode()" id="viewportToggleBtn" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center space-x-1.5 font-bold text-xs">
                 <i data-lucide="smartphone" class="w-3.5 h-3.5 text-blue-400"></i>
-                <span id="viewportModeText">Expand to Wide View</span>
+                <span id="viewportModeText">Expand View</span>
             </button>
-            <button onclick="toggleAudioMute()" id="audioToggleBtn" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition flex items-center space-x-1">
-                <i data-lucide="volume-2" class="w-3.5 h-3.5 text-emerald-400" id="audioIcon"></i>
-                <span id="audioStatusText" class="text-[11px]">Dialer Audio: ON</span>
+            <button onclick="toggleAudioMute()" id="audioToggleBtn" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center space-x-1 font-bold text-xs">
+                <i data-lucide="volume-2" class="w-3.5 h-3.5 text-pulse-green" id="audioIcon"></i>
+                <span id="audioStatusText" class="text-[11px]">Audio: ON</span>
             </button>
-            <button onclick="openGatewayModal()" id="gatewaySettingsBtn" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-500/30 transition flex items-center space-x-1 font-medium">
+            <button onclick="openGatewayModal()" id="gatewaySettingsBtn" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-bharat-gold border border-amber-500/40 transition flex items-center space-x-1 font-bold text-xs">
                 <span>⚙️ Gateway:</span>
-                <span id="headerGatewayStatus" class="font-bold text-white uppercase text-[10px] bg-slate-900 px-1 py-0.5 rounded">SIMULATION</span>
+                <span id="headerGatewayStatus" class="font-black text-slate-950 uppercase text-[10px] bg-bharat-amber px-1.5 py-0.5 rounded">SIMULATION</span>
             </button>
-            <a href="https://github.com/ashlesh0805/TelephoneBillManagementSystem" target="_blank" class="px-2 py-1 rounded bg-blue-600 hover:bg-blue-500 text-white font-bold transition flex items-center space-x-1">
+            <a href="https://github.com/ashlesh0805/TelephoneBillManagementSystem" target="_blank" class="px-2 py-1 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold transition flex items-center space-x-1 text-xs">
                 <svg class="w-3 h-3 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
                 <span>Source</span>
             </a>
@@ -131,24 +270,27 @@
     </header>
 
     <!-- FLOATING REAL-TIME SMS NOTIFICATION TOAST (Simulating Live SMS Delivery) -->
-    <div id="smsToast" class="fixed top-12 z-50 max-w-sm w-11/12 bg-white rounded-2xl shadow-2xl border border-blue-200 p-3.5 transition-all duration-300 transform -translate-y-24 opacity-0 pointer-events-none">
+    <div id="smsToast" class="fixed top-12 z-50 max-w-sm w-11/12 bg-white rounded-2xl shadow-2xl border-2 border-blue-600/30 p-3.5 transition-all duration-300 transform -translate-y-24 opacity-0 pointer-events-none">
         <div class="flex items-start space-x-3">
-            <div class="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white shrink-0 shadow-md shadow-blue-500/30">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center text-white shrink-0 shadow-md">
                 <i data-lucide="message-square" class="w-5 h-5"></i>
             </div>
             <div class="flex-1 min-w-0">
                 <div class="flex items-center justify-between">
-                    <span class="text-[11px] font-black uppercase text-blue-700 tracking-wider">JM-APEXTEL (SMS)</span>
+                    <span class="text-[11px] font-black uppercase text-blue-900 tracking-wider flex items-center space-x-1">
+                        <span>🇮🇳</span>
+                        <span>DOT-SANCHAR (SMS)</span>
+                    </span>
                     <span class="text-[10px] text-slate-400 font-mono" id="smsTime">Just now</span>
                 </div>
-                <p class="text-xs text-slate-800 mt-0.5 leading-snug">
-                    Your OTP for Apex Vintage Telecom STD Booth login is <strong id="smsOtpCode" class="text-blue-600 font-mono text-sm bg-blue-50 px-1 py-0.5 rounded border border-blue-200 font-black">------</strong>. Valid for 10 mins. Do not share.
+                <p class="text-xs text-slate-800 mt-1 leading-snug">
+                    Your OTP for Sanchar Bharat PCO Suite login is <strong id="smsOtpCode" class="text-blue-700 font-mono text-sm bg-blue-50 px-1.5 py-0.5 rounded border border-blue-300 font-black">------</strong>. Valid for 10 mins.
                 </p>
-                <div class="mt-2 flex items-center space-x-2">
-                    <button onclick="quickFillOtp()" class="px-2 py-0.5 rounded-lg bg-blue-600 text-white text-[11px] font-bold shadow-sm hover:bg-blue-700 transition">
-                        ⚡ Quick Auto-Fill
+                <div class="mt-2.5 flex items-center space-x-2">
+                    <button onclick="quickFillOtp()" class="px-2.5 py-1 rounded-lg bg-blue-600 text-white text-[11px] font-bold shadow-sm hover:bg-blue-700 transition flex items-center space-x-1">
+                        <span>⚡ Quick Auto-Fill</span>
                     </button>
-                    <button onclick="dismissSmsToast()" class="text-[11px] text-slate-500 hover:text-slate-800">
+                    <button onclick="dismissSmsToast()" class="text-[11px] text-slate-500 hover:text-slate-800 font-medium">
                         Dismiss
                     </button>
                 </div>
@@ -156,141 +298,157 @@
         </div>
     </div>
 
-    <!-- MAIN APP CONTAINER (MyJio-Inspired Mobile Application) -->
+    <!-- MAIN APP CONTAINER (Native Mobile Application Frame) -->
     <main id="mobileShell" class="mobile-shell flex flex-col flex-1 pb-32 overflow-x-hidden">
 
         <!-- ============================================================ -->
         <!-- SCREEN 0: REAL-TIME SMS OTP LOGIN (When not authenticated) -->
         <!-- ============================================================ -->
-        <section id="screenLogin" class="p-6 flex flex-col justify-between min-h-[92vh]">
-            <div class="space-y-6 pt-4">
+        <section id="screenLogin" class="p-5 flex flex-col justify-between min-h-[92vh]">
+            <div class="space-y-5 pt-3">
                 <!-- Brand Badge & Header -->
-                <div class="flex items-center space-x-3">
-                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-jio-navy via-jio-royal to-jio-electric flex items-center justify-center text-white text-2xl shadow-lg shadow-blue-900/25">
+                <div class="flex items-center space-x-3 p-3.5 rounded-2xl bg-[#08111e] text-white border border-slate-800 shadow-xl">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-blue-700 via-blue-600 to-cyan-500 flex items-center justify-center text-white text-2xl shadow-md shrink-0 border border-white/20">
                         ☎️
                     </div>
                     <div>
                         <div class="flex items-center space-x-1.5">
-                            <span class="text-xs font-black tracking-widest text-jio-blue uppercase">APEX VINTAGE</span>
-                            <span class="text-[10px] font-bold bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded border border-amber-300">STD/PCO</span>
+                            <span class="text-[11px] font-black tracking-widest text-bharat-gold uppercase">SANCHAR BHARAT</span>
+                            <span class="text-[9px] font-black bg-bharat-saffron text-slate-950 px-1.5 py-0.2 rounded uppercase">DoT PCO</span>
                         </div>
-                        <h1 class="text-2xl font-black text-slate-900 tracking-tight">Telephone Bill Suite</h1>
+                        <h1 class="text-lg font-black text-white tracking-tight">Telephone Bill Suite</h1>
+                        <p class="text-[10px] text-slate-400 font-mono">Dept of Telecommunications • Govt of India</p>
                     </div>
                 </div>
 
                 <!-- Welcome Note -->
-                <div class="bg-gradient-to-r from-blue-50 to-indigo-50/50 p-4 rounded-2xl border border-blue-100">
-                    <h2 class="text-sm font-bold text-jio-blue flex items-center space-x-1.5">
-                        <i data-lucide="shield-check" class="w-4 h-4 text-jio-electric"></i>
-                        <span>Secure Telecom Subscriber Login</span>
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-1">
+                    <h2 class="text-xs font-black uppercase text-blue-900 flex items-center space-x-1.5 tracking-wider">
+                        <i data-lucide="shield-check" class="w-4 h-4 text-blue-600"></i>
+                        <span>Secure Subscriber Authentication</span>
                     </h2>
-                    <p class="text-xs text-slate-600 mt-1 leading-relaxed">
-                        Access your Landline, PCO Booth, and Trunk Call billing records via instant SMS One-Time Password (OTP) verification.
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Access your Landline, STD PCO Booth, and trunk billing records via instant SMS One-Time Password (OTP) verification.
                     </p>
                 </div>
 
                 <!-- STEP 1: ENTER PHONE NUMBER -->
                 <div id="loginStepPhone" class="space-y-4">
                     <div class="space-y-1.5">
-                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                        <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider">
                             Mobile / Landline Number
                         </label>
-                        <div class="flex items-center rounded-2xl border-2 border-slate-200 bg-white px-3.5 py-2.5 focus-within:border-jio-electric transition-all shadow-sm">
-                            <span class="text-sm font-bold text-slate-500 border-r border-slate-200 pr-3 mr-3 font-mono flex items-center space-x-1">
+                        <div class="flex items-center rounded-2xl border-2 border-slate-300 bg-white px-3.5 py-2.5 focus-within:border-blue-600 transition-all shadow-sm">
+                            <span class="text-sm font-bold text-slate-600 border-r border-slate-200 pr-3 mr-3 font-mono flex items-center space-x-1">
                                 <span>🇮🇳</span>
                                 <span>+91</span>
                             </span>
                             <input type="tel" id="inputPhone" maxlength="10" placeholder="Enter 10-digit number"
-                                   class="w-full text-base font-bold text-slate-900 focus:outline-none placeholder:text-slate-400 font-mono tracking-wider">
+                                   class="w-full text-base font-black text-slate-900 focus:outline-none placeholder:text-slate-400 font-mono tracking-wider">
                         </div>
                         <p class="text-[11px] text-slate-500 flex items-center space-x-1">
-                            <i data-lucide="info" class="w-3.5 h-3.5 text-blue-500 shrink-0"></i>
-                            <span>Enter any number or pick a demo subscriber below</span>
+                            <i data-lucide="info" class="w-3.5 h-3.5 text-blue-600 shrink-0"></i>
+                            <span>Type any 10-digit phone or select a verified test account</span>
                         </p>
                     </div>
 
                     <!-- Quick Demo Accounts Chips -->
                     <div class="space-y-2 pt-1">
-                        <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Quick Demo Subscribers:</span>
+                        <span class="text-[10px] font-black text-slate-500 uppercase tracking-wider">Verified Subscriber Profiles:</span>
                         <div class="grid grid-cols-1 gap-2">
-                            <button onclick="selectDemoUser('9849012345')" class="demo-chip text-left p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-blue-50/60 hover:border-blue-300 transition flex items-center justify-between">
-                                <div>
-                                    <h4 class="text-xs font-bold text-slate-900">Rajesh Sharma</h4>
-                                    <p class="text-[11px] text-slate-500">Postpaid Silver (Hyderabad STD 040)</p>
+                            <button onclick="selectDemoUser('9849012345')" class="demo-chip text-left p-3 rounded-2xl border border-slate-200 bg-white hover:border-blue-500 hover:bg-blue-50/40 transition flex items-center justify-between shadow-sm group">
+                                <div class="flex items-center space-x-2.5">
+                                    <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-800 font-black text-xs flex items-center justify-center">
+                                        RS
+                                    </div>
+                                    <div>
+                                        <h4 class="text-xs font-black text-slate-900 group-hover:text-blue-700">Rajesh Sharma</h4>
+                                        <p class="text-[11px] text-slate-500">Postpaid Silver (Hyderabad STD 040)</p>
+                                    </div>
                                 </div>
-                                <span class="text-[11px] font-mono font-bold text-jio-blue bg-blue-50 px-2 py-0.5 rounded border border-blue-200">9849012345</span>
+                                <span class="text-[11px] font-mono font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-200">9849012345</span>
                             </button>
-                            <button onclick="selectDemoUser('9823098765')" class="demo-chip text-left p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-blue-50/60 hover:border-blue-300 transition flex items-center justify-between">
-                                <div>
-                                    <h4 class="text-xs font-bold text-slate-900">Priya Patel</h4>
-                                    <p class="text-[11px] text-slate-500">STD Booth Commercial (Mumbai STD 022)</p>
+                            <button onclick="selectDemoUser('9823098765')" class="demo-chip text-left p-3 rounded-2xl border border-slate-200 bg-white hover:border-blue-500 hover:bg-blue-50/40 transition flex items-center justify-between shadow-sm group">
+                                <div class="flex items-center space-x-2.5">
+                                    <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-800 font-black text-xs flex items-center justify-center">
+                                        PP
+                                    </div>
+                                    <div>
+                                        <h4 class="text-xs font-black text-slate-900 group-hover:text-blue-700">Priya Patel</h4>
+                                        <p class="text-[11px] text-slate-500">STD Commercial PCO (Mumbai 022)</p>
+                                    </div>
                                 </div>
-                                <span class="text-[11px] font-mono font-bold text-jio-blue bg-blue-50 px-2 py-0.5 rounded border border-blue-200">9823098765</span>
+                                <span class="text-[11px] font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-200">9823098765</span>
                             </button>
-                            <button onclick="selectDemoUser('9440123456')" class="demo-chip text-left p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-blue-50/60 hover:border-blue-300 transition flex items-center justify-between">
-                                <div>
-                                    <h4 class="text-xs font-bold text-slate-900">Sneha Reddy</h4>
-                                    <p class="text-[11px] text-slate-500">DoT Rotary Pulse (Bangalore STD 080)</p>
+                            <button onclick="selectDemoUser('9440123456')" class="demo-chip text-left p-3 rounded-2xl border border-slate-200 bg-white hover:border-blue-500 hover:bg-blue-50/40 transition flex items-center justify-between shadow-sm group">
+                                <div class="flex items-center space-x-2.5">
+                                    <div class="w-8 h-8 rounded-full bg-amber-100 text-amber-800 font-black text-xs flex items-center justify-center">
+                                        SR
+                                    </div>
+                                    <div>
+                                        <h4 class="text-xs font-black text-slate-900 group-hover:text-blue-700">Sneha Reddy</h4>
+                                        <p class="text-[11px] text-slate-500">Classic Rotary Dial (Bangalore 080)</p>
+                                    </div>
                                 </div>
-                                <span class="text-[11px] font-mono font-bold text-jio-blue bg-blue-50 px-2 py-0.5 rounded border border-blue-200">9440123456</span>
+                                <span class="text-[11px] font-mono font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-lg border border-amber-200">9440123456</span>
                             </button>
                         </div>
                     </div>
 
                     <button onclick="requestSmsOtp()" id="btnGenerateOtp"
-                            class="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-jio-blue to-jio-electric hover:opacity-95 text-white font-bold text-sm shadow-lg shadow-blue-600/30 transition transform active:scale-[0.99] flex items-center justify-center space-x-2">
-                        <span>Generate SMS OTP</span>
+                            class="w-full py-3.5 px-4 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-sm shadow-md transition transform active:scale-[0.99] flex items-center justify-center space-x-2">
+                        <span>Send SMS Verification OTP</span>
                         <i data-lucide="arrow-right" class="w-4 h-4"></i>
                     </button>
                 </div>
 
                 <!-- STEP 2: ENTER & VERIFY OTP -->
-                <div id="loginStepOtp" class="space-y-5 hidden">
+                <div id="loginStepOtp" class="space-y-4 hidden bg-white p-4 rounded-3xl border border-slate-200 shadow-sm">
                     <div class="flex items-center justify-between">
                         <div>
-                            <h3 class="text-sm font-bold text-slate-900">Verify One-Time Password</h3>
-                            <p class="text-xs text-slate-500">Sent via SMS to <span id="displayOtpPhone" class="font-mono font-bold text-jio-blue">+91 ----------</span></p>
+                            <h3 class="text-xs font-black uppercase tracking-wider text-slate-900">Enter 6-Digit OTP</h3>
+                            <p class="text-xs text-slate-500">Sent to <span id="displayOtpPhone" class="font-mono font-bold text-blue-700">+91 ----------</span></p>
                         </div>
-                        <button onclick="backToPhoneStep()" class="text-xs text-jio-electric font-bold hover:underline">
+                        <button onclick="backToPhoneStep()" class="text-xs text-blue-600 font-bold hover:underline">
                             Change
                         </button>
                     </div>
 
                     <!-- 6-Digit PIN Boxes -->
-                    <div class="flex justify-between space-x-2">
-                        <input type="text" maxlength="1" class="otp-box w-12 h-14 text-center font-mono text-xl font-black rounded-2xl border-2 border-slate-200 focus:border-jio-electric focus:bg-blue-50/30 outline-none transition" data-index="0" inputmode="numeric">
-                        <input type="text" maxlength="1" class="otp-box w-12 h-14 text-center font-mono text-xl font-black rounded-2xl border-2 border-slate-200 focus:border-jio-electric focus:bg-blue-50/30 outline-none transition" data-index="1" inputmode="numeric">
-                        <input type="text" maxlength="1" class="otp-box w-12 h-14 text-center font-mono text-xl font-black rounded-2xl border-2 border-slate-200 focus:border-jio-electric focus:bg-blue-50/30 outline-none transition" data-index="2" inputmode="numeric">
-                        <input type="text" maxlength="1" class="otp-box w-12 h-14 text-center font-mono text-xl font-black rounded-2xl border-2 border-slate-200 focus:border-jio-electric focus:bg-blue-50/30 outline-none transition" data-index="3" inputmode="numeric">
-                        <input type="text" maxlength="1" class="otp-box w-12 h-14 text-center font-mono text-xl font-black rounded-2xl border-2 border-slate-200 focus:border-jio-electric focus:bg-blue-50/30 outline-none transition" data-index="4" inputmode="numeric">
-                        <input type="text" maxlength="1" class="otp-box w-12 h-14 text-center font-mono text-xl font-black rounded-2xl border-2 border-slate-200 focus:border-jio-electric focus:bg-blue-50/30 outline-none transition" data-index="5" inputmode="numeric">
+                    <div class="flex justify-between space-x-1.5">
+                        <input type="text" maxlength="1" class="otp-box w-12 h-14 text-center font-mono text-2xl font-black rounded-2xl border-2 border-slate-300 focus:border-blue-600 focus:bg-blue-50/20 outline-none transition" data-index="0" inputmode="numeric">
+                        <input type="text" maxlength="1" class="otp-box w-12 h-14 text-center font-mono text-2xl font-black rounded-2xl border-2 border-slate-300 focus:border-blue-600 focus:bg-blue-50/20 outline-none transition" data-index="1" inputmode="numeric">
+                        <input type="text" maxlength="1" class="otp-box w-12 h-14 text-center font-mono text-2xl font-black rounded-2xl border-2 border-slate-300 focus:border-blue-600 focus:bg-blue-50/20 outline-none transition" data-index="2" inputmode="numeric">
+                        <input type="text" maxlength="1" class="otp-box w-12 h-14 text-center font-mono text-2xl font-black rounded-2xl border-2 border-slate-300 focus:border-blue-600 focus:bg-blue-50/20 outline-none transition" data-index="3" inputmode="numeric">
+                        <input type="text" maxlength="1" class="otp-box w-12 h-14 text-center font-mono text-2xl font-black rounded-2xl border-2 border-slate-300 focus:border-blue-600 focus:bg-blue-50/20 outline-none transition" data-index="4" inputmode="numeric">
+                        <input type="text" maxlength="1" class="otp-box w-12 h-14 text-center font-mono text-2xl font-black rounded-2xl border-2 border-slate-300 focus:border-blue-600 focus:bg-blue-50/20 outline-none transition" data-index="5" inputmode="numeric">
                     </div>
 
                     <!-- Resend countdown timer -->
-                    <div class="flex items-center justify-between text-xs">
-                        <span id="otpTimerText" class="text-slate-500 font-medium">Resend OTP in <strong id="otpTimerSecs" class="font-mono text-slate-800">30s</strong></span>
-                        <button onclick="resendOtp()" id="btnResendOtp" class="text-jio-electric font-bold hover:underline disabled:opacity-40 disabled:no-underline" disabled>
-                            Resend OTP
+                    <div class="flex items-center justify-between text-xs pt-1">
+                        <span id="otpTimerText" class="text-slate-500 font-medium">Resend code in <strong id="otpTimerSecs" class="font-mono text-slate-800">30s</strong></span>
+                        <button onclick="resendOtp()" id="btnResendOtp" class="text-blue-600 font-bold hover:underline disabled:opacity-40 disabled:no-underline" disabled>
+                            Resend Code
                         </button>
                     </div>
 
                     <div id="otpErrorMsg" class="hidden p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-medium flex items-center space-x-1.5">
                         <i data-lucide="alert-circle" class="w-4 h-4 shrink-0"></i>
-                        <span>Invalid OTP code entered. Please check the SMS banner.</span>
+                        <span>Invalid OTP code. Please check the notification.</span>
                     </div>
 
                     <button onclick="verifyOtpAndLogin()" id="btnVerifyOtp"
-                            class="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-jio-blue to-jio-electric hover:opacity-95 text-white font-bold text-sm shadow-lg shadow-blue-600/30 transition transform active:scale-[0.99] flex items-center justify-center space-x-2">
+                            class="w-full py-3.5 px-4 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-sm shadow-md transition transform active:scale-[0.99] flex items-center justify-center space-x-2">
                         <i data-lucide="check-circle" class="w-4 h-4"></i>
-                        <span>Verify & Open App</span>
+                        <span>Verify & Launch Suite</span>
                     </button>
                 </div>
             </div>
 
             <!-- Vintage PCO Footer Notice -->
             <div class="pt-6 border-t border-slate-200 text-center space-y-1">
-                <p class="text-[11px] text-slate-500 font-mono">Department of Telecommunications (DoT) Regulations</p>
-                <p class="text-[10px] text-slate-400">Standard 60-Second Pulse Ceiling & Statutory 18% GST Compliance</p>
+                <p class="text-[11px] text-slate-500 font-mono font-bold">Department of Telecommunications (DoT) Regulations</p>
+                <p class="text-[10px] text-slate-400">16kHz Exchange Metering • Standard 60-Second Ceiling • 18% Statutory GST</p>
             </div>
         </section>
 
@@ -299,40 +457,43 @@
         <!-- ============================================================ -->
         <div id="appBody" class="hidden">
 
-            <!-- MYJIO-INSPIRED APP HEADER -->
-            <header class="bg-gradient-to-b from-jio-navy to-jio-blue text-white p-4 pt-5 rounded-b-[2rem] shadow-xl space-y-4">
+            <!-- SANCHAR BHARAT APP HEADER -->
+            <header class="bg-[#08111e] text-white p-4 pt-5 rounded-b-[2rem] border-b-2 border-amber-500 shadow-xl space-y-4">
                 <!-- Top Row: Logo, Switch Account, Profile -->
                 <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-2.5">
-                        <div class="w-8 h-8 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center text-lg border border-white/20">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-700 via-blue-600 to-amber-500 flex items-center justify-center text-lg border border-white/25 shadow-md">
                             ☎️
                         </div>
                         <div>
-                            <span class="text-[10px] font-black uppercase text-blue-200 tracking-wider">APEX VINTAGE TELECOM</span>
+                            <div class="flex items-center space-x-1.5">
+                                <span class="text-[10px] font-black uppercase tracking-widest text-amber-400">SANCHAR BHARAT</span>
+                                <span class="text-[9px] font-mono bg-amber-500 text-slate-950 font-black px-1.5 py-0.2 rounded">DoT STD</span>
+                            </div>
                             <div class="flex items-center space-x-1 cursor-pointer" onclick="toggleAccountPicker()">
-                                <h2 id="headerSubscriberName" class="text-sm font-black text-white">Rajesh Sharma</h2>
-                                <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-blue-200"></i>
+                                <h2 id="headerSubscriberName" class="text-sm font-black text-white hover:text-amber-300 transition">Rajesh Sharma</h2>
+                                <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-amber-400"></i>
                             </div>
                         </div>
                     </div>
 
                     <!-- Line Diagnostics & Logout -->
                     <div class="flex items-center space-x-2">
-                        <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[10px] font-bold flex items-center space-x-1">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
-                            <span>Line Clear</span>
+                        <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 text-[10px] font-mono font-bold flex items-center space-x-1">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                            <span>16kHz Active</span>
                         </span>
-                        <button onclick="logout()" title="Logout" class="p-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white transition border border-white/20">
+                        <button onclick="logout()" title="Logout" class="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-200 transition border border-slate-700 shadow-sm">
                             <i data-lucide="log-out" class="w-4 h-4"></i>
                         </button>
                     </div>
                 </div>
 
                 <!-- Account Switcher Drawer (Hidden by default) -->
-                <div id="accountPickerDrawer" class="hidden p-3 rounded-2xl bg-white text-slate-900 shadow-2xl border border-blue-200 space-y-2">
-                    <div class="flex items-center justify-between pb-1 border-b border-slate-100">
-                        <span class="text-[11px] font-bold text-slate-500 uppercase">Switch Active STD Connection</span>
-                        <button onclick="toggleAccountPicker()" class="text-xs text-slate-400 hover:text-slate-700 font-bold">✕ Close</button>
+                <div id="accountPickerDrawer" class="hidden p-3.5 rounded-2xl bg-white text-slate-900 shadow-2xl border-2 border-blue-600/30 space-y-2.5">
+                    <div class="flex items-center justify-between pb-1.5 border-b border-slate-100">
+                        <span class="text-[11px] font-black text-slate-700 uppercase tracking-wider">Switch Registered Telephone Line</span>
+                        <button onclick="toggleAccountPicker()" class="text-xs text-slate-400 hover:text-slate-700 font-bold px-1.5 py-0.5 rounded-md hover:bg-slate-100">✕ Close</button>
                     </div>
                     <div id="accountPickerList" class="space-y-1.5 max-h-48 overflow-y-auto">
                         <!-- Dynamically populated -->
@@ -340,17 +501,17 @@
                 </div>
 
                 <!-- Connection Mini Pills -->
-                <div class="flex items-center justify-between text-[11px] pt-1 text-blue-100/90 font-medium">
-                    <span class="flex items-center space-x-1">
-                        <i data-lucide="phone" class="w-3.5 h-3.5 text-blue-300"></i>
-                        <span id="headerPhone" class="font-mono">040-27654321</span>
+                <div class="flex items-center justify-between text-[11px] pt-1 text-slate-300 font-medium">
+                    <span class="flex items-center space-x-1 bg-slate-900/90 px-2.5 py-1 rounded-lg border border-slate-800">
+                        <i data-lucide="phone" class="w-3.5 h-3.5 text-blue-400"></i>
+                        <span id="headerPhone" class="font-mono text-white font-bold">040-27654321</span>
                     </span>
-                    <span class="flex items-center space-x-1">
-                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-amber-300"></i>
-                        <span id="headerCircle">Hyderabad Telecom Circle</span>
+                    <span class="flex items-center space-x-1 bg-slate-900/90 px-2.5 py-1 rounded-lg border border-slate-800">
+                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-amber-400"></i>
+                        <span id="headerCircle" class="text-white">Hyderabad Circle</span>
                     </span>
-                    <span class="font-mono bg-blue-900/60 px-2 py-0.5 rounded-md border border-blue-400/30 text-[10px] text-blue-200">
-                        16kHz Pulse Active
+                    <span class="font-mono bg-amber-500/10 text-amber-300 border border-amber-500/30 px-2 py-1 rounded-lg text-[10px] font-bold">
+                        Net-15 Cycle
                     </span>
                 </div>
             </header>
@@ -360,138 +521,143 @@
             <!-- ======================================================== -->
             <section id="tabHome" class="p-4 space-y-5 tab-content">
                 
-                <!-- MYJIO SIGNATURE HERO BILLING CARD -->
-                <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-jio-navy via-jio-royal to-jio-electric text-white p-5 shadow-jio space-y-4">
-                    <!-- Background ambient light rings -->
-                    <div class="absolute -right-12 -top-12 w-44 h-44 rounded-full bg-white/10 pointer-events-none blur-xl"></div>
-                    <div class="absolute -left-12 -bottom-12 w-36 h-36 rounded-full bg-blue-400/20 pointer-events-none blur-lg"></div>
+                <!-- SANCHAR BHARAT SIGNATURE HERO BILLING CARD -->
+                <div class="relative overflow-hidden rounded-3xl bg-[#0d1e38] text-white p-5 border border-slate-700/80 shadow-2xl space-y-4">
+                    <!-- Top Saffron-Amber Accent Bar -->
+                    <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-amber-500 via-amber-400 to-orange-500"></div>
 
-                    <div class="flex items-center justify-between relative z-10">
-                        <div>
-                            <span class="text-[11px] font-bold text-blue-200 uppercase tracking-wider">Active Telephone Plan</span>
-                            <h3 id="homePlanName" class="text-lg font-black text-white">Postpaid Silver (STD Trunk)</h3>
+                    <!-- Subtle Indian Telecom Watermark Grid in Background -->
+                    <div class="absolute -right-8 -top-8 w-40 h-40 rounded-full bg-blue-500/10 pointer-events-none blur-2xl"></div>
+                    <div class="absolute -left-8 -bottom-8 w-32 h-32 rounded-full bg-amber-500/10 pointer-events-none blur-2xl"></div>
+
+                    <div class="flex items-center justify-between relative z-10 pt-1">
+                        <div class="space-y-0.5">
+                            <span class="text-[10px] font-black uppercase text-amber-400 tracking-wider font-mono">🇮🇳 DoT POSTPAID SUBSCRIBER</span>
+                            <h3 id="homePlanName" class="text-base font-black text-white">Postpaid Silver (STD Trunk)</h3>
                         </div>
-                        <span id="homeBillStatusBadge" class="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-rose-500/20 text-rose-200 border border-rose-400/40">
+                        <span id="homeBillStatusBadge" class="px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider bg-rose-500/20 text-rose-300 border border-rose-400/50 shadow-sm">
                             ⚠️ UNPAID DUE
                         </span>
                     </div>
 
                     <!-- Amount Due Hero Display -->
                     <div class="py-1 relative z-10">
-                        <span class="text-xs text-blue-200 block font-medium">Total Outstanding Telecom Bill</span>
-                        <div class="flex items-baseline space-x-1.5 mt-0.5">
-                            <span class="text-xl font-bold text-blue-200">₹</span>
+                        <span class="text-[11px] text-slate-300 block font-bold uppercase tracking-wider">Total Outstanding Telecom Dues</span>
+                        <div class="flex items-baseline space-x-1.5 mt-1">
+                            <span class="text-2xl font-black text-amber-400">₹</span>
                             <h2 id="homeAmountDue" class="text-4xl font-black tracking-tight text-white font-mono">366.63</h2>
                         </div>
-                        <p id="homeDueDateText" class="text-xs text-blue-200 mt-1">
-                            Due by <span class="font-bold text-amber-300">25 Sep 2026</span> (Net-15 DoT Cycle)
+                        <p id="homeDueDateText" class="text-xs text-slate-300 mt-1.5 flex items-center space-x-1.5">
+                            <span>Due by</span>
+                            <span class="font-bold text-amber-300 font-mono">25 Sep 2026</span>
+                            <span class="text-slate-400">• Net-15 DoT Cycle</span>
                         </p>
                     </div>
 
                     <!-- Quick Action Buttons -->
-                    <div class="grid grid-cols-2 gap-2.5 pt-2 relative z-10">
+                    <div class="grid grid-cols-2 gap-2.5 pt-1 relative z-10">
                         <button onclick="openPaymentModal()" id="btnHomePay"
-                                class="py-2.5 px-4 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs shadow-md transition flex items-center justify-center space-x-1.5">
-                            <i data-lucide="credit-card" class="w-4 h-4"></i>
-                            <span>Pay Bill Now</span>
+                                class="py-3 px-4 rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs shadow-lg shadow-amber-500/30 transition transform active:scale-[0.98] flex items-center justify-center space-x-1.5">
+                            <i data-lucide="credit-card" class="w-4 h-4 text-slate-950"></i>
+                            <span>Pay Bill Now (UPI)</span>
                         </button>
                         <button onclick="viewInvoiceModal()"
-                                class="py-2.5 px-4 rounded-xl bg-white/15 hover:bg-white/25 text-white font-bold text-xs backdrop-blur-md border border-white/20 transition flex items-center justify-center space-x-1.5">
-                            <i data-lucide="file-text" class="w-4 h-4"></i>
+                                class="py-3 px-4 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs border border-slate-600/80 transition transform active:scale-[0.98] flex items-center justify-center space-x-1.5 shadow-sm">
+                            <i data-lucide="file-text" class="w-4 h-4 text-amber-400"></i>
                             <span>View Tax Invoice</span>
                         </button>
                     </div>
                 </div>
 
-                <!-- QUICK ACTIONS CAROUSEL (MyJio-Style Round Icons) -->
-                <div class="space-y-2">
+                <!-- QUICK ACTIONS GRID (4-Column Fintech/Telecom Grid) -->
+                <div class="space-y-2.5">
                     <div class="flex items-center justify-between px-1">
-                        <span class="text-xs font-black text-slate-700 uppercase tracking-wider">Quick PCO Operations</span>
-                        <span class="text-[11px] text-jio-blue font-bold">Vintage STD Suite</span>
+                        <span class="text-xs font-black text-slate-800 uppercase tracking-wider">Quick PCO Operations</span>
+                        <span class="text-[11px] text-blue-600 font-bold">Standard Services</span>
                     </div>
-                    <div class="grid grid-cols-4 gap-2">
-                        <button onclick="switchTab('booth')" class="flex flex-col items-center p-3 rounded-2xl bg-white border border-slate-200 hover:border-blue-400 shadow-sm transition group">
-                            <div class="w-11 h-11 rounded-2xl bg-blue-50 text-jio-blue flex items-center justify-center text-xl group-hover:scale-110 transition shadow-inner">
+                    <div class="grid grid-cols-4 gap-2.5">
+                        <button onclick="switchTab('booth')" class="flex flex-col items-center p-3 rounded-2xl bg-white border border-slate-200 hover:border-blue-500 shadow-sm transition group">
+                            <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl group-hover:scale-105 transition border border-blue-100 shadow-inner">
                                 📞
                             </div>
-                            <span class="text-[11px] font-bold text-slate-800 mt-2 text-center">Dial STD</span>
+                            <span class="text-[11px] font-bold text-slate-900 mt-2 text-center">Dial STD</span>
                         </button>
 
-                        <button onclick="switchTab('bills')" class="flex flex-col items-center p-3 rounded-2xl bg-white border border-slate-200 hover:border-blue-400 shadow-sm transition group">
-                            <div class="w-11 h-11 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl group-hover:scale-110 transition shadow-inner">
+                        <button onclick="switchTab('bills')" class="flex flex-col items-center p-3 rounded-2xl bg-white border border-slate-200 hover:border-emerald-500 shadow-sm transition group">
+                            <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl group-hover:scale-105 transition border border-emerald-100 shadow-inner">
                                 🧾
                             </div>
-                            <span class="text-[11px] font-bold text-slate-800 mt-2 text-center">DoT Bills</span>
+                            <span class="text-[11px] font-bold text-slate-900 mt-2 text-center">DoT Bills</span>
                         </button>
 
-                        <button onclick="switchTab('plans')" class="flex flex-col items-center p-3 rounded-2xl bg-white border border-slate-200 hover:border-blue-400 shadow-sm transition group">
-                            <div class="w-11 h-11 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl group-hover:scale-110 transition shadow-inner">
+                        <button onclick="switchTab('plans')" class="flex flex-col items-center p-3 rounded-2xl bg-white border border-slate-200 hover:border-amber-500 shadow-sm transition group">
+                            <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl group-hover:scale-105 transition border border-amber-100 shadow-inner">
                                 🏷️
                             </div>
-                            <span class="text-[11px] font-bold text-slate-800 mt-2 text-center">PCO Plans</span>
+                            <span class="text-[11px] font-bold text-slate-900 mt-2 text-center">PCO Plans</span>
                         </button>
 
-                        <button onclick="switchTab('account')" class="flex flex-col items-center p-3 rounded-2xl bg-white border border-slate-200 hover:border-blue-400 shadow-sm transition group">
-                            <div class="w-11 h-11 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl group-hover:scale-110 transition shadow-inner">
+                        <button onclick="switchTab('account')" class="flex flex-col items-center p-3 rounded-2xl bg-white border border-slate-200 hover:border-indigo-500 shadow-sm transition group">
+                            <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl group-hover:scale-105 transition border border-indigo-100 shadow-inner">
                                 📟
                             </div>
-                            <span class="text-[11px] font-bold text-slate-800 mt-2 text-center">Diagnostics</span>
+                            <span class="text-[11px] font-bold text-slate-900 mt-2 text-center">Diagnostics</span>
                         </button>
                     </div>
                 </div>
 
-                <!-- VINTAGE TELECOM USAGE METERS (MyJio-Style Metric Cards, Strictly Vintage) -->
+                <!-- VINTAGE TELECOM USAGE METERS (Solid Cards with Segmented Reels) -->
                 <div class="space-y-3">
-                    <span class="text-xs font-black text-slate-700 uppercase tracking-wider px-1">Cycle Telemetry & Meter Units</span>
+                    <span class="text-xs font-black text-slate-800 uppercase tracking-wider px-1">Cycle Telemetry & Meter Units</span>
                     
                     <div class="grid grid-cols-2 gap-3">
                         <!-- Meter 1: Monthly Free Minutes Allowance -->
-                        <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-2">
+                        <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-2.5">
                             <div class="flex items-center justify-between">
-                                <span class="text-[11px] font-bold text-slate-500">Free Talk-Time</span>
-                                <i data-lucide="clock" class="w-4 h-4 text-jio-electric"></i>
+                                <span class="text-[11px] font-black text-slate-600 uppercase">Free Talk-Time</span>
+                                <i data-lucide="clock" class="w-4 h-4 text-blue-600"></i>
                             </div>
                             <div>
                                 <span id="meterFreeMinsLeft" class="text-2xl font-black text-slate-900 font-mono">144</span>
-                                <span class="text-xs font-bold text-slate-400">/ 150 Mins</span>
+                                <span class="text-xs font-bold text-slate-400 font-mono">/ 150 M</span>
                             </div>
                             <!-- Progress Bar -->
-                            <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                                <div id="meterFreeMinsBar" class="bg-gradient-to-r from-blue-500 to-jio-electric h-2 rounded-full transition-all" style="width: 96%"></div>
+                            <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden border border-slate-200/50">
+                                <div id="meterFreeMinsBar" class="bg-blue-600 h-2 rounded-full transition-all" style="width: 96%"></div>
                             </div>
-                            <p class="text-[10px] text-slate-400">Deducted prior to local call billing</p>
+                            <p class="text-[10px] text-slate-500 leading-tight">Deducted before pulse billing</p>
                         </div>
 
-                        <!-- Meter 2: Gross Pulse Meter (16kHz Pulses) -->
-                        <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-2">
+                        <!-- Meter 2: Gross Pulse Meter (16kHz Segmented Reels) -->
+                        <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-2.5">
                             <div class="flex items-center justify-between">
-                                <span class="text-[11px] font-bold text-slate-500">Gross Pulse Count</span>
+                                <span class="text-[11px] font-black text-slate-600 uppercase">16kHz Pulses</span>
                                 <i data-lucide="activity" class="w-4 h-4 text-amber-500"></i>
                             </div>
-                            <div>
-                                <span id="meterTotalPulses" class="text-2xl font-black text-slate-900 font-mono">27</span>
-                                <span class="text-xs font-bold text-slate-400">Pulses</span>
+                            <div class="flex items-center space-x-1">
+                                <div class="pulse-digit-reel text-lg" id="meterPulseReels">0 0 2 7</div>
+                                <span class="text-xs font-bold text-slate-500">Units</span>
                             </div>
                             <!-- Progress Bar -->
-                            <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                                <div id="meterPulseBar" class="bg-gradient-to-r from-amber-400 to-amber-600 h-2 rounded-full transition-all" style="width: 45%"></div>
+                            <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden border border-slate-200/50">
+                                <div id="meterPulseBar" class="bg-amber-500 h-2 rounded-full transition-all" style="width: 45%"></div>
                             </div>
-                            <p class="text-[10px] text-slate-400">Standard 60-second mechanical ceiling</p>
+                            <p class="text-[10px] text-slate-500 leading-tight">Standard 60-second mechanical ceiling</p>
                         </div>
                     </div>
 
                     <!-- Meter 3: STD Booth Channel Status Banner -->
-                    <div class="p-3.5 rounded-2xl bg-gradient-to-r from-slate-900 to-blue-950 text-white flex items-center justify-between shadow-md">
+                    <div class="p-3.5 rounded-2xl bg-[#08111e] text-white flex items-center justify-between border border-slate-800 shadow-md">
                         <div class="flex items-center space-x-2.5">
                             <div class="w-8 h-8 rounded-xl bg-blue-600/30 border border-blue-400/40 flex items-center justify-center text-sm">
                                 🎛️
                             </div>
                             <div>
-                                <h4 class="text-xs font-bold">PCO Master Switch Telephony</h4>
+                                <h4 class="text-xs font-black text-white">PCO Master Switch Telephony</h4>
                                 <p class="text-[10px] text-slate-400">Booth 1: Ready • Booth 2: Ready • Coin Box: Active</p>
                             </div>
                         </div>
-                        <button onclick="switchTab('booth')" class="px-2.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-[11px] font-bold text-white transition">
+                        <button onclick="switchTab('booth')" class="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-[11px] font-black text-slate-950 transition shadow-sm">
                             Open Console
                         </button>
                     </div>
@@ -500,8 +666,8 @@
                 <!-- RECENT CALLS FEED (CDR Preview with vintage badges) -->
                 <div class="space-y-2.5 pt-1">
                     <div class="flex items-center justify-between px-1">
-                        <span class="text-xs font-black text-slate-700 uppercase tracking-wider">Recent Trunk & Local Calls</span>
-                        <button onclick="switchTab('bills')" class="text-xs font-bold text-jio-blue hover:underline">View All CDR</button>
+                        <span class="text-xs font-black text-slate-800 uppercase tracking-wider">Recent Trunk & Local Calls</span>
+                        <button onclick="switchTab('bills')" class="text-xs font-bold text-blue-600 hover:underline">View All CDR</button>
                     </div>
                     <div id="homeRecentCallsList" class="space-y-2">
                         <!-- Populated dynamically -->
@@ -514,10 +680,10 @@
             <!-- ======================================================== -->
             <section id="tabBooth" class="p-4 space-y-4 tab-content hidden">
                 <!-- Header Banner -->
-                <div class="bg-gradient-to-r from-slate-900 via-jio-navy to-slate-900 text-white p-4 rounded-2xl shadow-md space-y-1">
+                <div class="bg-[#08111e] text-white p-4 rounded-2xl border border-slate-800 shadow-md space-y-1">
                     <div class="flex items-center justify-between">
                         <span class="text-[10px] font-black uppercase text-amber-400 tracking-wider font-mono">DEPARTMENT OF TELECOM (DoT) PCO CONSOLE</span>
-                        <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">OPERATOR ACTIVE</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold">OPERATOR ACTIVE</span>
                     </div>
                     <h2 class="text-lg font-black text-white flex items-center space-x-2">
                         <span>Interactive STD Booth Call Simulator</span>
@@ -531,7 +697,7 @@
                 <div class="flex items-center space-x-2">
                     <span class="text-xs font-bold text-slate-700 shrink-0">Select Booth:</span>
                     <div class="flex space-x-1.5 flex-1">
-                        <button onclick="selectBooth(1)" id="boothBtn1" class="booth-selector-btn flex-1 py-1.5 rounded-xl text-xs font-bold bg-jio-blue text-white border border-blue-600 transition text-center shadow-sm">
+                        <button onclick="selectBooth(1)" id="boothBtn1" class="booth-selector-btn flex-1 py-1.5 rounded-xl text-xs font-bold bg-blue-600 text-white border border-blue-600 transition text-center shadow-sm">
                             Booth 1 (Local/STD)
                         </button>
                         <button onclick="selectBooth(2)" id="boothBtn2" class="booth-selector-btn flex-1 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 transition text-center">
@@ -544,7 +710,7 @@
                 </div>
 
                 <!-- VINTAGE VFD DIGITAL CALL METER DISPLAY -->
-                <div class="rounded-2xl bg-slate-950 p-4 border-2 border-slate-800 shadow-2xl space-y-3">
+                <div class="rounded-2xl bg-[#050b14] p-4 border-2 border-slate-800 shadow-2xl space-y-3">
                     <div class="flex items-center justify-between text-xs border-b border-slate-800 pb-2">
                         <span class="text-slate-400 font-mono flex items-center space-x-1">
                             <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -640,7 +806,7 @@
                     <!-- Presets for Fast Viva Testing -->
                     <div class="flex items-center space-x-1.5 overflow-x-auto no-scrollbar pb-1 text-xs">
                         <span class="text-[10px] font-bold text-slate-400 uppercase shrink-0">Sample Trunks:</span>
-                        <button onclick="presetDial('01123456789')" class="px-2.5 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 text-jio-blue font-mono text-xs font-bold border border-blue-200 shrink-0">
+                        <button onclick="presetDial('01123456789')" class="px-2.5 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 font-mono text-xs font-bold border border-blue-200 shrink-0">
                             Delhi STD (011)
                         </button>
                         <button onclick="presetDial('02226543210')" class="px-2.5 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-mono text-xs font-bold border border-indigo-200 shrink-0">
@@ -654,55 +820,107 @@
                         </button>
                     </div>
 
-                    <!-- Rotary / Touch-Tone Keypad (3x4 Grid) -->
-                    <div class="grid grid-cols-3 gap-2 pt-1 max-w-xs mx-auto">
-                        <button onclick="keypadPress('1')" class="keypad-btn py-3 rounded-2xl bg-slate-100 hover:bg-blue-100 text-slate-900 font-black text-xl shadow-sm transition active:scale-95 flex flex-col items-center">
-                            <span>1</span>
-                            <span class="text-[9px] text-slate-400 font-normal">.</span>
-                        </button>
-                        <button onclick="keypadPress('2')" class="keypad-btn py-3 rounded-2xl bg-slate-100 hover:bg-blue-100 text-slate-900 font-black text-xl shadow-sm transition active:scale-95 flex flex-col items-center">
-                            <span>2</span>
-                            <span class="text-[9px] text-slate-400 font-normal">ABC</span>
-                        </button>
-                        <button onclick="keypadPress('3')" class="keypad-btn py-3 rounded-2xl bg-slate-100 hover:bg-blue-100 text-slate-900 font-black text-xl shadow-sm transition active:scale-95 flex flex-col items-center">
-                            <span>3</span>
-                            <span class="text-[9px] text-slate-400 font-normal">DEF</span>
-                        </button>
-                        <button onclick="keypadPress('4')" class="keypad-btn py-3 rounded-2xl bg-slate-100 hover:bg-blue-100 text-slate-900 font-black text-xl shadow-sm transition active:scale-95 flex flex-col items-center">
-                            <span>4</span>
-                            <span class="text-[9px] text-slate-400 font-normal">GHI</span>
-                        </button>
-                        <button onclick="keypadPress('5')" class="keypad-btn py-3 rounded-2xl bg-slate-100 hover:bg-blue-100 text-slate-900 font-black text-xl shadow-sm transition active:scale-95 flex flex-col items-center">
-                            <span>5</span>
-                            <span class="text-[9px] text-slate-400 font-normal">JKL</span>
-                        </button>
-                        <button onclick="keypadPress('6')" class="keypad-btn py-3 rounded-2xl bg-slate-100 hover:bg-blue-100 text-slate-900 font-black text-xl shadow-sm transition active:scale-95 flex flex-col items-center">
-                            <span>6</span>
-                            <span class="text-[9px] text-slate-400 font-normal">MNO</span>
-                        </button>
-                        <button onclick="keypadPress('7')" class="keypad-btn py-3 rounded-2xl bg-slate-100 hover:bg-blue-100 text-slate-900 font-black text-xl shadow-sm transition active:scale-95 flex flex-col items-center">
-                            <span>7</span>
-                            <span class="text-[9px] text-slate-400 font-normal">PQRS</span>
-                        </button>
-                        <button onclick="keypadPress('8')" class="keypad-btn py-3 rounded-2xl bg-slate-100 hover:bg-blue-100 text-slate-900 font-black text-xl shadow-sm transition active:scale-95 flex flex-col items-center">
-                            <span>8</span>
-                            <span class="text-[9px] text-slate-400 font-normal">TUV</span>
-                        </button>
-                        <button onclick="keypadPress('9')" class="keypad-btn py-3 rounded-2xl bg-slate-100 hover:bg-blue-100 text-slate-900 font-black text-xl shadow-sm transition active:scale-95 flex flex-col items-center">
-                            <span>9</span>
-                            <span class="text-[9px] text-slate-400 font-normal">WXYZ</span>
-                        </button>
-                        <button onclick="keypadPress('+')" class="keypad-btn py-3 rounded-2xl bg-slate-100 hover:bg-blue-100 text-slate-900 font-black text-xl shadow-sm transition active:scale-95 flex flex-col items-center">
-                            <span>+</span>
-                            <span class="text-[9px] text-slate-400 font-normal">ISD</span>
-                        </button>
-                        <button onclick="keypadPress('0')" class="keypad-btn py-3 rounded-2xl bg-slate-100 hover:bg-blue-100 text-slate-900 font-black text-xl shadow-sm transition active:scale-95 flex flex-col items-center">
-                            <span>0</span>
-                            <span class="text-[9px] text-slate-400 font-normal">STD</span>
-                        </button>
-                        <button onclick="keypadBackspace()" class="keypad-btn py-3 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-black text-base shadow-sm transition active:scale-95 flex flex-col items-center justify-center">
-                            <i data-lucide="delete" class="w-5 h-5"></i>
-                        </button>
+                    <!-- Keypad Mode Toggle: Round Buttons vs Rotary Wheel -->
+                    <div class="flex items-center justify-between px-2 pt-1">
+                        <span class="text-[10px] font-black uppercase text-amber-700 tracking-wider font-mono">Dialer Mechanism:</span>
+                        <div class="flex items-center bg-slate-100 p-0.5 rounded-xl border border-slate-200 text-[11px] font-bold">
+                            <button onclick="switchKeypadMode('round')" id="btnModeRound" class="px-2.5 py-1 rounded-lg bg-amber-500 text-slate-950 shadow-sm transition">
+                                🔘 Round Buttons
+                            </button>
+                            <button onclick="switchKeypadMode('rotary')" id="btnModeRotary" class="px-2.5 py-1 rounded-lg text-slate-600 hover:text-slate-900 transition">
+                                🔄 Rotary Wheel
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- KEYPAD OPTION 1: VINTAGE ROUND BUTTONS (ITI Push-Button Dial) -->
+                    <div id="viewRoundButtons" class="pt-2">
+                        <div class="grid grid-cols-3 gap-y-3 gap-x-4 max-w-xs mx-auto justify-items-center">
+                            <!-- Row 1 -->
+                            <button onclick="keypadPress('1')" class="vintage-round-btn">
+                                <span class="text-xl font-black text-slate-900 leading-none">1</span>
+                                <span class="text-[8px] font-bold text-amber-800">.</span>
+                            </button>
+                            <button onclick="keypadPress('2')" class="vintage-round-btn">
+                                <span class="text-xl font-black text-slate-900 leading-none">2</span>
+                                <span class="text-[8px] font-bold text-amber-800">ABC</span>
+                            </button>
+                            <button onclick="keypadPress('3')" class="vintage-round-btn">
+                                <span class="text-xl font-black text-slate-900 leading-none">3</span>
+                                <span class="text-[8px] font-bold text-amber-800">DEF</span>
+                            </button>
+
+                            <!-- Row 2 -->
+                            <button onclick="keypadPress('4')" class="vintage-round-btn">
+                                <span class="text-xl font-black text-slate-900 leading-none">4</span>
+                                <span class="text-[8px] font-bold text-amber-800">GHI</span>
+                            </button>
+                            <button onclick="keypadPress('5')" class="vintage-round-btn">
+                                <span class="text-xl font-black text-slate-900 leading-none">5</span>
+                                <span class="text-[8px] font-bold text-amber-800">JKL</span>
+                            </button>
+                            <button onclick="keypadPress('6')" class="vintage-round-btn">
+                                <span class="text-xl font-black text-slate-900 leading-none">6</span>
+                                <span class="text-[8px] font-bold text-amber-800">MNO</span>
+                            </button>
+
+                            <!-- Row 3 -->
+                            <button onclick="keypadPress('7')" class="vintage-round-btn">
+                                <span class="text-xl font-black text-slate-900 leading-none">7</span>
+                                <span class="text-[8px] font-bold text-amber-800">PQRS</span>
+                            </button>
+                            <button onclick="keypadPress('8')" class="vintage-round-btn">
+                                <span class="text-xl font-black text-slate-900 leading-none">8</span>
+                                <span class="text-[8px] font-bold text-amber-800">TUV</span>
+                            </button>
+                            <button onclick="keypadPress('9')" class="vintage-round-btn">
+                                <span class="text-xl font-black text-slate-900 leading-none">9</span>
+                                <span class="text-[8px] font-bold text-amber-800">WXYZ</span>
+                            </button>
+
+                            <!-- Row 4 -->
+                            <button onclick="keypadPress('+')" class="vintage-round-btn">
+                                <span class="text-xl font-black text-slate-900 leading-none">+</span>
+                                <span class="text-[8px] font-bold text-amber-800">ISD</span>
+                            </button>
+                            <button onclick="keypadPress('0')" class="vintage-round-btn">
+                                <span class="text-xl font-black text-slate-900 leading-none">0</span>
+                                <span class="text-[8px] font-bold text-amber-800">STD</span>
+                            </button>
+                            <button onclick="keypadBackspace()" class="vintage-round-btn !border-rose-400 !bg-rose-50 hover:!bg-rose-100 text-rose-700">
+                                <i data-lucide="delete" class="w-5 h-5"></i>
+                                <span class="text-[8px] font-bold text-rose-700 mt-0.5">CLEAR</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- KEYPAD OPTION 2: VINTAGE ROTARY WHEEL DIAL -->
+                    <div id="viewRotaryDial" class="hidden py-3">
+                        <div class="rotary-dial-container">
+                            <div class="rotary-wheel" id="rotaryWheelElem">
+                                <!-- 10 Radial Finger Holes arranged like vintage rotary telephones -->
+                                <div class="rotary-hole" style="top: 14px; left: 135px;" onclick="dialRotaryDigit('1')">1</div>
+                                <div class="rotary-hole" style="top: 36px; left: 178px;" onclick="dialRotaryDigit('2')">2</div>
+                                <div class="rotary-hole" style="top: 78px; left: 200px;" onclick="dialRotaryDigit('3')">3</div>
+                                <div class="rotary-hole" style="top: 125px; left: 198px;" onclick="dialRotaryDigit('4')">4</div>
+                                <div class="rotary-hole" style="top: 168px; left: 172px;" onclick="dialRotaryDigit('5')">5</div>
+                                <div class="rotary-hole" style="top: 194px; left: 128px;" onclick="dialRotaryDigit('6')">6</div>
+                                <div class="rotary-hole" style="top: 194px; left: 78px;" onclick="dialRotaryDigit('7')">7</div>
+                                <div class="rotary-hole" style="top: 168px; left: 34px;" onclick="dialRotaryDigit('8')">8</div>
+                                <div class="rotary-hole" style="top: 125px; left: 8px;" onclick="dialRotaryDigit('9')">9</div>
+                                <div class="rotary-hole" style="top: 78px; left: 6px;" onclick="dialRotaryDigit('0')">0</div>
+                            </div>
+                            <!-- Central Vintage Brass Cap -->
+                            <div class="rotary-center">
+                                <span class="text-[9px] font-black uppercase tracking-wider text-amber-950">DoT ITI</span>
+                                <span class="text-[8px] font-bold text-amber-900">PCO 1982</span>
+                            </div>
+                            <!-- Finger Stop Hook at bottom right -->
+                            <div class="rotary-stop-hook"></div>
+                        </div>
+                        <p class="text-center text-[10px] text-slate-400 font-mono pt-2">
+                            Tap any number hole to rotate and pulse-dial
+                        </p>
                     </div>
 
                     <!-- Connect / Disconnect Buttons -->
@@ -753,7 +971,7 @@
                 <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-card space-y-3">
                     <div class="flex items-center justify-between">
                         <span class="text-xs font-black text-slate-800 uppercase tracking-wider">Itemized Call Log (CDR)</span>
-                        <span id="cdrRecordCount" class="text-xs font-mono font-bold text-jio-blue bg-blue-50 px-2 py-0.5 rounded border border-blue-200">0 Calls</span>
+                        <span id="cdrRecordCount" class="text-xs font-mono font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">0 Calls</span>
                     </div>
 
                     <div class="overflow-x-auto">
@@ -788,7 +1006,7 @@
             <!-- ======================================================== -->
             <section id="tabPlans" class="p-4 space-y-4 tab-content hidden">
                 <div>
-                    <span class="text-[10px] font-black uppercase text-jio-blue tracking-wider font-mono">AUTHENTIC DoT TARIFF PACKS</span>
+                    <span class="text-[10px] font-black uppercase text-blue-600 tracking-wider font-mono">AUTHENTIC DoT TARIFF PACKS</span>
                     <h2 class="text-lg font-black text-slate-900">Vintage Landline & STD Plans</h2>
                     <p class="text-xs text-slate-500">Preserving classic pulse rate slabs and commercial PCO booth contracts</p>
                 </div>
@@ -817,7 +1035,7 @@
                 <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-card space-y-3">
                     <div class="flex items-center justify-between">
                         <span class="text-xs font-black text-slate-800 uppercase tracking-wider">Line Health Diagnostics</span>
-                        <button onclick="runLineDiagnostics()" id="btnRunDiagnostics" class="px-2.5 py-1 rounded-lg bg-blue-50 text-jio-blue font-bold text-xs border border-blue-200 hover:bg-blue-100 transition">
+                        <button onclick="runLineDiagnostics()" id="btnRunDiagnostics" class="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 font-bold text-xs border border-blue-200 hover:bg-blue-100 transition">
                             ⚡ Run Test
                         </button>
                     </div>
@@ -853,33 +1071,33 @@
         </div>
 
         <!-- ============================================================ -->
-        <!-- BOTTOM NAVIGATION BAR (MyJio-Inspired Mobile Tabs) -->
+        <!-- BOTTOM NAVIGATION BAR (Sanchar Bharat Mobile Tabs) -->
         <!-- ============================================================ -->
-        <nav id="bottomNavBar" class="hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-lg border-t border-slate-200 py-2 shadow-2xl transition-all">
+        <nav id="bottomNavBar" class="hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-slate-200/90 py-2 shadow-2xl transition-all">
             <div class="max-w-md mx-auto flex items-center justify-around px-2">
-                <button onclick="switchTab('home')" class="nav-item flex flex-col items-center py-1 px-2.5 rounded-2xl transition text-jio-blue" data-nav="home">
+                <button onclick="switchTab('home')" class="nav-item flex flex-col items-center py-1 px-3 rounded-2xl transition text-blue-600 font-bold" data-nav="home">
                     <i data-lucide="home" class="w-5 h-5"></i>
-                    <span class="text-[10px] font-bold mt-1">Home</span>
+                    <span class="text-[10px] mt-1">Home</span>
                 </button>
 
-                <button onclick="switchTab('booth')" class="nav-item flex flex-col items-center py-1 px-2.5 rounded-2xl transition text-slate-400 hover:text-jio-blue" data-nav="booth">
+                <button onclick="switchTab('booth')" class="nav-item flex flex-col items-center py-1 px-3 rounded-2xl transition text-slate-400 hover:text-blue-600 font-medium" data-nav="booth">
                     <i data-lucide="phone-call" class="w-5 h-5"></i>
-                    <span class="text-[10px] font-bold mt-1">STD Booth</span>
+                    <span class="text-[10px] mt-1">STD Booth</span>
                 </button>
 
-                <button onclick="switchTab('bills')" class="nav-item flex flex-col items-center py-1 px-2.5 rounded-2xl transition text-slate-400 hover:text-jio-blue" data-nav="bills">
+                <button onclick="switchTab('bills')" class="nav-item flex flex-col items-center py-1 px-3 rounded-2xl transition text-slate-400 hover:text-blue-600 font-medium" data-nav="bills">
                     <i data-lucide="receipt" class="w-5 h-5"></i>
-                    <span class="text-[10px] font-bold mt-1">Bills & CDR</span>
+                    <span class="text-[10px] mt-1">Bills & CDR</span>
                 </button>
 
-                <button onclick="switchTab('plans')" class="nav-item flex flex-col items-center py-1 px-2.5 rounded-2xl transition text-slate-400 hover:text-jio-blue" data-nav="plans">
+                <button onclick="switchTab('plans')" class="nav-item flex flex-col items-center py-1 px-3 rounded-2xl transition text-slate-400 hover:text-blue-600 font-medium" data-nav="plans">
                     <i data-lucide="tags" class="w-5 h-5"></i>
-                    <span class="text-[10px] font-bold mt-1">PCO Plans</span>
+                    <span class="text-[10px] mt-1">PCO Plans</span>
                 </button>
 
-                <button onclick="switchTab('account')" class="nav-item flex flex-col items-center py-1 px-2.5 rounded-2xl transition text-slate-400 hover:text-jio-blue" data-nav="account">
+                <button onclick="switchTab('account')" class="nav-item flex flex-col items-center py-1 px-3 rounded-2xl transition text-slate-400 hover:text-blue-600 font-medium" data-nav="account">
                     <i data-lucide="user" class="w-5 h-5"></i>
-                    <span class="text-[10px] font-bold mt-1">Account</span>
+                    <span class="text-[10px] mt-1">Account</span>
                 </button>
             </div>
         </nav>
@@ -967,7 +1185,7 @@
                     <i data-lucide="printer" class="w-3.5 h-3.5"></i>
                     <span>Print Slip</span>
                 </button>
-                <button onclick="closeTrunkSlipModal()" class="flex-1 py-2 rounded-xl bg-jio-blue text-white font-bold text-xs hover:bg-blue-700 transition">
+                <button onclick="closeTrunkSlipModal()" class="flex-1 py-2 rounded-xl bg-blue-600 text-white font-bold text-xs hover:bg-blue-700 transition">
                     Done
                 </button>
             </div>
@@ -980,17 +1198,17 @@
     <div id="modalTaxInvoice" class="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-3 hidden overflow-y-auto">
         <div class="w-full max-w-2xl rounded-3xl bg-white shadow-2xl overflow-hidden border border-slate-200 my-auto">
             <!-- Modal Header with download & print buttons -->
-            <div class="bg-gradient-to-r from-jio-navy to-jio-blue text-white p-4 flex items-center justify-between">
+            <div class="bg-[#08111e] text-white p-4 border-b-2 border-amber-500 flex items-center justify-between">
                 <div>
-                    <h3 class="font-bold text-sm">TRAI & DoT Compliant Telephone Tax Invoice</h3>
-                    <p class="text-[11px] text-blue-200">Itemized statement with 18% GST and Call Detail Records</p>
+                    <h3 class="font-bold text-sm text-white">TRAI & DoT Compliant Telephone Tax Invoice</h3>
+                    <p class="text-[11px] text-slate-300">Itemized statement with 18% GST and Call Detail Records</p>
                 </div>
                 <div class="flex items-center space-x-2">
-                    <button onclick="downloadInvoicePdf()" class="px-2.5 py-1.5 rounded-lg bg-white/20 hover:bg-white/30 text-white text-xs font-bold transition flex items-center space-x-1">
-                        <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                    <button onclick="downloadInvoicePdf()" class="px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition flex items-center space-x-1 border border-white/20">
+                        <i data-lucide="download" class="w-3.5 h-3.5 text-amber-400"></i>
                         <span>PDF</span>
                     </button>
-                    <button onclick="closeInvoiceModal()" class="p-1.5 rounded-lg bg-white/20 hover:bg-white/30 text-white transition">
+                    <button onclick="closeInvoiceModal()" class="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white transition">
                         ✕
                     </button>
                 </div>
@@ -1010,22 +1228,22 @@
         <div class="w-full max-w-sm rounded-3xl bg-white shadow-2xl overflow-hidden border border-slate-200 p-5 space-y-4">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                 <div>
-                    <span class="text-[10px] font-bold text-jio-blue uppercase tracking-wider">SECURE PAYMENT</span>
+                    <span class="text-[10px] font-black text-amber-600 uppercase tracking-wider font-mono">SECURE SETTLEMENT</span>
                     <h3 class="text-base font-black text-slate-900">Settle Telephone Bill</h3>
                 </div>
                 <button onclick="closePaymentModal()" class="text-slate-400 hover:text-slate-700 text-sm font-bold">✕</button>
             </div>
 
-            <div class="p-4 rounded-2xl bg-blue-50/70 border border-blue-100 text-center space-y-1">
+            <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-center space-y-1">
                 <span class="text-xs text-slate-500 font-medium">Net Amount Payable</span>
-                <div class="text-3xl font-black text-jio-blue font-mono" id="payModalAmount">₹ 366.63</div>
-                <p class="text-[11px] text-slate-400" id="payModalBillNo">Bill: APEX-202608-001</p>
+                <div class="text-3xl font-black text-slate-900 font-mono" id="payModalAmount">₹ 366.63</div>
+                <p class="text-[11px] text-slate-400 font-mono" id="payModalBillNo">Bill: APEX-202608-001</p>
             </div>
 
             <div class="space-y-2">
                 <span class="text-xs font-bold text-slate-700">Select Settlement Method:</span>
                 
-                <label class="p-3 rounded-xl border-2 border-jio-blue bg-blue-50/30 flex items-center justify-between cursor-pointer">
+                <label class="p-3 rounded-xl border-2 border-blue-600 bg-blue-50/40 flex items-center justify-between cursor-pointer">
                     <div class="flex items-center space-x-2.5">
                         <span class="text-lg">📲</span>
                         <div>
@@ -1033,7 +1251,7 @@
                             <p class="text-[10px] text-slate-500">GPay, PhonePe, Paytm, BHIM</p>
                         </div>
                     </div>
-                    <input type="radio" name="payMethod" value="upi" checked class="text-jio-blue focus:ring-jio-blue">
+                    <input type="radio" name="payMethod" value="upi" checked class="text-blue-600 focus:ring-blue-600">
                 </label>
 
                 <label class="p-3 rounded-xl border border-slate-200 hover:bg-slate-50 flex items-center justify-between cursor-pointer">
@@ -1044,12 +1262,12 @@
                             <p class="text-[10px] text-slate-500">Official DoT Cash Voucher Receipt</p>
                         </div>
                     </div>
-                    <input type="radio" name="payMethod" value="cash" class="text-jio-blue focus:ring-jio-blue">
+                    <input type="radio" name="payMethod" value="cash" class="text-blue-600 focus:ring-blue-600">
                 </label>
             </div>
 
             <button onclick="processBillPayment()" id="btnConfirmPay"
-                    class="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:opacity-95 text-white font-bold text-sm shadow-lg shadow-emerald-600/30 transition flex items-center justify-center space-x-2">
+                    class="w-full py-3.5 px-4 rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-sm shadow-lg shadow-amber-500/30 transition flex items-center justify-center space-x-2">
                 <i data-lucide="check" class="w-4 h-4"></i>
                 <span>Confirm & Pay Instantly</span>
             </button>
@@ -1196,15 +1414,23 @@
                     <!-- Twilio Fields -->
                     <div id="fieldsTwilio" class="space-y-2 hidden">
                         <div class="flex items-center justify-between">
-                            <span class="font-bold text-rose-600">Twilio Global SMS</span>
+                            <span class="font-bold text-rose-600">Twilio Global SMS & Real Phone Calling</span>
                             <a href="https://www.twilio.com/" target="_blank" class="text-[10px] text-rose-600 underline">Twilio Console</a>
                         </div>
+                        <p class="text-[10px] text-slate-500 leading-snug">
+                            Powers <strong>real SMS delivery</strong> and <strong>real outbound cellular phone calls</strong> to smartphones. Your dialed phone physically rings over GSM!
+                        </p>
                         <label class="block text-[10px] text-slate-500 font-bold">Account SID:</label>
                         <input type="text" id="twilioSid" placeholder="ACxxxxxxxxxxxxxxxxxxxxxxxx" class="w-full p-2 rounded-lg border border-slate-300 font-mono text-xs">
                         <label class="block text-[10px] text-slate-500 font-bold">Auth Token:</label>
                         <input type="password" id="twilioToken" placeholder="Twilio Auth Token" class="w-full p-2 rounded-lg border border-slate-300 font-mono text-xs">
-                        <label class="block text-[10px] text-slate-500 font-bold">From Phone Number:</label>
+                        <label class="block text-[10px] text-slate-500 font-bold">Twilio Phone Number (with +):</label>
                         <input type="text" id="twilioFrom" placeholder="+1234567890" class="w-full p-2 rounded-lg border border-slate-300 font-mono text-xs">
+                        <div class="pt-1">
+                            <button type="button" onclick="testRealCarrierCall()" class="w-full py-2 rounded-xl bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 text-white font-bold text-xs flex items-center justify-center space-x-1.5 shadow-sm transition">
+                                <span>📞 Test Outbound Call to Smartphone</span>
+                            </button>
+                        </div>
                     </div>
 
                     <!-- CallMeBot WhatsApp Fields -->
@@ -1254,6 +1480,83 @@
                         💾 Save Settings
                     </button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- MODAL 7: REAL SMARTPHONE CALL DISPATCH NOTICE & OPTIONS -->
+    <!-- ================================================================ -->
+    <div id="modalVoiceGatewayPrompt" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
+        <div class="w-full max-w-sm rounded-3xl bg-white shadow-2xl border border-slate-200 overflow-hidden text-slate-800 animate-in zoom-in-95 duration-200">
+            <!-- Modal Header -->
+            <div class="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 text-white p-4 flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <span class="text-xl">📞</span>
+                    <div>
+                        <h3 class="font-black text-sm">Real Smartphone Calling</h3>
+                        <p class="text-[10px] text-emerald-100">Make your actual smartphone physically ring</p>
+                    </div>
+                </div>
+                <button onclick="closeVoiceGatewayPrompt()" class="w-7 h-7 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center">
+                    ✕
+                </button>
+            </div>
+
+            <div class="p-5 space-y-3.5 text-xs">
+                <div>
+                    <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Dialed Destination:</span>
+                    <div id="voicePromptPhone" class="text-lg font-black font-mono text-slate-900">+91 98490 12345</div>
+                </div>
+
+                <div class="p-3 bg-amber-50 rounded-2xl border border-amber-200 text-amber-900 space-y-1">
+                    <div class="font-bold flex items-center space-x-1">
+                        <span>ℹ️</span>
+                        <span>Twilio Voice Gateway is currently unconfigured</span>
+                    </div>
+                    <p class="text-[11px] text-amber-800 leading-snug">
+                        To physically ring your real phone over GSM carrier signals, connect your free Twilio credentials, OR use the 1-click WebRTC mobile handset pair below!
+                    </p>
+                </div>
+
+                <!-- Option A: Pair WebRTC Mobile Handset (Instant Zero-Setup) -->
+                <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2 hover:border-emerald-400 transition">
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-slate-900 flex items-center space-x-1.5">
+                            <span class="text-emerald-600">⚡</span>
+                            <span>Option 1: WebRTC Mobile Handset</span>
+                        </span>
+                        <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">RECOMMENDED • 0 SETUP</span>
+                    </div>
+                    <p class="text-[11px] text-slate-500 leading-snug">
+                        Scan the QR code with your smartphone camera. Your phone will ring, answer, and transmit live 2-way microphone audio directly to the PCO booth.
+                    </p>
+                    <button onclick="closeVoiceGatewayPrompt(); openRealPhoneHandsetModal();" class="w-full py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition flex items-center justify-center space-x-1.5">
+                        <span>📱 Open Handset Pairing QR</span>
+                    </button>
+                </div>
+
+                <!-- Option B: Twilio Programmable Voice Outbound -->
+                <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2 hover:border-rose-400 transition">
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-slate-900 flex items-center space-x-1.5">
+                            <span class="text-rose-600">🌐</span>
+                            <span>Option 2: Twilio Voice Carrier Call</span>
+                        </span>
+                        <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-rose-100 text-rose-800">GSM CARRIER</span>
+                    </div>
+                    <p class="text-[11px] text-slate-500 leading-snug">
+                        Connect Twilio Account SID & Token to place an outbound PSTN call directly to any SIM card worldwide with Indian DoT IVR operator announcement.
+                    </p>
+                    <button onclick="openGatewaySettingsForVoice()" class="w-full py-2 px-3 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold text-xs transition flex items-center justify-center space-x-1.5">
+                        <span>⚙️ Configure Twilio Voice</span>
+                    </button>
+                </div>
+
+                <!-- Continue local simulation button -->
+                <button onclick="closeVoiceGatewayPrompt()" class="w-full py-2 text-center text-slate-500 hover:text-slate-800 font-bold text-xs transition">
+                    Continue Local Booth Audio Simulation
+                </button>
             </div>
         </div>
     </div>

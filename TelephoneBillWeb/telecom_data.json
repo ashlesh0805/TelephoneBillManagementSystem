@@ -15,6 +15,11 @@
       "otp": "784366",
       "expires_at": 1789830101294,
       "verified": true
+    },
+    "7780649938": {
+      "otp": "752737",
+      "expires_at": 1789831843773,
+      "verified": false
     }
   },
   "subscribers": [
@@ -62,6 +67,21 @@
       "due_date": "02 Oct 2026",
       "status": "ACTIVE",
       "joined": "2023-11-20"
+    },
+    {
+      "id": "sub_3135",
+      "name": "Subscriber 9938",
+      "phone": "7780649938",
+      "landline": "040-27659938",
+      "circle": "Hyderabad Telecom Circle",
+      "plan": "DoT Standard Landline 100",
+      "monthly_rental": 199,
+      "free_minutes": 100,
+      "pulse_rate": 1.8,
+      "balance": 199,
+      "due_date": "28 Sep 2026",
+      "status": "ACTIVE",
+      "joined": "2026-09-19"
     }
   ],
   "cdrs": [
